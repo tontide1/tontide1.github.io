@@ -1,0 +1,3 @@
+# Bilingual content policy: English primary, Vietnamese secondary
+
+The site is bilingual with English as the default language — English content lives at root URLs, Vietnamese under `/vi/`. All site-chrome pages (home, about, projects, archives, search, links) exist in both languages. Posts are written in one language and translated only when worth the effort; an untranslated post has no translation link and simply does not appear in the other language's site. English-first was chosen because the site's primary audience is international; translating every post would roughly double writing effort for marginal reach. The trade-off is easy to revisit per-post, so no machinery was built to enforce it.

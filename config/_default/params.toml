@@ -2,56 +2,56 @@
 mainSections = ["post"]
 # Output page's full content in RSS.
 rssFullContent = true
-favicon        = "img/favicon.png"
+favicon = "img/favicon.png"
 
 # Accepted values: "default", "lastmod"
 # default = see https://gohugo.io/quick-reference/glossary/#default-sort-order
 # lastmod = sort by last modified date, in descending order
-SortBy              = "default"
+SortBy = "default"
 
 [footer]
-    since      = 2020
-    customText = ""
+since = 2026
+customText = ""
 
 [dateFormat]
-    published   = ":date_full"
-    lastUpdated = ":date_full"
+published = ":date_full"
+lastUpdated = ":date_full"
 
 [sidebar]
-    emoji    = "🍥"
-    subtitle = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-    avatar   = "img/avatar.png"
+# TODO: thêm emoji riêng cho sidebar, ví dụ: emoji = "✨"
+subtitle = "Software Developer" # TODO: thay bằng tagline thật của bạn
+avatar = "img/avatar.png"       # TODO: thay bằng avatar của bạn
 
 [article]
-    headingAnchor = false
-    math          = false
-    readingTime   = true
+headingAnchor = false
+math = false
+readingTime = true
 
-    [article.license]
-        enabled = true
-        default = "Licensed under CC BY-NC-SA 4.0"
+[article.license]
+enabled = true
+default = "Licensed under CC BY-NC-SA 4.0"
 
 [widgets]
-    homepage = [
-        { type = "search" },
-        { type = "archives", params = { limit = 5 } },
-        { type = "categories", params = { limit = 10 } },
-        { type = "tag-cloud", params = { limit = 10 } },
-    ]
-    page = [{ type = "toc" }]
+homepage = [
+  { type = "search" },
+  { type = "archives", params = { limit = 5 } },
+  { type = "categories", params = { limit = 10 } },
+  { type = "tag-cloud", params = { limit = 10 } },
+]
+page = [{ type = "toc" }]
 
 [opengraph.twitter]
-    site = ""
-    card = "summary_large_image"
+site = ""
+card = "summary_large_image"
 
 [colorScheme]
-    toggle  = true
-    default = "auto"
+toggle = true
+default = "auto"
 
 ## Comments
+# Tắt comments — portfolio-first, bật lại khi blog có độc giả thật
 [comments]
-    enabled  = true
-    provider = "disqus"
+enabled = false
 
-    # See all the available configurations at https://github.com/CaiJimmy/hugo-theme-stack/blob/master/config/_default/params.toml
-    # Copy the configurations you need from there and paste it here.
+# See all the available configurations at https://github.com/CaiJimmy/hugo-theme-stack/blob/master/config/_default/params.toml
+# Copy the configurations you need from there and paste it here.

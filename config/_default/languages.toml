@@ -1,0 +1,15 @@
+[en]
+label = "English"
+direction = "ltr"
+locale = "en-us"
+title = "Tai Phan"
+contentDir = "content/en"
+weight = 1
+
+[vi]
+label = "Tiếng Việt"
+direction = "ltr"
+locale = "vi-vn"
+title = "Tai Phan"
+contentDir = "content/vi"
+weight = 2

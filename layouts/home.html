@@ -1,0 +1,55 @@
+{{ define "main" }}
+    {{/* Hero — tên + tagline + socials */}}
+    <section class="home-hero">
+        <h1 class="home-hero-name">{{ .Site.Title }}</h1>
+        <p class="home-hero-tagline">{{ T "heroTagline" }}</p>
+
+        {{- with .Site.Menus.social -}}
+            <ul class="home-hero-socials">
+                {{ range . }}
+                    <li>
+                        <a href="{{ .URL }}" {{ if .Params.newTab }}target="_blank"{{ end }} title="{{ .Name }}" rel="me">
+                            {{ partial "helper/icon" (default "link" .Params.Icon) }}
+                        </a>
+                    </li>
+                {{ end }}
+            </ul>
+        {{- end -}}
+    </section>
+
+    {{/* Featured projects — được gắn cờ `featured: true` */}}
+    {{ $featured := where (where .Site.RegularPages "Section" "projects") "Params.featured" true }}
+    {{ if gt (len $featured) 0 }}
+        <section class="home-section">
+            <header class="home-section-header">
+                <h2 class="section-title">{{ T "featuredProjects" }}</h2>
+                <a class="home-section-link" href="{{ "projects/" | relLangURL }}">{{ T "allProjects" }}</a>
+            </header>
+            <div class="article-list--tile">
+                {{ range $featured }}
+                    {{ partial "article-list/tile" . }}
+                {{ end }}
+            </div>
+        </section>
+    {{ end }}
+
+    {{/* Latest posts — 3 bài mới nhất */}}
+    {{ $posts := where .Site.RegularPages "Section" "post" }}
+    {{ if gt (len $posts) 0 }}
+        <section class="home-section">
+            <header class="home-section-header">
+                <h2 class="section-title">{{ T "latestPosts" }}</h2>
+                <a class="home-section-link" href="{{ "post/" | relLangURL }}">{{ T "allPosts" }}</a>
+            </header>
+            <div class="article-list--compact">
+                {{ range first 3 $posts }}
+                    {{ partial "article-list/compact" . }}
+                {{ end }}
+            </div>
+        </section>
+    {{ end }}
+{{ end }}
+
+{{ define "right-sidebar" }}
+    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+{{ end }}

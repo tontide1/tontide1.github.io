@@ -1,24 +1,29 @@
-# Configure main menu and social menu
-#[[main]]
-#identifier = "home"
-#name = "Home"
-#url = "/"
-#[main.params]
-#icon = "home"
-#newtab = true
+# Main menu is defined per-page in content front matter (`menu: main`),
+# so it is language-aware automatically.
+
+# Social menu — shown in the left sidebar
+[[social]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/tontide1"
+
+[social.params]
+icon = "brand-github"
 
 [[social]]
-    identifier = "github"
-    name       = "GitHub"
-    url        = "https://github.com/CaiJimmy/hugo-theme-stack"
+identifier = "linkedin"
+name = "LinkedIn"
+# TODO: thay URL bằng profile LinkedIn thật của bạn
+url = "https://www.linkedin.com/in/tontide1"
 
-    [social.params]
-        icon = "brand-github"
+[social.params]
+icon = "brand-linkedin"
 
 [[social]]
-    identifier = "twitter"
-    name       = "Twitter"
-    url        = "https://twitter.com"
+identifier = "email"
+name = "Email"
+# TODO: thay bằng email thật của bạn
+url = "mailto:hello@tontide1.dev"
 
-    [social.params]
-        icon = "brand-twitter"
+[social.params]
+icon = "mail"
