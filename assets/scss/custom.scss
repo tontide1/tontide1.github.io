@@ -1,67 +1,85 @@
 /*
-    You can add your own custom styles here.
+    Site-wide design overrides — warm monochrome editorial.
+    Imported last by the theme's style.scss, so same-specificity
+    rules here beat the theme's defaults.
+    Note: theme dark tokens are declared as :root[data-scheme="dark"]
+    (specificity 0,2,0) — must be matched, not lowered.
 */
 
-/* === Homepage hero === */
-.home-hero {
-    margin-bottom: var(--section-separation);
+/* === Tokens: light === */
+:root {
+    --body-background: #fbfbfa;
+    --body-text-color: #787774;
 
-    .home-hero-name {
-        font-size: 3.2rem;
-        margin: 0 0 0.5rem;
-        color: var(--card-text-color-main);
-    }
+    --accent-color: #111111;
+    --accent-color-darker: #444444;
+    --accent-color-text: #ffffff;
 
-    .home-hero-tagline {
-        font-size: 1.6rem;
-        color: var(--body-text-color);
-        margin: 0 0 var(--spacing-lg);
-    }
+    --card-background: #ffffff;
+    --card-background-selected: #f0efed;
+    --card-text-color-main: #111111;
+    --card-text-color-secondary: #787774;
+    --card-text-color-tertiary: #9b9a97;
+    --card-separator-color: rgba(0, 0, 0, 0.06);
+    --card-border-radius: 8px;
 
-    .home-hero-socials {
-        display: flex;
-        gap: var(--spacing-xs);
-        list-style: none;
-        padding: 0;
-        margin: 0;
+    /* shape rule: containers 8px, tags/badges pill */
+    --tag-border-radius: 999px;
 
-        a {
-            display: inline-flex;
-            padding: var(--spacing-sm);
-            color: var(--body-text-color);
-            border-radius: var(--tag-border-radius);
-            transition: color 0.2s ease, background 0.2s ease;
+    --base-font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+    --code-font-family: "JetBrains Mono", Menlo, Monaco, Consolas, "Courier New", monospace;
 
-            &:hover {
-                color: var(--accent-color);
-                background: rgba(127, 127, 127, 0.12);
-            }
+    --section-separation: 64px;
 
-            svg {
-                width: 24px;
-                height: 24px;
-            }
-        }
-    }
+    --focus-color: #1f6c9f;
 }
 
-/* === Homepage sections === */
-.home-section {
-    margin-bottom: var(--section-separation);
+/* === Tokens: dark (same family, off-black) === */
+:root[data-scheme="dark"] {
+    --body-background: #141414;
+    --body-text-color: rgba(255, 255, 255, 0.62);
 
-    .home-section-header {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        margin-bottom: var(--spacing-md);
-    }
+    --accent-color: #f2f1ef;
+    --accent-color-darker: #c9c7c3;
+    --accent-color-text: #111111;
 
-    .home-section-link {
-        font-size: 1.4rem;
-        color: var(--body-text-color);
+    --card-background: #1d1d1d;
+    --card-background-selected: #2a2a2a;
+    --card-text-color-main: rgba(255, 255, 255, 0.92);
+    --card-text-color-secondary: rgba(255, 255, 255, 0.62);
+    --card-text-color-tertiary: rgba(255, 255, 255, 0.45);
+    --card-separator-color: rgba(255, 255, 255, 0.1);
 
-        &:hover {
-            color: var(--accent-color);
-        }
-    }
+    --focus-color: #7fb3d5;
+}
+
+body {
+    line-height: 1.6;
+}
+
+/* === Display titles — sans only (see AGENTS.md UI rules: no serif) === */
+.section-title,
+.article-title {
+    font-weight: 600;
+    text-wrap: balance;
+}
+
+/* === Listing headers (theme class, restyled site-wide) === */
+.section-title {
+    text-transform: none;
+    font-size: 2.4rem;
+    letter-spacing: -0.01em;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: var(--card-text-color-main);
+}
+
+.article-title {
+    letter-spacing: -0.01em;
+}
+
+/* === Accessibility === */
+:focus-visible {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
 }
