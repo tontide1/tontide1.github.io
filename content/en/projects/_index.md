@@ -4,7 +4,7 @@ description: "Selected work by Tai Phan"
 menu:
     main:
         name: Projects
-        weight: 3
+        weight: 2
         params:
             icon: briefcase
 ---
@@ -21,6 +21,5 @@ menu:
     repo: https://github.com/tontide1/...
     demo: https://...
   date: 2026-01-01
-  featured: true              # chỉ 1-3 project được gắn cờ này → xuất hiện trên homepage
   ---
 -->

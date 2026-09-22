@@ -14,7 +14,7 @@ links:
 menu:
     main:
         name: Links
-        weight: 7
+        weight: 6
         params:
             icon: link
 ---

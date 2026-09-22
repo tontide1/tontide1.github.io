@@ -1,55 +1,51 @@
-{{ define "main" }}
-    {{/* Hero — tên + tagline + socials */}}
-    <section class="home-hero">
-        <h1 class="home-hero-name">{{ .Site.Title }}</h1>
-        <p class="home-hero-tagline">{{ T "heroTagline" }}</p>
+{{/*
+    There is no separate home page: the About content lives on the home
+    content file itself (content/en/_index.md, content/vi/_index.md),
+    so the site root IS the About page. Old /about/ URLs are kept as
+    aliases in that front matter. Mirrors the theme's single.html.
+*/}}
 
-        {{- with .Site.Menus.social -}}
-            <ul class="home-hero-socials">
-                {{ range . }}
-                    <li>
-                        <a href="{{ .URL }}" {{ if .Params.newTab }}target="_blank"{{ end }} title="{{ .Name }}" rel="me">
-                            {{ partial "helper/icon" (default "link" .Params.Icon) }}
-                        </a>
-                    </li>
-                {{ end }}
-            </ul>
+{{ define "body-class" }}
+    article-page
+    {{/*
+        Enable the right sidebar if
+            - Widget different from 'TOC' is enabled
+            - TOC is enabled and not empty
+    */}}
+    {{- $HasWidgetNotTOC := false -}}
+    {{- $TOCWidgetEnabled := false -}}
+    {{- range .Site.Params.widgets.page -}}
+        {{- if ne .type "toc" -}}
+            {{ $HasWidgetNotTOC = true -}}
+        {{- else -}}
+            {{ $TOCWidgetEnabled = true -}}
         {{- end -}}
-    </section>
+    {{- end -}}
+    {{- $TOCEnabled := and (default .Site.Params.article.toc .Params.toc) $TOCWidgetEnabled -}}
+    {{- $hasTOC := ge (len .TableOfContents) 100 -}}
+    {{- .Scratch.Set "TOCEnabled" (and $TOCEnabled $hasTOC) -}}
+    {{- .Scratch.Set "hasWidget" (or $HasWidgetNotTOC (and $TOCEnabled $hasTOC)) -}}
+{{ end }}
 
-    {{/* Featured projects — được gắn cờ `featured: true` */}}
-    {{ $featured := where (where .Site.RegularPages "Section" "projects") "Params.featured" true }}
-    {{ if gt (len $featured) 0 }}
-        <section class="home-section">
-            <header class="home-section-header">
-                <h2 class="section-title">{{ T "featuredProjects" }}</h2>
-                <a class="home-section-link" href="{{ "projects/" | relLangURL }}">{{ T "allProjects" }}</a>
-            </header>
-            <div class="article-list--tile">
-                {{ range $featured }}
-                    {{ partial "article-list/tile" . }}
-                {{ end }}
-            </div>
-        </section>
+{{ define "main" }}
+    {{ partial "article/article.html" . }}
+
+    {{ if .Params.links }}
+        {{ partial "article/components/links" . }}
     {{ end }}
 
-    {{/* Latest posts — 3 bài mới nhất */}}
-    {{ $posts := where .Site.RegularPages "Section" "post" }}
-    {{ if gt (len $posts) 0 }}
-        <section class="home-section">
-            <header class="home-section-header">
-                <h2 class="section-title">{{ T "latestPosts" }}</h2>
-                <a class="home-section-link" href="{{ "post/" | relLangURL }}">{{ T "allPosts" }}</a>
-            </header>
-            <div class="article-list--compact">
-                {{ range first 3 $posts }}
-                    {{ partial "article-list/compact" . }}
-                {{ end }}
-            </div>
-        </section>
+    {{ partial "article/components/related-content" . }}
+
+    {{ if not (eq .Params.comments false) }}
+        {{ partial "comments/include" . }}
     {{ end }}
+
+    {{ partialCached "footer/footer" . }}
+
+    {{ partialCached "article/components/photoswipe" . }}
+    {{ partial "article/components/mermaid" . }}
 {{ end }}
 
 {{ define "right-sidebar" }}
-    {{ partial "sidebar/right.html" (dict "Context" . "Scope" "homepage") }}
+    {{ if .Scratch.Get "hasWidget" }}{{ partial "sidebar/right.html" (dict "Context" . "Scope" "page") }}{{ end }}
 {{ end }}

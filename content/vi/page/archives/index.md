@@ -5,7 +5,7 @@ layout: "archives"
 menu:
     main:
         name: Lưu trữ
-        weight: 5
+        weight: 4
         params:
             icon: archives
 ---

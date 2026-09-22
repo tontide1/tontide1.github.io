@@ -4,7 +4,7 @@ description: "Sản phẩm tiêu biểu của Tai Phan"
 menu:
     main:
         name: Dự án
-        weight: 3
+        weight: 2
         params:
             icon: briefcase
 ---

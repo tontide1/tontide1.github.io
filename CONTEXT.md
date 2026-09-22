@@ -4,20 +4,20 @@ The owner's public website: a portfolio-first site with a blog. English is the p
 
 ## Content
 
+**About**:
+The owner's introduction — bio, skills, and contact — and what the site opens on: the root URL serves it directly.
+_Avoid_: home page, homepage, trang chủ
+
 **Portfolio**:
-The site's primary function — a curated showcase of the owner's work, presented front-and-center on the homepage.
+The site's primary function — a curated showcase of the owner's work, presented through the Projects section.
 _Avoid_: CV site, résumé, showcase
 
 **Project**:
 A piece of work the owner has built, showcased in the Projects section.
 _Avoid_: Case study, product, repo
 
-**Featured Project**:
-A Project selected to appear on the homepage's featured grid, alongside up to two others.
-_Avoid_: Pinned project, highlight
-
 **Blog**:
-The secondary section of the site where the owner publishes written posts, reachable from the portfolio homepage.
+The secondary section of the site where the owner publishes written posts.
 _Avoid_: Articles (for the section as a whole)
 
 **Post**:

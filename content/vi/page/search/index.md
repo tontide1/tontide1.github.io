@@ -8,7 +8,7 @@ outputs:
 menu:
     main:
         name: Tìm kiếm
-        weight: 6
+        weight: 5
         params:
             icon: search
 ---
