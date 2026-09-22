@@ -23,7 +23,7 @@ icon = "brand-linkedin"
 identifier = "email"
 name = "Email"
 # TODO: thay bằng email thật của bạn
-url = "mailto:hello@tontide1.dev"
+url = "mailto:phantantaiforwork@gmail.com"
 
 [social.params]
 icon = "mail"
