@@ -1,25 +1,37 @@
-# tontide1.github.io
+# TÀI — Personal Gravity System
 
-The owner's public website: a portfolio-first site with a blog. English is the primary language, Vietnamese the secondary.
+The owner's personal digital universe where Tài is the stable gravitational center and his public life, thoughts, notes, projects, and research orbit around him. WebGL to explore; HTML/MDX to read.
 
-## Content
+## Language
 
-**About**:
-The owner's introduction — bio, skills, and contact — and what the site opens on: the root URL serves it directly.
-_Avoid_: home page, homepage, trang chủ
+**TÀI**:
+The central gravitational anchor and identity of the site, representing the owner (bio, skills, background, contact).
+_Avoid_: Home page, Homepage, Root category, Trang chủ
 
-**Portfolio**:
-The site's primary function — a curated showcase of the owner's work, presented through the Projects section.
-_Avoid_: CV site, résumé, showcase
+**Domain**:
+One of the five primary celestial systems orbiting TÀI: LIFE, THOUGHTS, NOTES, PROJECTS, RESEARCH.
+_Avoid_: Category, Section, Folder, Tag
 
-**Project**:
-A piece of work the owner has built, showcased in the Projects section.
-_Avoid_: Case study, product, repo
+**Universe**:
+The interactive 3D discovery layer rendered with ASCII/WebGL representing the information architecture.
+_Avoid_: Game, Canvas app, Simulation, Splash screen
 
-**Blog**:
-The secondary section of the site where the owner publishes written posts.
-_Avoid_: Articles (for the section as a whole)
+**LIFE**:
+The domain archiving public personal experiences, milestones, and travel in an editorial timeline.
+_Avoid_: Personal blog, Diary, Daily log
 
-**Post**:
-A single written article published in the Blog.
-_Avoid_: Article, entry
+**THOUGHTS**:
+The domain containing long-form reflections, opinions, and personal essays structured as a constellation of ideas.
+_Avoid_: Blog, Blog posts, Articles, Entries
+
+**NOTES**:
+The domain containing concise technical fragments, debugging notes, and compact implementation references.
+_Avoid_: Cheatsheets, Snippets, Wiki
+
+**PROJECTS**:
+The domain showcasing concrete software systems built by the owner with their architecture and artifacts.
+_Avoid_: Portfolio, Showcase, CV items, Case studies
+
+**RESEARCH**:
+The domain containing structured, hypothesis-driven investigations, benchmarks, and experimental pipelines.
+_Avoid_: Lab notes, Casual experiments, Blog posts
