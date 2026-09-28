@@ -102,15 +102,31 @@ export interface TransitionState {
   duration: number;
 }
 
+export interface SearchItem {
+  id: string;
+  title: string;
+  summary: string;
+  domain: string;
+  tags: string[];
+  path: string;
+  date?: string;
+  meta?: string;
+  entityId: string;
+}
+
 export const $selectedEntityId = atom<string | null>(null);
 export const $hoveredEntityId = atom<string | null>(null);
 export const $isInspectOpen = atom<boolean>(false);
+export const $isSearchOpen = atom<boolean>(false);
+export const $isMapOpen = atom<boolean>(false);
 export const $transitionState = atom<TransitionState | null>(null);
 
 export function selectEntity(id: string | null) {
   $selectedEntityId.set(id);
   if (id) {
     $isInspectOpen.set(true);
+    $isSearchOpen.set(false);
+    $isMapOpen.set(false);
   } else {
     $isInspectOpen.set(false);
   }
@@ -119,6 +135,35 @@ export function selectEntity(id: string | null) {
 export function closeInspect() {
   $selectedEntityId.set(null);
   $isInspectOpen.set(false);
+}
+
+export function openSearch() {
+  $isSearchOpen.set(true);
+  $isMapOpen.set(false);
+  $isInspectOpen.set(false);
+}
+
+export function closeSearch() {
+  $isSearchOpen.set(false);
+}
+
+export function openMap() {
+  $isMapOpen.set(true);
+  $isSearchOpen.set(false);
+  $isInspectOpen.set(false);
+}
+
+export function closeMap() {
+  $isMapOpen.set(false);
+}
+
+export function toggleMap() {
+  const current = $isMapOpen.get();
+  $isMapOpen.set(!current);
+  if (!current) {
+    $isSearchOpen.set(false);
+    $isInspectOpen.set(false);
+  }
 }
 
 export function hoverEntity(id: string | null) {

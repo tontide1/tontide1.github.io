@@ -3,7 +3,137 @@ import Layout from '../layouts/Layout.astro';
 import { UniverseCanvas } from '../components/universe/UniverseCanvas';
 import { HUD } from '../components/universe/HUD';
 import { IdentityDrawer } from '../components/universe/IdentityDrawer';
+import { SearchModal } from '../components/universe/SearchModal';
+import { OrientationMap } from '../components/universe/OrientationMap';
 import HtmlFallback from '../components/navigation/HtmlFallback.astro';
+import { getCollection } from 'astro:content';
+import type { SearchItem } from '../stores/universe';
+
+const projects = await getCollection('projects', ({ data }) => !data.draft);
+const research = await getCollection('research', ({ data }) => !data.draft);
+const life = await getCollection('life', ({ data }) => !data.draft);
+const thoughts = await getCollection('thoughts', ({ data }) => !data.draft);
+const notes = await getCollection('notes', ({ data }) => !data.draft);
+
+const allItems: SearchItem[] = [
+  // Primary Domains
+  {
+    id: 'domain-about',
+    title: 'TÀI — Central Gravitational Anchor',
+    summary: 'Software developer, AI researcher, and builder. Center of mass of this digital system.',
+    domain: 'tai',
+    tags: ['identity', 'bio', 'cv', 'contact'],
+    path: '/about',
+    meta: 'CORE',
+    entityId: 'tai',
+  },
+  {
+    id: 'domain-projects',
+    title: 'PROJECTS — Structured Celestial Body',
+    summary: 'Concrete software systems, architecture, experiments, and technical artifacts.',
+    domain: 'projects',
+    tags: ['systems', 'code', 'deployments'],
+    path: '/projects',
+    meta: 'DOMAIN',
+    entityId: 'projects',
+  },
+  {
+    id: 'domain-research',
+    title: 'RESEARCH — Binary Clustered System',
+    summary: 'Hypothesis-driven investigations, legal QA retrieval benchmarks, and datasets.',
+    domain: 'research',
+    tags: ['benchmarks', 'nlp', 'papers'],
+    path: '/research',
+    meta: 'DOMAIN',
+    entityId: 'research',
+  },
+  {
+    id: 'domain-life',
+    title: 'LIFE — Organic Celestial Body',
+    summary: 'Public personal experiences, milestones, workspace, and technical journey.',
+    domain: 'life',
+    tags: ['timeline', 'archive', 'journey'],
+    path: '/life',
+    meta: 'DOMAIN',
+    entityId: 'life',
+  },
+  {
+    id: 'domain-thoughts',
+    title: 'THOUGHTS — Connected Constellation',
+    summary: 'Reflections, software engineering perspectives, and long-form personal essays.',
+    domain: 'thoughts',
+    tags: ['essays', 'ideas', 'philosophy'],
+    path: '/thoughts',
+    meta: 'DOMAIN',
+    entityId: 'thoughts',
+  },
+  {
+    id: 'domain-notes',
+    title: 'NOTES — Compact Asteroid Field',
+    summary: 'Concise technical fragments, tooling discoveries, and debugging references.',
+    domain: 'notes',
+    tags: ['fragments', 'tooling', 'debugging'],
+    path: '/notes',
+    meta: 'DOMAIN',
+    entityId: 'notes',
+  },
+  // Published Articles & Artifacts
+  ...projects.map((p) => ({
+    id: p.id,
+    title: p.data.title,
+    summary: p.data.summary,
+    domain: 'projects',
+    tags: p.data.tags || [],
+    path: `/projects/${p.id}`,
+    date: p.data.date,
+    meta: p.data.stack?.join(', ') || 'SYSTEM',
+    entityId: 'projects',
+  })),
+  ...research.map((r) => ({
+    id: r.id,
+    title: r.data.title,
+    summary: r.data.summary,
+    domain: 'research',
+    tags: r.data.tags || [],
+    path: `/research/${r.id}`,
+    date: r.data.date,
+    meta: r.data.status?.toUpperCase() || 'RESEARCH',
+    entityId: 'research',
+  })),
+  ...life.map((l) => ({
+    id: l.id,
+    title: l.data.title,
+    summary: l.data.summary,
+    domain: 'life',
+    tags: l.data.tags || [],
+    path: `/life/${l.id}`,
+    date: l.data.date,
+    meta: 'TIMELINE',
+    entityId: 'life',
+  })),
+  ...thoughts.map((t) => ({
+    id: t.id,
+    title: t.data.title,
+    summary: t.data.summary,
+    domain: 'thoughts',
+    tags: t.data.tags || [],
+    path: `/thoughts/${t.id}`,
+    date: t.data.date,
+    meta: 'ESSAY',
+    entityId: 'thoughts',
+  })),
+  ...notes.map((n) => ({
+    id: n.id,
+    title: n.data.title,
+    summary: n.data.summary,
+    domain: 'notes',
+    tags: n.data.tags || [],
+    path: `/notes/${n.id}`,
+    date: n.data.date,
+    meta: n.data.category || 'NOTE',
+    entityId: 'notes',
+  })),
+];
 ---
 
 <Layout title="TÀI — A Personal Gravity System">
@@ -19,5 +149,11 @@ import HtmlFallback from '../components/navigation/HtmlFallback.astro';
 
     {/* Inspector / Identity Drawer */}
     <IdentityDrawer client:load />
+
+    {/* Search Modal (Keyboard shortcut: /) */}
+    <SearchModal items={allItems} client:load />
+
+    {/* 2D Orientation Map (Keyboard shortcut: M) */}
+    <OrientationMap items={allItems} client:load />
   </main>
 </Layout>

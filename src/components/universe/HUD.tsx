@@ -7,6 +7,8 @@ import {
   $isInspectOpen,
   selectEntity,
   triggerTransition,
+  openSearch,
+  toggleMap,
 } from '../../stores/universe';
 
 export const HUD: React.FC = () => {
@@ -48,13 +50,18 @@ export const HUD: React.FC = () => {
             ABOUT
           </button>
           <button
-            onClick={() => {
-              alert('Search modal will be available in Slice 5 (Search + Map)');
-            }}
+            onClick={openSearch}
             className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1"
           >
             <span>SEARCH</span>
             <kbd className="text-[9px] bg-[#1a1a1a] text-[#777777] px-1 rounded">/</kbd>
+          </button>
+          <button
+            onClick={toggleMap}
+            className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1"
+          >
+            <span>MAP</span>
+            <kbd className="text-[9px] bg-[#1a1a1a] text-[#777777] px-1 rounded">M</kbd>
           </button>
         </nav>
       </header>
