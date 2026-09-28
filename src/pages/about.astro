@@ -1,5 +1,6 @@
 ---
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { PERSON } from '../lib/seo';
 ---
 
 <ContentLayout
@@ -7,7 +8,9 @@ import ContentLayout from '../layouts/ContentLayout.astro';
   title="About Tai Phan"
   role="Central Gravitational Anchor"
   meta="IDENTITY / BIO"
+  type="website"
   description="Software developer & AI engineer based in Ho Chi Minh City, Vietnam. Specializing in RAG architectures, high-performance backend systems, and agentic workflows."
+  structuredData={PERSON}
 >
   <section class="space-y-4">
     <h2 class="text-lg font-semibold text-[#ffffff] border-b border-[#262626] pb-2">

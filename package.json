@@ -17,6 +17,8 @@
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
     "@astrojs/react": "^4.4.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
     "@nanostores/react": "^1.1.0",
     "@react-three/fiber": "^9.8.1",
     "@tailwindcss/vite": "^4.3.3",

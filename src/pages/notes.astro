@@ -1,16 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { collectionPage } from '../lib/seo';
 
 const notes = await getCollection('notes');
+
+const title = 'Compact Knowledge Fragments';
+const description =
+  'What Tài learns and records: technical notes, Linux tooling, debugging logs, and concise implementation references.';
 ---
 
 <ContentLayout
   domain="NOTES"
-  title="Compact Knowledge Fragments"
+  title={title}
   role="Compact Asteroid Field"
+  type="website"
   meta="DEBUGGING / REFERENCES"
-  description="What Tài learns and records: technical notes, Linux tooling, debugging logs, and concise implementation references."
+  description={description}
+  structuredData={collectionPage({
+    title,
+    description,
+    url: Astro.url.href,
+    section: 'Notes',
+    items: notes.map((n) => ({ name: n.data.title, url: new URL(`/notes/${n.id}/`, Astro.url).href })),
+  })}
 >
   <div class="space-y-4">
     {notes.map((note) => (

@@ -4,12 +4,48 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  /** og:type — 'article' for dated content pages, 'website' otherwise. */
+  type?: 'website' | 'article';
+  /** Site-relative or absolute social card path. */
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  /** JSON-LD nodes, serialised into a single application/ld+json block. */
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
   title = 'TÀI — A Personal Gravity System',
   description = 'Personal digital universe where Tài is the stable gravitational center and his public life, thoughts, notes, projects, and research orbit around him.',
+  type = 'website',
+  image = '/img/og-default.png',
+  imageAlt = 'TÀI — A Personal Gravity System: the domains of a personal website held in orbit around one central anchor.',
+  publishedTime,
+  modifiedTime,
+  structuredData,
 } = Astro.props;
+
+const siteName = 'TÀI — A Personal Gravity System';
+
+// Astro.site is configured, but fall back to the request URL so dev servers and
+// any future config change still emit a valid absolute URL.
+const siteBase = Astro.site ?? Astro.url;
+
+// Directories are served as index.html, so normalise every path to a trailing slash.
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = new URL(path, siteBase).href;
+const ogImage = new URL(image, siteBase).href;
+
+// `<` is the only character that can terminate the script element early.
+// A single node gets `@context` injected; arrays are assumed to carry their own.
+const jsonLd = structuredData
+  ? JSON.stringify(
+      Array.isArray(structuredData)
+        ? structuredData
+        : { '@context': 'https://schema.org', ...structuredData }
+    ).replace(/</g, '\\u003c')
+  : null;
 ---
 
 <!doctype html>
@@ -22,6 +58,34 @@ const {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="theme-color" content="#050505" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={`${siteName} — Feed`} href={new URL('/rss.xml', siteBase).href} />
+
+    <!-- Social metadata: important information must exist in HTML, not only in canvas -->
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    {type === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {type === 'article' && modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime} />
+    )}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
 
     <!-- Google Fonts for JetBrains Mono & Geist -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

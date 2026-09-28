@@ -1,16 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { collectionPage } from '../lib/seo';
 
 const entries = await getCollection('life');
+
+const title = 'Public Timeline & Milestones';
+const description =
+  'Public personal experiences, technical journey, workspaces, and milestones.';
 ---
 
 <ContentLayout
   domain="LIFE"
-  title="Public Timeline & Milestones"
+  title={title}
   role="Organic Celestial Body"
+  type="website"
   meta="TIMELINE / ARCHIVE"
-  description="Public personal experiences, technical journey, workspaces, and milestones."
+  description={description}
+  structuredData={collectionPage({
+    title,
+    description,
+    url: Astro.url.href,
+    section: 'Life',
+    items: entries.map((e) => ({ name: e.data.title, url: new URL(`/life/${e.id}/`, Astro.url).href })),
+  })}
 >
   <div class="relative border-l border-[#262626] ml-3 pl-6 space-y-8">
     {entries.map((item) => (

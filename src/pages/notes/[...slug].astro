@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import ContentLayout from '../../layouts/ContentLayout.astro';
+import { article } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const notes = await getCollection('notes');
@@ -20,6 +21,17 @@ const { Content } = await render(note);
   role="Knowledge Fragment"
   meta={note.data.category}
   description={note.data.summary}
+  publishedTime={note.data.date}
+  modifiedTime={note.data.updated ?? note.data.date}
+  structuredData={article({
+    title: note.data.title,
+    description: note.data.summary,
+    url: Astro.url.href,
+    section: 'Notes',
+    tags: note.data.tags,
+    date: note.data.date,
+    updated: note.data.updated,
+  })}
 >
   <div class="flex items-center space-x-3 text-xs text-[#525252] mb-6">
     <span>RECORDED:</span>

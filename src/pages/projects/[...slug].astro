@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import ContentLayout from '../../layouts/ContentLayout.astro';
+import { article } from '../../lib/seo';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -20,6 +21,17 @@ const { Content } = await render(project);
   role="Structured System"
   meta={project.data.status.toUpperCase()}
   description={project.data.summary}
+  publishedTime={project.data.date}
+  modifiedTime={project.data.updated ?? project.data.date}
+  structuredData={article({
+    title: project.data.title,
+    description: project.data.summary,
+    url: Astro.url.href,
+    section: 'Projects',
+    tags: project.data.tags,
+    date: project.data.date,
+    updated: project.data.updated,
+  })}
 >
   <div class="mb-6 flex flex-wrap gap-2 items-center text-xs">
     <span class="text-[#525252]">STACK:</span>

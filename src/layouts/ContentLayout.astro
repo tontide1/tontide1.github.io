@@ -1,5 +1,6 @@
 ---
 import Layout from './Layout.astro';
+import { toIsoDate } from '../lib/seo';
 
 interface Props {
   domain: string;
@@ -7,12 +8,40 @@ interface Props {
   role?: string;
   meta?: string;
   description?: string;
+  /** og:type + article timestamps; content pages are dated articles. */
+  type?: 'website' | 'article';
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
 
-const { domain, title, role, meta, description } = Astro.props;
+const {
+  domain,
+  title,
+  role,
+  meta,
+  description,
+  type = 'article',
+  image,
+  imageAlt,
+  publishedTime,
+  modifiedTime,
+  structuredData,
+} = Astro.props;
 ---
 
-<Layout title={`${title} — TÀI`}>
+<Layout
+  title={`${title} — TÀI`}
+  description={description}
+  type={type}
+  image={image}
+  imageAlt={imageAlt}
+  publishedTime={toIsoDate(publishedTime)}
+  modifiedTime={toIsoDate(modifiedTime)}
+  structuredData={structuredData}
+>
   <div class="min-h-screen bg-[#050505] text-[#e8e8e8] font-mono flex flex-col justify-between p-6 md:p-12 max-w-4xl mx-auto">
     {/* Navigation */}
     <header class="border-b border-[#262626] pb-6 mb-12 flex items-center justify-between">

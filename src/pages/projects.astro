@@ -1,16 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { collectionPage } from '../lib/seo';
 
 const projects = await getCollection('projects');
+
+const title = 'Engineered Systems & Projects';
+const description =
+  'What Tài builds: concrete systems, production backends, research prototypes, and open-source infrastructure.';
 ---
 
 <ContentLayout
   domain="PROJECTS"
-  title="Engineered Systems & Projects"
+  title={title}
   role="Structured Celestial Body"
+  type="website"
   meta="SYSTEMS / ARTIFACTS"
-  description="What Tài builds: concrete systems, production backends, research prototypes, and open-source infrastructure."
+  description={description}
+  structuredData={collectionPage({
+    title,
+    description,
+    url: Astro.url.href,
+    section: 'Projects',
+    items: projects.map((p) => ({ name: p.data.title, url: new URL(`/projects/${p.id}/`, Astro.url).href })),
+  })}
 >
   <div class="space-y-6">
     {projects.map((proj) => (

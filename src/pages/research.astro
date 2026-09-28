@@ -1,16 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { collectionPage } from '../lib/seo';
 
 const researches = await getCollection('research');
+
+const title = 'Research Investigations';
+const description =
+  'What Tài investigates: structured questions, empirical hypotheses, benchmarks, and experimental pipelines.';
 ---
 
 <ContentLayout
   domain="RESEARCH"
-  title="Research Investigations"
+  title={title}
   role="Binary Clustered System"
+  type="website"
   meta="HYPOTHESIS / EXPERIMENTS"
-  description="What Tài investigates: structured questions, empirical hypotheses, benchmarks, and experimental pipelines."
+  description={description}
+  structuredData={collectionPage({
+    title,
+    description,
+    url: Astro.url.href,
+    section: 'Research',
+    items: researches.map((r) => ({ name: r.data.title, url: new URL(`/research/${r.id}/`, Astro.url).href })),
+  })}
 >
   <div class="space-y-6">
     {researches.map((item) => (

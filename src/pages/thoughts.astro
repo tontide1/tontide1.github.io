@@ -1,16 +1,29 @@
 ---
 import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
+import { collectionPage } from '../lib/seo';
 
 const essays = await getCollection('thoughts');
+
+const title = 'Constellation of Ideas';
+const description =
+  'What Tài thinks: reflections, software engineering perspectives, opinions, and personal essays.';
 ---
 
 <ContentLayout
   domain="THOUGHTS"
-  title="Constellation of Ideas"
+  title={title}
   role="Connected Constellation"
+  type="website"
   meta="ESSAYS / PERSPECTIVES"
-  description="What Tài thinks: reflections, software engineering perspectives, opinions, and personal essays."
+  description={description}
+  structuredData={collectionPage({
+    title,
+    description,
+    url: Astro.url.href,
+    section: 'Thoughts',
+    items: essays.map((e) => ({ name: e.data.title, url: new URL(`/thoughts/${e.id}/`, Astro.url).href })),
+  })}
 >
   <div class="space-y-6">
     {essays.map((post) => (
