@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useStore } from '@nanostores/react';
 import * as THREE from 'three';
-import { $transitionState, ENTITY_MAP, ENTITY_CURRENT_POSITIONS } from '../../stores/universe';
+import { $transitionState, $draggingEntityId, ENTITY_MAP, ENTITY_CURRENT_POSITIONS } from '../../stores/universe';
 import { $prefersReducedMotion, getQualityProfile } from '../../stores/environment';
 
 const MIN_DISTANCE = 8;
@@ -129,12 +129,16 @@ export const UniverseControls: React.FC = () => {
 
       const deltaX = e.clientX - previousPointerPosition.current.x;
       const deltaY = e.clientY - previousPointerPosition.current.y;
+      // Advance the origin every move so the next orbit drag cannot jump, even
+      // if this one is handed over to a body drag.
+      previousPointerPosition.current = { x: e.clientX, y: e.clientY };
+
+      // A body drag owns the gesture: the camera holds still.
+      if ($draggingEntityId.get()) return;
 
       targetRotation.current.y += deltaX * 0.005;
       targetRotation.current.x += deltaY * 0.005;
       targetRotation.current.x = Math.max(MIN_PHI, Math.min(MAX_PHI, targetRotation.current.x));
-
-      previousPointerPosition.current = { x: e.clientX, y: e.clientY };
     };
 
     const onPointerUp = (e: PointerEvent) => {

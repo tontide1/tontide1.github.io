@@ -116,6 +116,8 @@ export interface SearchItem {
 
 export const $selectedEntityId = atom<string | null>(null);
 export const $hoveredEntityId = atom<string | null>(null);
+/** Set while a body is being pulled, so camera orbit can stand down. */
+export const $draggingEntityId = atom<string | null>(null);
 export const $isInspectOpen = atom<boolean>(false);
 export const $isSearchOpen = atom<boolean>(false);
 export const $isMapOpen = atom<boolean>(false);

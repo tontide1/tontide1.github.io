@@ -115,7 +115,8 @@ export const HUD: React.FC = () => {
       {/* Bottom Bar: Telemetry & Domain Switcher */}
       <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto">
         <div className="text-[9px] sm:text-[11px] text-[#525252] text-center sm:text-left">
-          <span>DRAG TO ROTATE</span> ·{' '}
+          <span>DRAG BACKGROUND TO ROTATE</span> ·{' '}
+          <span>DRAG A BODY TO PULL IT</span> ·{' '}
           <span className="hidden sm:inline">SCROLL TO ZOOM</span>
           <span className="sm:hidden">PINCH TO ZOOM</span> ·{' '}
           <span className="hidden sm:inline">CLICK TO ENTER</span>
