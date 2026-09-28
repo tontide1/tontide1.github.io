@@ -1,0 +1,43 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+
+const notes = [
+  {
+    title: 'BM25 vs Dense Retrieval Failure Modes',
+    category: 'RAG / IR',
+    date: '2026-09-15',
+    detail: 'Dense retrieval struggles on exact legal citations, specific serial IDs, and rare acronyms. BM25 with tuned b=0.75, k1=1.2 acts as an indispensable safety floor.',
+  },
+  {
+    title: 'Linux eBPF Tracing for Slow System Calls',
+    category: 'LINUX / TOOLING',
+    date: '2026-08-20',
+    detail: 'Using bpftrace to inspect latency spikes on disk write barriers in high-throughput database nodes.',
+  },
+];
+---
+
+<ContentLayout
+  domain="NOTES"
+  title="Compact Knowledge Fragments"
+  role="Compact Asteroid Field"
+  meta="DEBUGGING / REFERENCES"
+  description="What Tài learns and records: technical notes, Linux tooling, debugging logs, and concise implementation references."
+>
+  <div class="space-y-4">
+    {notes.map((note) => (
+      <div class="bg-[#0a0a0a] border border-[#1f1f1f] p-4 rounded">
+        <div class="flex items-center justify-between text-[10px] text-[#525252] mb-1.5">
+          <span class="text-[#fde68a] font-bold">{note.category}</span>
+          <span>{note.date}</span>
+        </div>
+        <h2 class="text-sm font-bold text-[#ffffff] mb-1.5">
+          {note.title}
+        </h2>
+        <p class="text-xs text-[#a3a3a3] leading-relaxed">
+          {note.detail}
+        </p>
+      </div>
+    ))}
+  </div>
+</ContentLayout>

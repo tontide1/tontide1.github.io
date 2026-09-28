@@ -1,0 +1,37 @@
+{
+  "name": "tontide1-gravity-system",
+  "version": "1.0.0",
+  "description": "TÀI — A Personal Gravity System",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tontide1/tontide1.github.io.git"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/react": "^4.4.2",
+    "@nanostores/react": "^1.1.0",
+    "@react-three/fiber": "^9.8.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^5.18.2",
+    "lucide-react": "^1.48.0",
+    "nanostores": "^1.5.4",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwindcss": "^4.3.3",
+    "three": "^0.174.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.174.0",
+    "typescript": "^5.9.3"
+  }
+}

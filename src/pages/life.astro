@@ -1,0 +1,41 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+
+const timeline = [
+  {
+    date: '2026',
+    title: 'Focus on High-Scale Systems & Agentic AI',
+    detail: 'Deepening work on autonomous coding agents, deterministic retrieval algorithms, and modern frontend 3D interfaces.',
+  },
+  {
+    date: '2025',
+    title: 'Applied AI & RAG Research',
+    detail: 'Extensive experimentation with semantic search, chunking strategies, and Vietnamese legal domain knowledge graphs.',
+  },
+];
+---
+
+<ContentLayout
+  domain="LIFE"
+  title="Public Timeline & Milestones"
+  role="Organic Celestial Body"
+  meta="TIMELINE / ARCHIVE"
+  description="Public personal experiences, technical journey, workspaces, and milestones."
+>
+  <div class="relative border-l border-[#262626] ml-3 pl-6 space-y-8">
+    {timeline.map((item) => (
+      <div class="relative">
+        <div class="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-[#a7f3d0] border-2 border-[#050505]" />
+        <span class="text-[10px] text-[#a7f3d0] font-bold block mb-1">
+          {item.date}
+        </span>
+        <h3 class="text-sm md:text-base font-semibold text-[#ffffff] mb-1">
+          {item.title}
+        </h3>
+        <p class="text-xs text-[#a3a3a3] leading-relaxed">
+          {item.detail}
+        </p>
+      </div>
+    ))}
+  </div>
+</ContentLayout>

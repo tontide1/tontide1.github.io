@@ -1,0 +1,41 @@
+---
+import { ENTITY_MAP } from '../../stores/universe';
+const entities = Object.values(ENTITY_MAP);
+---
+
+<nav aria-label="Direct Navigation" class="sr-only focus-within:not-sr-only focus-within:fixed focus-within:top-4 focus-within:left-4 focus-within:z-50 focus-within:bg-[#0a0a0a] focus-within:border focus-within:border-[#262626] focus-within:p-4 focus-within:rounded focus-within:shadow-2xl">
+  <p class="text-xs text-[#777777] mb-2 font-mono">Accessible Navigation / Non-WebGL Fallback:</p>
+  <ul class="flex flex-col gap-1.5 text-xs font-mono">
+    {entities.map((entity) => (
+      <li>
+        <a 
+          href={entity.path}
+          class="text-[#6ea8fe] hover:underline focus:ring-1 focus:ring-[#6ea8fe] px-1 py-0.5 rounded"
+        >
+          {entity.name} — {entity.role} ({entity.meta})
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<noscript>
+  <div class="fixed inset-0 z-50 bg-[#050505] p-8 text-xs font-mono text-[#e8e8e8] flex flex-col justify-center items-center">
+    <div class="max-w-md w-full border border-[#262626] p-6 rounded bg-[#0a0a0a]">
+      <h1 class="text-base font-bold mb-2">TÀI — Personal Gravity System</h1>
+      <p class="text-[#777777] mb-4">
+        Interactive WebGL is disabled or not supported. You can explore all domains and content directly below:
+      </p>
+      <ul class="space-y-2">
+        {entities.map((entity) => (
+          <li class="border-b border-[#1f1f1f] pb-1.5">
+            <a href={entity.path} class="text-[#6ea8fe] hover:underline font-semibold">
+              {entity.name}
+            </a>
+            <span class="text-[#525252] ml-2 text-[10px]">{entity.role}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</noscript>

@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { UniverseCanvas } from '../components/universe/UniverseCanvas';
+import { HUD } from '../components/universe/HUD';
+import { IdentityDrawer } from '../components/universe/IdentityDrawer';
+import HtmlFallback from '../components/navigation/HtmlFallback.astro';
+---
+
+<Layout title="TÀI — A Personal Gravity System">
+  <main class="relative w-screen h-screen overflow-hidden bg-[#050505]">
+    {/* HTML-first accessible navigation & noscript fallback */}
+    <HtmlFallback />
+
+    {/* 3D WebGL Gravity Universe */}
+    <UniverseCanvas client:only="react" />
+
+    {/* Interactive HUD Overlay */}
+    <HUD client:load />
+
+    {/* Inspector / Identity Drawer */}
+    <IdentityDrawer client:load />
+  </main>
+</Layout>

@@ -1,5 +1,16 @@
-public
-resources
-.hugo_build.lock
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Environment / local
+.env
+.env.*
+!.env.example
+*.local
+
+# System
 .DS_Store
-assets/jsconfig.json
+Thumbs.db

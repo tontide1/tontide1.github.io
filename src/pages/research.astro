@@ -1,0 +1,52 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+
+const researches = [
+  {
+    title: 'Hybrid Retrieval for Vietnamese Legal QA',
+    status: 'ACTIVE',
+    question: 'How does dense embedding retrieval compare to reciprocal rank fusion (RRF) with BM25 on statutory legal corpora?',
+    hypothesis: 'Dense embeddings alone miss exact legal statute articles and numbers; hybrid retrieval with cross-encoder reranking yields >15% higher recall@5.',
+    meta: 'EVALUATION / BENCHMARK',
+  },
+];
+---
+
+<ContentLayout
+  domain="RESEARCH"
+  title="Research Investigations"
+  role="Binary Clustered System"
+  meta="HYPOTHESIS / EXPERIMENTS"
+  description="What Tài investigates: structured questions, empirical hypotheses, benchmarks, and experimental pipelines."
+>
+  <div class="space-y-6">
+    {researches.map((item) => (
+      <article class="bg-[#0a0a0a] border border-[#1f1f1f] p-6 rounded space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base md:text-lg font-bold text-[#ffffff]">
+            {item.title}
+          </h2>
+          <span class="text-[10px] text-[#93c5fd] border border-[#262626] px-2 py-0.5 rounded">
+            {item.status}
+          </span>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <span class="text-[#525252] block text-[10px] uppercase font-bold">
+              RESEARCH QUESTION
+            </span>
+            <p class="text-[#e8e8e8]">{item.question}</p>
+          </div>
+
+          <div>
+            <span class="text-[#525252] block text-[10px] uppercase font-bold">
+              WORKING HYPOTHESIS
+            </span>
+            <p class="text-[#a3a3a3]">{item.hypothesis}</p>
+          </div>
+        </div>
+      </article>
+    ))}
+  </div>
+</ContentLayout>

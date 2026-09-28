@@ -1,0 +1,41 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+
+const essays = [
+  {
+    title: 'Gravity as Information Architecture',
+    date: '2026-09',
+    summary: 'Why traditional navigation bars fail to express multidimensional relationships between an engineer, their tools, and their evolving curiosity.',
+  },
+  {
+    title: 'Pragmatic Engineering: Measure Before Abstracting',
+    date: '2026-08',
+    summary: 'Observations on premature complexity and the understated elegance of standard libraries and minimal dependencies.',
+  },
+];
+---
+
+<ContentLayout
+  domain="THOUGHTS"
+  title="Constellation of Ideas"
+  role="Connected Constellation"
+  meta="ESSAYS / PERSPECTIVES"
+  description="What Tài thinks: reflections, software engineering perspectives, opinions, and personal essays."
+>
+  <div class="space-y-6">
+    {essays.map((post) => (
+      <article class="bg-[#0a0a0a] border border-[#1f1f1f] p-5 rounded hover:border-[#3a3a3a] transition-colors">
+        <div class="flex items-center justify-between text-[11px] text-[#525252] mb-2">
+          <span>ESSAY</span>
+          <span>{post.date}</span>
+        </div>
+        <h2 class="text-base font-bold text-[#ffffff] mb-2">
+          {post.title}
+        </h2>
+        <p class="text-xs text-[#a3a3a3] leading-relaxed">
+          {post.summary}
+        </p>
+      </article>
+    ))}
+  </div>
+</ContentLayout>
