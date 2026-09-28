@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 import { collectionPage } from '../lib/seo';
 
-const entries = await getCollection('life');
+const entries = await getCollection('life', ({ data }) => !data.draft);
 
 const title = 'Public Timeline & Milestones';
 const description =

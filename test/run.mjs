@@ -27,6 +27,7 @@ const astro = (command) => [process.execPath, [ASTRO, command]];
 
 const SUITES = [
   { id: 'environment', needs: { browser: false, server: null }, run: () => import('./suite-environment.mjs') },
+  { id: 'source', needs: { browser: false, server: null }, run: () => import('./suite-source.mjs') },
   { id: 'seo', needs: { browser: false, server: null }, run: () => import('./suite-seo.mjs') },
   { id: 'layout', needs: { browser: false, server: null }, run: () => import('./suite-layout.mjs') },
   { id: 'bundle', needs: { browser: true, server: 'preview' }, run: () => import('./suite-bundle.mjs') },

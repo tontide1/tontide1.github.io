@@ -4,7 +4,7 @@ import ContentLayout from '../../layouts/ContentLayout.astro';
 import { article } from '../../lib/seo';
 
 export async function getStaticPaths() {
-  const items = await getCollection('life');
+  const items = await getCollection('life', ({ data }) => !data.draft);
   return items.map((item) => ({
     params: { slug: item.id },
     props: { item },
@@ -38,7 +38,7 @@ const { Content } = await render(item);
     <span class="text-[#e8e8e8]">{item.data.date}</span>
   </div>
 
-  <article class="prose prose-invert max-w-none space-y-4 text-xs md:text-sm text-[#cccccc] leading-relaxed border-t border-[#1f1f1f] pt-6">
+  <article class="space-y-4 text-xs md:text-sm text-[#cccccc] leading-relaxed border-t border-[#1f1f1f] pt-6">
     <Content />
   </article>
 </ContentLayout>

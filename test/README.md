@@ -18,7 +18,7 @@ npm run test:seo      # one suite: node test/run.mjs --only=<id>
 npm test -- --no-build  # reuse the existing dist/
 ```
 
-Suite ids: `environment`, `seo`, `layout`, `bundle`, `devices`, `drag`,
+Suite ids: `environment`, `source`, `seo`, `layout`, `bundle`, `devices`, `drag`,
 `touch-drag`.
 
 `npm test` needs Chrome or Chromium. It is found automatically; override with
@@ -33,6 +33,7 @@ gitignored.
 | Suite | Needs | Asserts |
 |---|---|---|
 | `environment` | nothing | Device tier detection, the SSR `matchMedia` guard, the high/medium/low dpr, star and ASCII-cell budgets, and that reduced motion thins the starfield without dropping desktop resolution |
+| `source` | nothing | Every `getCollection` call site filters drafts, no unseeded randomness in the scene graph, no classes from the uninstalled typography plugin |
 | `seo` | build | Canonical per route, full Open Graph and Twitter sets, JSON-LD per page type, sitemap coverage, robots, RSS ordering |
 | `layout` | build | `dvh` height, the reduced-motion block surviving Tailwind, the HTML fallback and `noscript`, an `h1` on every deep link, zero executable JS on content pages, pinch zoom left enabled |
 | `bundle` | preview + Chrome | The first script is the small loader, the three.js chunk lands after the first paint wave, the canvas still mounts, no unexpected 4xx |
