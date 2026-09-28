@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { UniverseCanvas } from '../components/universe/UniverseCanvas';
+import { UniverseLoader } from '../components/universe/UniverseLoader';
 import { HUD } from '../components/universe/HUD';
 import { IdentityDrawer } from '../components/universe/IdentityDrawer';
 import { SearchModal } from '../components/universe/SearchModal';
@@ -142,8 +142,8 @@ const allItems: SearchItem[] = [
     {/* HTML-first accessible navigation & noscript fallback */}
     <HtmlFallback />
 
-    {/* 3D WebGL Gravity Universe */}
-    <UniverseCanvas client:only="react" />
+    {/* 3D WebGL Gravity Universe — bundle deferred until the shell has painted */}
+    <UniverseLoader client:only="react" />
 
     {/* Interactive HUD Overlay */}
     <HUD client:load />
