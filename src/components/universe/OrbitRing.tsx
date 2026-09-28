@@ -27,16 +27,17 @@ export const OrbitRing: React.FC<OrbitRingProps> = ({
     return geom;
   }, [points]);
 
+  const lineObject = useMemo(() => {
+    const material = new THREE.LineBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+    });
+    return new THREE.LineLoop(lineGeometry, material);
+  }, [lineGeometry, color, opacity]);
+
   if (radius <= 0) return null;
 
-  return (
-    <line geometry={lineGeometry}>
-      <lineBasicMaterial
-        color={color}
-        transparent
-        opacity={opacity}
-        depthWrite={false}
-      />
-    </line>
-  );
+  return <primitive object={lineObject} />;
 };

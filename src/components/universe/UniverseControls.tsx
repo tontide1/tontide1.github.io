@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useStore } from '@nanostores/react';
 import * as THREE from 'three';
-import { $transitionState, ENTITY_MAP } from '../../stores/universe';
+import { $transitionState, ENTITY_MAP, ENTITY_CURRENT_POSITIONS } from '../../stores/universe';
 
 export const UniverseControls: React.FC = () => {
   const { camera, gl } = useThree();
@@ -80,8 +80,12 @@ export const UniverseControls: React.FC = () => {
       let targetX = 0;
       let targetZ = 0;
 
-      if (targetEntity && targetEntity.orbitRadius > 0) {
-        // Approximate forward position towards entity
+      const dynamicPos = ENTITY_CURRENT_POSITIONS[transition.targetId];
+      if (dynamicPos) {
+        targetX = dynamicPos[0];
+        targetZ = dynamicPos[2];
+      } else if (targetEntity && targetEntity.orbitRadius > 0) {
+        // Fallback to initial angle
         targetX = Math.cos(targetEntity.orbitAngle) * targetEntity.orbitRadius;
         targetZ = Math.sin(targetEntity.orbitAngle) * targetEntity.orbitRadius;
       }

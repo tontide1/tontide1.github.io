@@ -125,6 +125,12 @@ export function hoverEntity(id: string | null) {
   $hoveredEntityId.set(id);
 }
 
+export const ENTITY_CURRENT_POSITIONS: Record<string, [number, number, number]> = {};
+
+export function updateEntityPosition(id: string, x: number, y: number, z: number) {
+  ENTITY_CURRENT_POSITIONS[id] = [x, y, z];
+}
+
 export function triggerTransition(targetId: string, targetPath: string) {
   $transitionState.set({
     targetId,
