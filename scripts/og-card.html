@@ -1,0 +1,95 @@
+<!doctype html>
+<!--
+  Social card for Open Graph / Twitter. Regenerate with:
+
+      npm run generate:og
+
+  Open this file directly in a browser to iterate on the design without
+  regenerating. 1200x630 is the Open Graph minimum for a large summary card.
+
+  The domain list below mirrors ENTITY_MAP in src/stores/universe.ts; if a
+  domain is added or renamed there, mirror it here too.
+-->
+<html><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;width:1200px;height:630px;overflow:hidden;background:#050505;}
+  body{font-family:'Geist Mono',ui-monospace,monospace;color:#e8e8e8;-webkit-font-smoothing:antialiased;position:relative;}
+  .frame{position:absolute;inset:28px;border:1px solid #161616;border-radius:14px;}
+  .corner{position:absolute;width:14px;height:14px;border:1px solid #6ea8fe;opacity:.45}
+  .eyebrow{position:absolute;top:62px;left:76px;font-size:11px;letter-spacing:4.5px;color:#6ea8fe;}
+  .type{position:absolute;left:76px;top:50%;transform:translateY(-54%);width:540px;}
+  h1{margin:0;font-size:118px;font-weight:700;letter-spacing:4px;line-height:.98;color:#ffffff;text-shadow:0 0 40px rgba(255,255,255,.26);}
+  .sub{margin-top:22px;font-size:13px;letter-spacing:6px;color:#6ea8fe;}
+  .rule{margin:28px 0 0;width:100%;height:1px;background:linear-gradient(90deg,#262626,rgba(38,38,38,0));}
+  .lede{margin:24px 0 0;font-size:15px;line-height:1.85;color:#8a8a8a;font-weight:300;max-width:512px;}
+  .brand{position:absolute;bottom:60px;left:76px;font-size:11px;letter-spacing:4px;color:#4a4a4a;}
+  .url{position:absolute;bottom:60px;right:76px;font-size:11px;letter-spacing:3px;color:#3a3a3a;}
+</style></head>
+<body>
+  <svg width="1200" height="630" style="position:absolute;inset:0">
+    <defs>
+      <radialGradient id="core" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+        <stop offset="35%" stop-color="#6ea8fe" stop-opacity=".45"/>
+        <stop offset="100%" stop-color="#6ea8fe" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#6ea8fe" stop-opacity=".13"/>
+        <stop offset="100%" stop-color="#6ea8fe" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g id="stars"></g>
+    <ellipse cx="872" cy="315" rx="300" ry="180" fill="url(#halo)"/>
+    <ellipse cx="872" cy="315" rx="34.4" ry="17.2" fill="none" stroke="#1f1f1f"/>
+    <ellipse cx="872" cy="315" rx="68.8" ry="34.4" fill="none" stroke="#1f1f1f"/>
+    <ellipse cx="872" cy="315" rx="103.2" ry="51.6" fill="none" stroke="#1f1f1f"/>
+    <ellipse cx="872" cy="315" rx="137.6" ry="68.8" fill="none" stroke="#1f1f1f"/>
+    <ellipse cx="872" cy="315" rx="172" ry="86" fill="none" stroke="#1f1f1f"/>
+    <circle cx="872" cy="315" r="34" fill="url(#core)"/>
+    <circle cx="872" cy="315" r="5" fill="#ffffff"/>
+    <text x="872" y="263" fill="#ffffff" font-size="12" letter-spacing="3" text-anchor="middle" opacity=".8">TÀI</text>
+    <circle cx="872" cy="229" r="3.5" fill="#6ea8fe"/>
+    <text x="872" y="209" fill="#6ea8fe" font-size="12" letter-spacing="1.8" text-anchor="middle" opacity=".92">PROJECTS</text>
+    <circle cx="1035.6" cy="288.4" r="3.5" fill="#93c5fd"/>
+    <text x="1058.4" y="285" fill="#93c5fd" font-size="12" letter-spacing="1.8" text-anchor="middle" opacity=".92">RESEARCH</text>
+    <circle cx="973.1" cy="384.6" r="3.5" fill="#e9d5ff"/>
+    <text x="987.2" y="408" fill="#e9d5ff" font-size="12" letter-spacing="1.8" text-anchor="middle" opacity=".92">THOUGHTS</text>
+    <circle cx="770.9" cy="384.6" r="3.5" fill="#a7f3d0"/>
+    <text x="756.8" y="408" fill="#a7f3d0" font-size="12" letter-spacing="1.8" text-anchor="middle" opacity=".92">LIFE</text>
+    <circle cx="708.4" cy="288.4" r="3.5" fill="#fde68a"/>
+    <text x="685.6" y="285" fill="#fde68a" font-size="12" letter-spacing="1.8" text-anchor="middle" opacity=".92">NOTES</text>
+  </svg>
+  <div class="frame"></div>
+  <div class="corner" style="top:20px;left:20px;border-right:0;border-bottom:0"></div>
+  <div class="corner" style="top:20px;right:20px;border-left:0;border-bottom:0"></div>
+  <div class="corner" style="bottom:20px;left:20px;border-right:0;border-top:0"></div>
+  <div class="corner" style="bottom:20px;right:20px;border-left:0;border-top:0"></div>
+  <div class="eyebrow">CENTRAL GRAVITATIONAL ANCHOR</div>
+  <div class="type">
+    <h1>TÀI</h1>
+    <div class="sub">A PERSONAL GRAVITY SYSTEM</div>
+    <div class="rule"></div>
+    <p class="lede">Projects, research, life, thoughts, and notes held in orbit around one stable center — explored as an interactive WebGL universe, readable as plain HTML.</p>
+  </div>
+  <div class="brand">TÀI // PERSONAL GRAVITY SYSTEM</div>
+  <div class="url">tontide1.github.io</div>
+
+  <!-- Deterministic starfield: fixed formula, no randomness, so the generated
+       PNG is reproducible across runs. -->
+  <script>
+    (() => {
+      const out = [];
+      for (let i = 0; i < 160; i++) {
+        const x = (i * 149) % 1200;
+        const y = (i * 331) % 630;
+        const r = (0.5 + ((i * 7) % 5) * 0.4).toFixed(2);
+        const o = (0.1 + ((i * 13) % 7) * 0.085).toFixed(2);
+        out.push(`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}" fill="#ffffff" opacity="${o}"/>`);
+      }
+      document.getElementById('stars').innerHTML = out.join('');
+    })();
+  </script>
+</body></html>
