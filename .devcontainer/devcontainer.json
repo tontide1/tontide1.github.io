@@ -12,7 +12,7 @@
             // Rebuild the container if it already exists to update.
             "VERSION": "latest",
             // Update NODE_VERSION to pick the Node.js version: 12, 14
-            "NODE_VERSION": "22"
+            "NODE_VERSION": "24"
         }
     },
     // Configure tool-specific properties.
@@ -32,10 +32,11 @@
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     "forwardPorts": [
-        1313
+        4321
     ],
     // Use 'postCreateCommand' to run commands after the container is created.
-    // "postCreateCommand": "uname -a",
+    // Installs the node/pnpm versions pinned in .mise.toml, then the dependencies.
+    "postCreateCommand": "mise trust && mise install && pnpm install",
     // Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "node",
     "features": {

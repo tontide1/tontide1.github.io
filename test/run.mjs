@@ -1,9 +1,9 @@
 /**
  * Verification runner.
  *
- *   npm test               every suite: build, start dev + preview, run, tear down
- *   npm run test:static    only the suites that need neither a browser nor a server
- *   npm run test:seo       just the built-HTML metadata suite
+ *   pnpm test               every suite: build, start dev + preview, run, tear down
+ *   pnpm test:static        only the suites that need neither a browser nor a server
+ *   pnpm test:seo           just the built-HTML metadata suite
  *
  * Two servers are started because two suites need different things: the browser
  * suites that read the app's own stores need the dev server, because a production

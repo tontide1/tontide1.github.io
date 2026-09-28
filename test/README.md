@@ -12,17 +12,17 @@ Adding Vitest would not reach the browser at all.
 ## Running
 
 ```sh
-npm test              # build, start dev + preview, run every suite, tear down
-npm run test:static   # only the suites needing neither a browser nor a server
-npm run test:seo      # one suite: node test/run.mjs --only=<id>
-npm test -- --no-build  # reuse the existing dist/
+pnpm test              # build, start dev + preview, run every suite, tear down
+pnpm test:static       # only the suites needing neither a browser nor a server
+pnpm test:seo          # one suite: pnpm test --only=<id>
+pnpm test --no-build   # reuse the existing dist/
 ```
 
 Suite ids: `environment`, `source`, `seo`, `layout`, `bundle`, `devices`, `drag`,
 `touch-drag`.
 
-`npm test` needs Chrome or Chromium. It is found automatically; override with
-`CHROME_PATH`. Without a browser, `npm run test:static` still covers 371
+`pnpm test` needs Chrome or Chromium. It is found automatically; override with
+`CHROME_PATH`. Without a browser, `pnpm test:static` still covers 375
 assertions.
 
 Screenshots and stack traces land in `node_modules/.cache/verify/`, which is

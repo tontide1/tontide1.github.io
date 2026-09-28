@@ -1,7 +1,7 @@
 /**
  * Renders scripts/og-card.html into public/img/og-default.png.
  *
- *     npm run generate:og
+ *     pnpm generate:og
  *
  * The card is rendered by Chrome rather than an image library so the social
  * preview uses the same webfont and design tokens as the site. Headless Chrome

@@ -1,0 +1,10 @@
+# pnpm 11+ reads all settings from this file; the `pnpm` field in package.json
+# is no longer honoured. `allowBuilds` replaces the old onlyBuiltDependencies.
+#
+# sharp and esbuild ship native binaries that must be built at install time.
+# sharp is listed as a direct devDependency because Astro's build imports its
+# image service, and Astro only declares sharp as an *optional* dependency —
+# so a clean install can otherwise resolve no sharp and fail the build.
+allowBuilds:
+  sharp: true
+  esbuild: true

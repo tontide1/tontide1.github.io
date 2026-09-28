@@ -1,0 +1,5 @@
+# Single source of truth for the toolchain. CI (.github/workflows/deploy.yml)
+# and local both resolve node and pnpm from here via mise.
+[tools]
+node = "24"
+pnpm = "12.6.0"
