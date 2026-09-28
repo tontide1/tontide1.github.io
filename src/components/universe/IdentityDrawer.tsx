@@ -115,7 +115,6 @@ export const IdentityDrawer: React.FC = () => {
                 PRIMARY SYSTEMS
               </span>
               <ul className="space-y-1.5 text-[11px] text-[#e8e8e8]">
-                <li>• DriveBook (High-scale operations)</li>
                 <li>• Legal-RAG (Vietnamese Legal QA)</li>
               </ul>
             </div>
