@@ -34,6 +34,7 @@ const SUITES = [
   { id: 'devices', needs: { browser: true, server: 'dev' }, run: () => import('./suite-devices.mjs') },
   { id: 'drag', needs: { browser: true, server: 'dev' }, run: () => import('./suite-drag.mjs') },
   { id: 'touch-drag', needs: { browser: true, server: 'dev' }, run: () => import('./suite-touch-drag.mjs') },
+  { id: 'keyboard', needs: { browser: true, server: 'dev' }, run: () => import('./suite-keyboard.mjs') },
 ];
 
 const selected = SUITES.filter((s) => {
@@ -84,7 +85,7 @@ try {
     servers.push(await startServer({
       label: 'preview',
       cmd,
-      args: [...commandArgs, '--port', String(port)],
+      args: [...commandArgs, '--port', String(port), '--host', '127.0.0.1'],
       url: `http://127.0.0.1:${port}/`,
     }));
     console.log(`preview on ${servers.at(-1).url}`);
@@ -95,7 +96,7 @@ try {
     servers.push(await startServer({
       label: 'dev',
       cmd,
-      args: [...commandArgs, '--port', String(port)],
+      args: [...commandArgs, '--port', String(port), '--host', '127.0.0.1'],
       url: `http://127.0.0.1:${port}/`,
     }));
     console.log(`dev on ${servers.at(-1).url}`);

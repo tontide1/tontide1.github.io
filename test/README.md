@@ -19,10 +19,10 @@ pnpm test --no-build   # reuse the existing dist/
 ```
 
 Suite ids: `environment`, `source`, `seo`, `layout`, `bundle`, `devices`, `drag`,
-`touch-drag`.
+`touch-drag`, `keyboard`.
 
 `pnpm test` needs Chrome or Chromium. It is found automatically; override with
-`CHROME_PATH`. Without a browser, `pnpm test:static` still covers 375
+`CHROME_PATH`. Without a browser, `pnpm test:static` still covers 380
 assertions.
 
 Screenshots and stack traces land in `node_modules/.cache/verify/`, which is
@@ -40,6 +40,7 @@ gitignored.
 | `devices` | dev + Chrome | Phone, phone-with-reduced-motion and desktop profiles: tier, budget, backing-store size, and that reduced motion freezes the scene while the default profile keeps animating |
 | `drag` | dev + Chrome | A body follows the cursor, respects its clamp, and the camera holds still; a background drag still orbits; a tap still selects; release springs back to the orbit |
 | `touch-drag` | dev + Chrome | The same pull through the real touch pipeline on a phone profile |
+| `keyboard` | dev + Chrome | Every HUD control is reachable by Tab and shows a visible focus indicator, no control suppresses its ring without replacing it, and the `/`, `Escape` and `M` shortcuts fire |
 
 ## Two servers, on purpose
 
@@ -47,6 +48,11 @@ gitignored.
 the dev server: a production build serves no source modules. `bundle` asserts on
 emitted chunk names, so it needs the preview build. The runner starts each only
 when a selected suite asks for it.
+
+Both servers are started with `--host 127.0.0.1` to match the loopback address
+the runner probes. Left to its own devices `astro dev` binds whatever `localhost`
+resolves to first, which is `[::1]` on some machines and IPv4 on others, so the
+probe misses a server that is up and healthy.
 
 ## Traps this harness already hit
 
@@ -68,6 +74,20 @@ Recorded here because each one produced a green result that meant nothing.
   at the pull distance after a correct return, which reads as "never sprang back".
   The orbit base is the right reference.
 - **`Runtime.evaluate` rejects a bare top-level `await`.** Wrap it.
+- **CDP cannot fake CPU count or memory.** `Emulation.setDeviceMetricsOverride`
+  covers viewport, DPR and touch — nothing reports `hardwareConcurrency` or
+  `deviceMemory`, so headless Chrome answers with the *host's* values. Since
+  `detectDeviceTier` keys off exactly those, a "phone" profile reads as a fast
+  machine and the suite measures the build box. `emulateDevice` now stages both
+  via `Page.addScriptToEvaluateOnNewDocument`, which keeps the app's real
+  detection logic in the path.
+- **Do not gate deferral on `DOMContentLoaded`.** DCL moves with main-thread load
+  and can be pushed past the very request the assertion is checking, so the gate
+  went red roughly one full run in three. First contentful paint is the milestone
+  the deferral actually protects, and it is bounded by the document.
+- **`el.focus()` does not reliably trigger `:focus-visible`.** Any styled focus
+  ring should hang off that pseudo-class, and a programmatic focus skips the
+  browser's heuristic, so the probe measures nothing. Tab to the control instead.
 - **A failed run can leave a headless Chrome holding its debug port**, so the
   next run silently attaches to the stale browser. `launch()` picks a free port
   and a temp profile, and waits for the process to exit before cleaning up —

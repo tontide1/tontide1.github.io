@@ -164,9 +164,35 @@ export async function launch({ width = 1440, height = 900, port } = {}) {
   return { cdp: { send: session.send, on: session.on, once: session.once, events: session.events }, close, port: debugPort };
 }
 
-/** Emulate a device: viewport, DPR, touch, and optional reduced motion. */
+/**
+ * Emulate a device: viewport, DPR, touch, and optional reduced motion.
+ *
+ * `cores` and `memoryGB` exist because the Emulation domain has no command for
+ * either, so headless Chrome reports the *host's* CPU count and omits
+ * deviceMemory entirely. `detectDeviceTier` keys off exactly those two numbers,
+ * so without them a "phone" profile silently reads as a fast machine and the
+ * tier assertions measure the host rather than the device under test. They are
+ * injected before any page script runs, which keeps the app's real detection
+ * logic in the path — only the browser-reported values are staged.
+ */
 export async function emulateDevice(cdp, opts) {
-  const { width, height, dpr = 3, mobile = true, reducedMotion = false } = opts;
+  const { width, height, dpr = 3, mobile = true, reducedMotion = false, cores, memoryGB } = opts;
+  if (cores !== undefined || memoryGB !== undefined) {
+    const overrides = [];
+    if (cores !== undefined) {
+      overrides.push(
+        `Object.defineProperty(Navigator.prototype, 'hardwareConcurrency', { get: () => ${Number(cores)}, configurable: true });`
+      );
+    }
+    if (memoryGB !== undefined) {
+      overrides.push(
+        `Object.defineProperty(Navigator.prototype, 'deviceMemory', { get: () => ${Number(memoryGB)}, configurable: true });`
+      );
+    }
+    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
+      source: overrides.join('\n'),
+    });
+  }
   await cdp.send('Emulation.setDeviceMetricsOverride', {
     width,
     height,

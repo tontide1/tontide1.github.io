@@ -69,7 +69,15 @@ export default async function run({ baseUrl }) {
     s.check('the loader precedes the canvas chunk', !!loader && !!heavy && loader.ts <= heavy.ts);
     const delay = heavy && first ? Math.round((heavy.ts - first.ts) * 1000) : NaN;
     s.check('the canvas chunk is deferred behind the first wave', delay > 50, `${delay}ms`);
-    s.check('the canvas chunk arrives after DOMContentLoaded', !!heavy && !!paint?.dcl && heavy.ts * 1000 > paint.dcl, `dcl=${paint?.dcl}ms`);
+    // First paint is the milestone the deferral exists to protect, and it is
+    // bounded by the document. DOMContentLoaded is not: under CPU contention the
+    // main thread can stall long enough for the chunk request to beat it, which
+    // says nothing about the site. That ordering was a flaky gate.
+    s.check(
+      'the canvas chunk arrives after first contentful paint',
+      !!heavy && !!paint?.fcp && heavy.ts * 1000 > paint.fcp,
+      `fcp=${paint?.fcp}ms, chunk at ${heavy ? Math.round(heavy.ts * 1000) : '?'}ms`
+    );
     s.note('first script', first ? first.url.split('/').pop() : 'none');
     s.note('canvas chunk requested at', `${delay}ms after the first wave`);
     s.note('FCP / DOMContentLoaded', `${paint?.fcp}ms / ${paint?.dcl}ms`);

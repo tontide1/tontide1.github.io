@@ -1,0 +1,56 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+import { ENTITY_MAP } from '../stores/universe';
+
+const domains = Object.values(ENTITY_MAP).filter((e) => e.type === 'domain');
+---
+
+{/*
+  GitHub Pages serves this for any unmatched path, so it has to be useful rather
+  than decorative: the two things a lost visitor needs are a way back into the
+  universe and a way to the five domains. It is `noindex` — a dead URL should not
+  be offered to a crawler as a destination.
+*/}
+<ContentLayout
+  domain="SIGNAL LOST"
+  title="404 — This object has drifted out of orbit"
+  role="Unresolved Address"
+  meta="ERROR / 404"
+  type="website"
+  robots="noindex, follow"
+  description="The requested address does not correspond to any object in this system. Return to the universe, or navigate directly to a domain."
+>
+  <section class="space-y-4">
+    <p>
+      The address you followed does not resolve to anything in this system. Nothing
+      was lost — the coordinate was simply never catalogued.
+    </p>
+    <p>
+      If you reached this from a link on this site, it is a broken edge and worth
+      reporting.
+    </p>
+  </section>
+
+  <section class="space-y-4">
+    <h2 class="text-lg font-semibold text-[#ffffff] border-b border-[#262626] pb-2">
+      Return to a known orbit
+    </h2>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      {domains.map((domain) => (
+        <li>
+          <a
+            href={domain.path}
+            class="flex items-center gap-2 border border-[#1f1f1f] bg-[#0a0a0a] px-3 py-2 rounded hover:border-[#6ea8fe]/50 transition-colors"
+          >
+            <span
+              class="w-2 h-2 rounded-full shrink-0"
+              style={`background-color: ${domain.color}`}
+            />
+            <span class="text-[#e8e8e8] font-semibold">{domain.name}</span>
+            <span class="text-[10px] text-[#525252] truncate">{domain.meta}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</ContentLayout>

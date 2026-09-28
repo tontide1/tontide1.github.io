@@ -8,10 +8,17 @@ import {
 } from './cdp.mjs';
 import { createSuite, collectPageErrors, waitForCanvas } from './harness.mjs';
 
+/**
+ * The tiers these profiles expect are derived by `detectDeviceTier` from pointer
+ * coarseness plus whether the device looks constrained (`cores <= 4 ||
+ * deviceMemory <= 4`). The two constrained numbers are staged by
+ * `emulateDevice`; without them the suite would assert against the host CPU and
+ * pass or fail for reasons that have nothing to do with the site.
+ */
 const PROFILES = [
-  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
-  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
-  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, tier: 'medium', maxDpr: 1.5, stars: 220, cell: 9.5 },
+  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
+  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
+  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, cores: 4, memoryGB: 4, tier: 'medium', maxDpr: 1.5, stars: 220, cell: 9.5 },
 ];
 
 export default async function run({ devUrl }) {
@@ -20,7 +27,7 @@ export default async function run({ devUrl }) {
   for (const p of PROFILES) {
     const { cdp, close } = await launch({ width: p.width, height: p.height });
     try {
-      await emulateDevice(cdp, { width: p.width, height: p.height, dpr: p.dpr, mobile: p.mobile, reducedMotion: p.reduced });
+      await emulateDevice(cdp, { width: p.width, height: p.height, dpr: p.dpr, mobile: p.mobile, reducedMotion: p.reduced, cores: p.cores, memoryGB: p.memoryGB });
       await navigate(cdp, `${devUrl}/`);
       s.check(`${p.name} canvas mounted`, await waitForCanvas(cdp, evaluate));
       await sleep(600);

@@ -26,7 +26,12 @@ const meta = (html, attr, value) => html.match(new RegExp(`<meta ${attr}="${valu
 
 export default async function run() {
   const s = createSuite('SEO metadata (built HTML)');
-  const pages = htmlPages(DIST).sort();
+  // 404.html is built into dist/ but is deliberately noindex and absent from the
+  // sitemap, so it is not an "indexable page" and must not be held to the
+  // canonical/JSON-LD contract. It gets its own block below.
+  const pages = htmlPages(DIST)
+    .filter((p) => path.basename(p) !== '404.html')
+    .sort();
 
   for (const file of pages) {
     const html = fs.readFileSync(file, 'utf8');
@@ -95,6 +100,23 @@ export default async function run() {
   const ref = robots.match(/Sitemap:\s*(\S+)/)?.[1];
   s.check('robots allows crawling', /User-agent:\s*\*/.test(robots) && /Allow:\s*\//.test(robots));
   s.check('robots points at a sitemap that exists', !!ref && fs.existsSync(DIST + ref.replace(ORIGIN, '')), String(ref));
+
+  // --- 404 ------------------------------------------------------------------
+  // A dead address must still hand the visitor a way onward, and must not be
+  // advertised to a crawler as somewhere to index.
+  s.check('a 404 document is built', fs.existsSync(path.join(DIST, '404.html')));
+  if (fs.existsSync(path.join(DIST, '404.html'))) {
+    const notFound = fs.readFileSync(path.join(DIST, '404.html'), 'utf8');
+    s.check('404 opts out of indexing', /<meta name="robots" content="noindex/.test(notFound));
+    s.check('404 keeps a crawlable route back', notFound.includes('href="/"'));
+    s.check(
+      '404 links every domain so a lost visitor is not stranded',
+      ['/life', '/thoughts', '/notes', '/projects', '/research'].every((r) =>
+        notFound.includes(`href="${r}"`)
+      )
+    );
+  }
+  s.check('404 is kept out of the sitemap', !locs.some((l) => l.includes('404')));
 
   // --- RSS ------------------------------------------------------------------
   const feed = fs.readFileSync(path.join(DIST, 'rss.xml'), 'utf8');

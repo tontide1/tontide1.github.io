@@ -13,6 +13,16 @@ import {
   toggleAsciiMode,
 } from '../../stores/universe';
 
+/**
+ * Spec §13.2 requires Tab to show where focus is. The HUD sits over a canvas,
+ * so it is the only keyboard surface there — a control that takes focus without
+ * a visible ring strands a keyboard user. `focus-visible` keeps the ring off
+ * mouse clicks; the native outline is suppressed in favour of this one so the
+ * two do not stack.
+ */
+const focusRing =
+  'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#6ea8fe]';
+
 export const HUD: React.FC = () => {
   const hoveredId = useStore($hoveredEntityId);
   const selectedId = useStore($selectedEntityId);
@@ -32,7 +42,7 @@ export const HUD: React.FC = () => {
         <div className="flex items-center space-x-3">
           <button
             onClick={() => selectEntity('tai')}
-            className="flex items-center space-x-2 text-[#e8e8e8] hover:text-[#6ea8fe] transition-colors focus:outline-none"
+            className={`flex items-center space-x-2 text-[#e8e8e8] hover:text-[#6ea8fe] transition-colors ${focusRing}`}
           >
             <span className="inline-block w-2 h-2 rounded-full bg-[#e8e8e8] animate-pulse" />
             <span className="font-semibold tracking-wider">TÀI</span>
@@ -48,7 +58,7 @@ export const HUD: React.FC = () => {
         <nav className="flex items-center space-x-2 sm:space-x-4 text-[11px]">
           <button
             onClick={toggleAsciiMode}
-            className={`transition-colors border px-2 py-1 rounded backdrop-blur-sm flex items-center space-x-1.5 ${
+            className={`transition-colors border px-2 py-1 rounded backdrop-blur-sm flex items-center space-x-1.5 ${focusRing} ${
               isAscii
                 ? 'border-[#6ea8fe]/50 text-[#6ea8fe] bg-[#6ea8fe]/10'
                 : 'border-[#262626] text-[#777777] hover:text-[#e8e8e8] bg-[#050505]/70'
@@ -66,20 +76,20 @@ export const HUD: React.FC = () => {
           </button>
           <button
             onClick={() => triggerTransition('tai', '/about')}
-            className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm"
+            className={`hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm ${focusRing}`}
           >
             ABOUT
           </button>
           <button
             onClick={openSearch}
-            className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1"
+            className={`hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1 ${focusRing}`}
           >
             <span>SEARCH</span>
             <kbd className="text-[9px] bg-[#1a1a1a] text-[#777777] px-1 rounded">/</kbd>
           </button>
           <button
             onClick={toggleMap}
-            className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1"
+            className={`hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1 ${focusRing}`}
           >
             <span>MAP</span>
             <kbd className="text-[9px] bg-[#1a1a1a] text-[#777777] px-1 rounded">M</kbd>
@@ -131,7 +141,7 @@ export const HUD: React.FC = () => {
               <button
                 key={`btn-${entity.id}`}
                 onClick={() => selectEntity(entity.id)}
-                className={`px-2.5 py-1 rounded text-[11px] transition-colors flex items-center space-x-1.5 ${
+                className={`px-2.5 py-1 rounded text-[11px] transition-colors flex items-center space-x-1.5 ${focusRing} ${
                   isSelected
                     ? 'bg-[#1f1f1f] text-[#ffffff] font-semibold border border-[#3a3a3a]'
                     : 'text-[#777777] hover:text-[#e8e8e8] hover:bg-[#141414]'

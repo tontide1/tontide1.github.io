@@ -10,5 +10,15 @@ export default defineConfig({
   integrations: [react(), mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
+    // The universe island is ~895 kB raw / ~242 kB gzip, which trips Vite's
+    // 500 kB default. It is not a splitting failure: the chunk contains no
+    // GLTF/FBX/OBJ/Text loaders, no OrbitControls and no MarchingCubes, so
+    // tree-shaking is already working and what remains is the irreducible cost
+    // of WebGLRenderer itself. It is also already deferred behind first paint —
+    // the `bundle` suite asserts the loader ships first and the canvas chunk
+    // lands afterwards. Raise the limit rather than pretend the number is small.
+    build: {
+      chunkSizeWarningLimit: 1000,
+    },
   },
 });
