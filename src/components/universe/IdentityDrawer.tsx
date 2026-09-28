@@ -33,7 +33,11 @@ export const IdentityDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 z-20 w-full sm:w-96 bg-[#0a0a0a]/95 backdrop-blur-xl border-l border-[#262626] p-6 flex flex-col justify-between font-mono shadow-2xl transition-transform duration-300">
+    <div
+      role="dialog"
+      aria-label={`${entity.name} inspector`}
+      className="fixed inset-y-0 right-0 z-20 w-full sm:w-96 bg-[#0a0a0a]/95 backdrop-blur-xl border-l border-[#262626] p-6 flex flex-col justify-between font-mono shadow-2xl transition-transform duration-300"
+    >
       <div>
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#262626] pb-4 mb-6">

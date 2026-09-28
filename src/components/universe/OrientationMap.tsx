@@ -52,6 +52,9 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="System orientation map"
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md font-mono"
       onClick={() => {
         closeMap();
@@ -84,7 +87,8 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
 
         {/* Central Core: TÀI */}
         <div className="flex flex-col items-center mb-6">
-          <div
+          <button
+            type="button"
             onMouseEnter={() => hoverEntity('tai')}
             onMouseLeave={() => hoverEntity(null)}
             onClick={() => handleNavigate('tai', '/about')}
@@ -99,7 +103,7 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
             <div className="text-[10px] text-[#777777] group-hover:text-[#a3a3a3] mt-0.5">
               CENTRAL GRAVITATIONAL ANCHOR · STABLE CORE (0 AU)
             </div>
-          </div>
+          </button>
 
           {/* ASCII Tree Connector */}
           <div className="text-[#3a3a3a] select-none text-[11px] leading-none my-2 hidden md:block">
@@ -122,11 +126,12 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
                 className="flex flex-col border border-[#1f1f1f] bg-[#0d0d0d]/80 rounded p-3 text-xs"
               >
                 {/* Domain Header Card */}
-                <div
+                <button
+                  type="button"
                   onMouseEnter={() => hoverEntity(domain.id)}
                   onMouseLeave={() => hoverEntity(null)}
                   onClick={() => handleNavigate(domain.id, domain.path)}
-                  className="cursor-pointer pb-2.5 mb-2.5 border-b border-[#1f1f1f] hover:border-[#333333] transition-colors"
+                  className="block w-full text-left cursor-pointer pb-2.5 mb-2.5 border-b border-[#1f1f1f] hover:border-[#333333] transition-colors"
                 >
                   <div className="flex items-center space-x-1.5 mb-1">
                     <span
@@ -146,7 +151,7 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
                   <div className="text-[9px] text-[#3a3a3a] mt-0.5">
                     ORBIT: {domain.orbit}
                   </div>
-                </div>
+                </button>
 
                 {/* Domain Content Nodes */}
                 <div className="space-y-2 flex-1">
@@ -156,12 +161,13 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
                     </div>
                   ) : (
                     domainItems.map((item) => (
-                      <div
+                      <button
+                        type="button"
                         key={`map-item-${item.id}`}
                         onMouseEnter={() => hoverEntity(domain.id)}
                         onMouseLeave={() => hoverEntity(null)}
                         onClick={() => handleNavigate(domain.id, item.path)}
-                        className="cursor-pointer p-2 rounded bg-[#121212] hover:bg-[#1a1a1a] border border-[#222222] hover:border-[#444444] transition-all group"
+                        className="block w-full text-left cursor-pointer p-2 rounded bg-[#121212] hover:bg-[#1a1a1a] border border-[#222222] hover:border-[#444444] transition-all group"
                       >
                         <div className="font-medium text-[#d4d4d4] group-hover:text-[#ffffff] text-[11px] leading-tight mb-1">
                           {item.title}
@@ -183,7 +189,7 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
                             ))}
                           </div>
                         )}
-                      </div>
+                      </button>
                     ))
                   )}
                 </div>

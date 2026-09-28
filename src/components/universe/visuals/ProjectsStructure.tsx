@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface ProjectsStructureProps {
   isHovered: boolean;
@@ -18,6 +19,8 @@ export const ProjectsStructure: React.FC<ProjectsStructureProps> = ({
   const satGroup2Ref = useRef<THREE.Group>(null);
 
   useFrame((_, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     // Structured rotation
     if (coreRef.current) {
       coreRef.current.rotation.y += delta * 0.35;

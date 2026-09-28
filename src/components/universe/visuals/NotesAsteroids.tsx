@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface NotesAsteroidsProps {
   isHovered: boolean;
@@ -51,6 +52,8 @@ export const NotesAsteroids: React.FC<NotesAsteroidsProps> = ({
   const fragmentRefs = useRef<(THREE.Mesh | null)[]>([]);
 
   useFrame((state, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     if (nucleusRef.current) {
       nucleusRef.current.rotation.y += delta * 0.4;
       nucleusRef.current.rotation.x += delta * 0.2;

@@ -111,6 +111,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ items }) => {
 
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search the universe"
       className="fixed inset-0 z-50 flex items-start justify-center pt-16 md:pt-24 px-4 bg-black/80 backdrop-blur-md font-mono"
       onClick={() => {
         closeSearch();
@@ -153,7 +156,8 @@ export const SearchModal: React.FC<SearchModalProps> = ({ items }) => {
               const domainColor = DOMAIN_COLORS[item.domain] || '#e8e8e8';
 
               return (
-                <div
+                <button
+                  type="button"
                   key={`search-item-${item.id}-${idx}`}
                   onMouseEnter={() => {
                     setSelectedIndex(idx);
@@ -161,7 +165,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ items }) => {
                   }}
                   onMouseLeave={() => hoverEntity(null)}
                   onClick={() => handleSelect(item)}
-                  className={`p-3 rounded cursor-pointer transition-colors text-xs ${
+                  className={`block w-full text-left p-3 rounded cursor-pointer transition-colors text-xs ${
                     isSelected
                       ? 'bg-[#171717] border border-[#333333]'
                       : 'hover:bg-[#121212] border border-transparent'
@@ -212,7 +216,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ items }) => {
                       ))}
                     </div>
                   )}
-                </div>
+                </button>
               );
             })
           )}

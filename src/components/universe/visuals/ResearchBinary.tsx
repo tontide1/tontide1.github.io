@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface ResearchBinaryProps {
   isHovered: boolean;
@@ -25,6 +26,8 @@ export const ResearchBinary: React.FC<ResearchBinaryProps> = ({
   }, []);
 
   useFrame((_, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     // Rotation around shared barycenter
     if (binaryGroupRef.current) {
       binaryGroupRef.current.rotation.y += delta * 0.45;

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface LifeBodyProps {
   isHovered: boolean;
@@ -13,6 +14,8 @@ export const LifeBody: React.FC<LifeBodyProps> = ({ isHovered, isSelected }) => 
   const ringRef = useRef<THREE.Mesh>(null);
 
   useFrame((_, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     // Slower, serene organic rotation
     if (planetRef.current) {
       planetRef.current.rotation.y += delta * 0.16;

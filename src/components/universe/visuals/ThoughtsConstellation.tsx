@@ -1,6 +1,7 @@
 import React, { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface ThoughtsConstellationProps {
   isHovered: boolean;
@@ -48,6 +49,8 @@ export const ThoughtsConstellation: React.FC<ThoughtsConstellationProps> = ({
   }, [nodes]);
 
   useFrame((_, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     if (groupRef.current) {
       groupRef.current.rotation.y += delta * 0.22;
       groupRef.current.rotation.x += delta * 0.12;

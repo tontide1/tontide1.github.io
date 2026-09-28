@@ -39,13 +39,13 @@ export const HUD: React.FC = () => {
           </button>
           <span className="text-[#3a3a3a]">/</span>
           <span className="hidden sm:inline tracking-wider">GRAVITY SYSTEM</span>
-          <span className="text-[#3a3a3a]">·</span>
-          <span className="text-[10px] text-[#3a3a3a] border border-[#262626] px-1.5 py-0.5 rounded">
+          <span className="text-[#3a3a3a] hidden sm:inline">·</span>
+          <span className="hidden sm:inline text-[10px] text-[#3a3a3a] border border-[#262626] px-1.5 py-0.5 rounded">
             v1.1 MVP
           </span>
         </div>
 
-        <nav className="flex items-center space-x-3 sm:space-x-4 text-[11px]">
+        <nav className="flex items-center space-x-2 sm:space-x-4 text-[11px]">
           <button
             onClick={toggleAsciiMode}
             className={`transition-colors border px-2 py-1 rounded backdrop-blur-sm flex items-center space-x-1.5 ${
@@ -114,8 +114,12 @@ export const HUD: React.FC = () => {
 
       {/* Bottom Bar: Telemetry & Domain Switcher */}
       <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto">
-        <div className="text-[11px] text-[#525252] hidden md:block">
-          <span>DRAG TO ROTATE</span> · <span>SCROLL TO ZOOM</span> · <span>CLICK TO ENTER</span>
+        <div className="text-[9px] sm:text-[11px] text-[#525252] text-center sm:text-left">
+          <span>DRAG TO ROTATE</span> ·{' '}
+          <span className="hidden sm:inline">SCROLL TO ZOOM</span>
+          <span className="sm:hidden">PINCH TO ZOOM</span> ·{' '}
+          <span className="hidden sm:inline">CLICK TO ENTER</span>
+          <span className="sm:hidden">TAP TO ENTER</span>
         </div>
 
         {/* Domain Navigation Pills */}

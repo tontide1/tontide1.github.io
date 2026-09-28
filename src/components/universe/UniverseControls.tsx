@@ -3,18 +3,29 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useStore } from '@nanostores/react';
 import * as THREE from 'three';
 import { $transitionState, ENTITY_MAP, ENTITY_CURRENT_POSITIONS } from '../../stores/universe';
+import { $prefersReducedMotion, getQualityProfile } from '../../stores/environment';
+
+const MIN_DISTANCE = 8;
+const MAX_DISTANCE = 32;
+const MIN_PHI = 0.1;
+const MAX_PHI = Math.PI / 2.2;
+const NO_PARALLAX = { x: 0, y: 0 };
 
 export const UniverseControls: React.FC = () => {
   const { camera, gl } = useThree();
   const transition = useStore($transitionState);
+  const reducedMotion = useStore($prefersReducedMotion);
 
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const pinchDistance = useRef<number | null>(null);
   const isDragging = useRef(false);
-  const previousMousePosition = useRef({ x: 0, y: 0 });
+  const previousPointerPosition = useRef({ x: 0, y: 0 });
   const targetRotation = useRef({ x: 0.5, y: 0.3 });
   const currentRotation = useRef({ x: 0.5, y: 0.3 });
 
-  const targetDistance = useRef(18);
-  const currentDistance = useRef(18);
+  const initialDistance = getQualityProfile().tier === 'low' ? 24 : 18;
+  const targetDistance = useRef(initialDistance);
+  const currentDistance = useRef(initialDistance);
 
   const mouseParallax = useRef({ x: 0, y: 0 });
   const hasNavigated = useRef(false);
@@ -41,6 +52,14 @@ export const UniverseControls: React.FC = () => {
 
     hasNavigated.current = false;
 
+    // Reduced motion: complete the transition immediately, no camera fly-through.
+    if (reducedMotion) {
+      hasNavigated.current = true;
+      $transitionState.set(null);
+      window.location.href = transition.targetPath;
+      return;
+    }
+
     // Safety timeout ensuring navigation always completes even if useFrame is throttled
     const timer = setTimeout(() => {
       if (!hasNavigated.current && transition) {
@@ -52,55 +71,99 @@ export const UniverseControls: React.FC = () => {
     }, transition.duration + 200);
 
     return () => clearTimeout(timer);
-  }, [transition]);
+  }, [transition, reducedMotion]);
 
   useEffect(() => {
     const dom = gl.domElement;
 
+    const pinchSpan = () => {
+      const [a, b] = Array.from(pointers.current.values());
+      if (!a || !b) return null;
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    };
+
+    const clampDistance = (value: number) => Math.max(MIN_DISTANCE, Math.min(MAX_DISTANCE, value));
+
     const onPointerDown = (e: PointerEvent) => {
-      if (e.button !== 0 || transition) return;
-      isDragging.current = true;
-      previousMousePosition.current = { x: e.clientX, y: e.clientY };
+      if (transition) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.current.size === 1) {
+        isDragging.current = true;
+        previousPointerPosition.current = { x: e.clientX, y: e.clientY };
+      } else {
+        // A second finger turns the gesture into a pinch, not an orbit drag.
+        isDragging.current = false;
+        pinchDistance.current = pinchSpan();
+      }
     };
 
     const onPointerMove = (e: PointerEvent) => {
       if (transition) return;
-      const nx = (e.clientX / window.innerWidth) * 2 - 1;
-      const ny = (e.clientY / window.innerHeight) * 2 - 1;
-      mouseParallax.current = { x: nx * 0.4, y: ny * 0.2 };
+
+      if (e.pointerType === 'mouse') {
+        const nx = (e.clientX / window.innerWidth) * 2 - 1;
+        const ny = (e.clientY / window.innerHeight) * 2 - 1;
+        mouseParallax.current = { x: nx * 0.4, y: ny * 0.2 };
+      }
+
+      if (!pointers.current.has(e.pointerId)) return;
+
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.current.size >= 2) {
+        const span = pinchSpan();
+        if (span !== null && pinchDistance.current !== null) {
+          // Spreading the fingers pulls the camera in, pinching pushes it out.
+          targetDistance.current = clampDistance(
+            targetDistance.current + (pinchDistance.current - span) * 0.02
+          );
+        }
+        pinchDistance.current = span;
+        return;
+      }
 
       if (!isDragging.current) return;
 
-      const deltaX = e.clientX - previousMousePosition.current.x;
-      const deltaY = e.clientY - previousMousePosition.current.y;
+      const deltaX = e.clientX - previousPointerPosition.current.x;
+      const deltaY = e.clientY - previousPointerPosition.current.y;
 
       targetRotation.current.y += deltaX * 0.005;
       targetRotation.current.x += deltaY * 0.005;
-      targetRotation.current.x = Math.max(0.1, Math.min(Math.PI / 2.2, targetRotation.current.x));
+      targetRotation.current.x = Math.max(MIN_PHI, Math.min(MAX_PHI, targetRotation.current.x));
 
-      previousMousePosition.current = { x: e.clientX, y: e.clientY };
+      previousPointerPosition.current = { x: e.clientX, y: e.clientY };
     };
 
-    const onPointerUp = () => {
-      isDragging.current = false;
+    const onPointerUp = (e: PointerEvent) => {
+      pointers.current.delete(e.pointerId);
+      if (pointers.current.size < 2) {
+        pinchDistance.current = null;
+      }
+      if (pointers.current.size === 0) {
+        isDragging.current = false;
+      }
     };
 
     const onWheel = (e: WheelEvent) => {
       if (transition) return;
       e.preventDefault();
-      targetDistance.current += e.deltaY * 0.015;
-      targetDistance.current = Math.max(8, Math.min(32, targetDistance.current));
+      targetDistance.current = clampDistance(targetDistance.current + e.deltaY * 0.015);
     };
 
     dom.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
     dom.addEventListener('wheel', onWheel, { passive: false });
 
     return () => {
       dom.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
       dom.removeEventListener('wheel', onWheel);
     };
   }, [gl, transition]);
@@ -146,8 +209,9 @@ export const UniverseControls: React.FC = () => {
     currentRotation.current.y += (targetRotation.current.y - currentRotation.current.y) * factor;
     currentDistance.current += (targetDistance.current - currentDistance.current) * factor;
 
-    const phi = currentRotation.current.x + mouseParallax.current.y * 0.05;
-    const theta = currentRotation.current.y + mouseParallax.current.x * 0.05;
+    const parallax = reducedMotion ? NO_PARALLAX : mouseParallax.current;
+    const phi = currentRotation.current.x + parallax.y * 0.05;
+    const theta = currentRotation.current.y + parallax.x * 0.05;
     const dist = currentDistance.current;
 
     const x = dist * Math.sin(phi) * Math.sin(theta);

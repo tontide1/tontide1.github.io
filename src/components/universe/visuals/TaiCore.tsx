@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { $prefersReducedMotion } from '../../../stores/environment';
 
 interface TaiCoreProps {
   isHovered: boolean;
@@ -13,6 +14,8 @@ export const TaiCore: React.FC<TaiCoreProps> = ({ isHovered, isSelected }) => {
   const outerShellRef = useRef<THREE.Mesh>(null);
 
   useFrame((state, delta) => {
+    if ($prefersReducedMotion.get()) return;
+
     // Gentle breathing pulse
     const elapsed = state.clock.getElapsedTime();
     const pulse = 1 + Math.sin(elapsed * 1.2) * 0.03;

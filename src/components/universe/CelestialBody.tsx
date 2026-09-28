@@ -7,6 +7,7 @@ import {
   updateEntityPosition,
   type EntityInfo,
 } from '../../stores/universe';
+import { $prefersReducedMotion } from '../../stores/environment';
 import { TaiCore } from './visuals/TaiCore';
 import { LifeBody } from './visuals/LifeBody';
 import { ThoughtsConstellation } from './visuals/ThoughtsConstellation';
@@ -20,6 +21,9 @@ interface CelestialBodyProps {
   isSelected: boolean;
 }
 
+/** Pointer travel (px) above which a click is treated as an orbit drag. */
+const TAP_TRAVEL_PX = 8;
+
 export const CelestialBody: React.FC<CelestialBodyProps> = ({
   entity,
   isHovered,
@@ -27,6 +31,7 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
 }) => {
   const groupRef = useRef<THREE.Group>(null);
   const angleRef = useRef(entity.orbitAngle);
+  const pointerDownAt = useRef<{ x: number; y: number } | null>(null);
 
   // Initialize position in store
   useEffect(() => {
@@ -42,7 +47,10 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
   useFrame((_, delta) => {
     // Orbital revolution around central anchor
     if (entity.orbitRadius > 0 && groupRef.current) {
-      angleRef.current += entity.orbitSpeed * delta * 0.4;
+      // Reduced motion keeps the body on its current orbit position.
+      if (!$prefersReducedMotion.get()) {
+        angleRef.current += entity.orbitSpeed * delta * 0.4;
+      }
       const x = Math.cos(angleRef.current) * entity.orbitRadius;
       const z = Math.sin(angleRef.current) * entity.orbitRadius;
       groupRef.current.position.set(x, 0, z);
@@ -86,8 +94,15 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
           document.body.style.cursor = 'default';
           hoverEntity(null);
         }}
+        onPointerDown={(e) => {
+          pointerDownAt.current = { x: e.clientX, y: e.clientY };
+        }}
         onClick={(e) => {
           e.stopPropagation();
+          const from = pointerDownAt.current;
+          pointerDownAt.current = null;
+          // A touch that travelled is an orbit drag, not a tap to enter.
+          if (from && Math.hypot(e.clientX - from.x, e.clientY - from.y) > TAP_TRAVEL_PX) return;
           selectEntity(entity.id);
         }}
       >

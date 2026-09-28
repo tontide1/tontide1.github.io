@@ -6,6 +6,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { $isAsciiMode } from '../../stores/universe';
+import { $deviceTier, $prefersReducedMotion, getQualityProfile } from '../../stores/environment';
 
 // Generate procedural ASCII monospace character atlas texture
 function createCharAtlasTexture(): THREE.CanvasTexture {
@@ -111,6 +112,10 @@ const AsciiShader = {
 export const AsciiEffect: React.FC = () => {
   const { gl, scene, camera, size, viewport } = useThree();
   const isAscii = useStore($isAsciiMode);
+  const deviceTier = useStore($deviceTier);
+  const reducedMotion = useStore($prefersReducedMotion);
+
+  const quality = getQualityProfile(deviceTier, reducedMotion);
 
   // Generate character atlas once
   const charAtlasTexture = useMemo(() => createCharAtlasTexture(), []);
@@ -120,7 +125,9 @@ export const AsciiEffect: React.FC = () => {
   const shaderPassRef = useRef<ShaderPass | null>(null);
 
   useEffect(() => {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // viewport.dpr is the pixel ratio R3F actually renders at, so the ASCII
+    // pass samples the same buffer the scene was drawn into.
+    const dpr = viewport.dpr;
     const renderTarget = new THREE.WebGLRenderTarget(
       size.width * dpr,
       size.height * dpr,
@@ -142,6 +149,7 @@ export const AsciiEffect: React.FC = () => {
     };
     asciiShader.uniforms.uCharAtlas.value = charAtlasTexture;
     asciiShader.uniforms.uResolution.value.set(size.width * dpr, size.height * dpr);
+    asciiShader.uniforms.uCharSize.value = getQualityProfile().asciiCharSize;
     asciiShader.uniforms.uEnabled.value = isAscii ? 1.0 : 0.0;
 
     const shaderPass = new ShaderPass(asciiShader);
@@ -156,14 +164,15 @@ export const AsciiEffect: React.FC = () => {
     };
   }, [gl, scene, camera, charAtlasTexture]);
 
-  // Update resolution on viewport resize
+  // Update resolution on viewport resize and cell size on device tier change
   useEffect(() => {
     if (composerRef.current && shaderPassRef.current) {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = viewport.dpr;
       composerRef.current.setSize(size.width * dpr, size.height * dpr);
       shaderPassRef.current.uniforms.uResolution.value.set(size.width * dpr, size.height * dpr);
+      shaderPassRef.current.uniforms.uCharSize.value = quality.asciiCharSize;
     }
-  }, [size, viewport.dpr]);
+  }, [size, viewport.dpr, quality.asciiCharSize]);
 
   // Update enabled state when toggled
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useStore } from '@nanostores/react';
 import {
@@ -6,6 +6,12 @@ import {
   $selectedEntityId,
   $hoveredEntityId,
 } from '../../stores/universe';
+import {
+  $deviceTier,
+  $prefersReducedMotion,
+  getQualityProfile,
+  syncEnvironment,
+} from '../../stores/environment';
 import { CelestialBody } from './CelestialBody';
 import { OrbitRing } from './OrbitRing';
 import { StarField } from './StarField';
@@ -15,15 +21,28 @@ import { AsciiEffect } from './AsciiEffect';
 export const UniverseCanvas: React.FC = () => {
   const selectedId = useStore($selectedEntityId);
   const hoveredId = useStore($hoveredEntityId);
+  const deviceTier = useStore($deviceTier);
+  const reducedMotion = useStore($prefersReducedMotion);
+
+  const quality = getQualityProfile(deviceTier, reducedMotion);
+  const isCompact = quality.tier === 'low';
+
+  useEffect(() => syncEnvironment(), []);
 
   const entities = Object.values(ENTITY_MAP);
 
   return (
-    <div className="relative w-full h-full min-h-screen bg-[#050505] overflow-hidden select-none">
+    <div className="relative w-full h-full min-h-dvh bg-[#050505] overflow-hidden select-none">
       <Canvas
-        camera={{ position: [0, 14, 18], fov: 45 }}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        camera={{ position: [0, 14, 18], fov: isCompact ? 55 : 45 }}
+        dpr={[1, quality.maxDpr]}
+        gl={{
+          antialias: !isCompact,
+          alpha: false,
+          powerPreference: 'high-performance',
+        }}
         className="w-full h-full"
+        style={{ touchAction: 'none' }}
       >
         <color attach="background" args={['#050505']} />
 
@@ -33,7 +52,7 @@ export const UniverseCanvas: React.FC = () => {
         <pointLight position={[10, 15, 10]} intensity={0.8} color="#6ea8fe" />
 
         {/* Star Background */}
-        <StarField count={400} />
+        <StarField count={quality.starCount} />
 
         {/* Orbital Rings */}
         {entities.map(
