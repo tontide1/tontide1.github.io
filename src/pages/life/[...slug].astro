@@ -1,0 +1,32 @@
+---
+import { getCollection, render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+
+export async function getStaticPaths() {
+  const items = await getCollection('life');
+  return items.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+---
+
+<ContentLayout
+  domain="LIFE"
+  title={item.data.title}
+  role="Personal Milestone"
+  meta="TIMELINE"
+  description={item.data.summary}
+>
+  <div class="flex items-center space-x-3 text-xs text-[#525252] mb-6">
+    <span>RECORDED:</span>
+    <span class="text-[#e8e8e8]">{item.data.date}</span>
+  </div>
+
+  <article class="prose prose-invert max-w-none space-y-4 text-xs md:text-sm text-[#cccccc] leading-relaxed border-t border-[#1f1f1f] pt-6">
+    <Content />
+  </article>
+</ContentLayout>

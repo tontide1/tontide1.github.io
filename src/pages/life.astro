@@ -1,18 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 
-const timeline = [
-  {
-    date: '2026',
-    title: 'Focus on High-Scale Systems & Agentic AI',
-    detail: 'Deepening work on autonomous coding agents, deterministic retrieval algorithms, and modern frontend 3D interfaces.',
-  },
-  {
-    date: '2025',
-    title: 'Applied AI & RAG Research',
-    detail: 'Extensive experimentation with semantic search, chunking strategies, and Vietnamese legal domain knowledge graphs.',
-  },
-];
+const entries = await getCollection('life');
 ---
 
 <ContentLayout
@@ -23,18 +13,23 @@ const timeline = [
   description="Public personal experiences, technical journey, workspaces, and milestones."
 >
   <div class="relative border-l border-[#262626] ml-3 pl-6 space-y-8">
-    {timeline.map((item) => (
+    {entries.map((item) => (
       <div class="relative">
         <div class="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-[#a7f3d0] border-2 border-[#050505]" />
         <span class="text-[10px] text-[#a7f3d0] font-bold block mb-1">
-          {item.date}
+          {item.data.date}
         </span>
         <h3 class="text-sm md:text-base font-semibold text-[#ffffff] mb-1">
-          {item.title}
+          <a href={`/life/${item.id}`} class="hover:text-[#a7f3d0] transition-colors">
+            {item.data.title} →
+          </a>
         </h3>
-        <p class="text-xs text-[#a3a3a3] leading-relaxed">
-          {item.detail}
+        <p class="text-xs text-[#a3a3a3] leading-relaxed mb-2">
+          {item.data.summary}
         </p>
+        <a href={`/life/${item.id}`} class="text-[11px] text-[#a7f3d0] hover:underline">
+          Read Log Entry →
+        </a>
       </div>
     ))}
   </div>

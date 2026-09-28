@@ -5,6 +5,7 @@ import {
   $selectedEntityId,
   $isInspectOpen,
   closeInspect,
+  triggerTransition,
 } from '../../stores/universe';
 
 export const IdentityDrawer: React.FC = () => {
@@ -25,6 +26,11 @@ export const IdentityDrawer: React.FC = () => {
 
   const entity = ENTITY_MAP[selectedId];
   if (!entity) return null;
+
+  const handleEnter = (e: React.MouseEvent) => {
+    e.preventDefault();
+    triggerTransition(entity.id, entity.path);
+  };
 
   return (
     <div className="fixed inset-y-0 right-0 z-20 w-full sm:w-96 bg-[#0a0a0a]/95 backdrop-blur-xl border-l border-[#262626] p-6 flex flex-col justify-between font-mono shadow-2xl transition-transform duration-300">
@@ -117,15 +123,15 @@ export const IdentityDrawer: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer / CTA */}
+      {/* Footer / CTA with transition */}
       <div className="border-t border-[#262626] pt-4 mt-6">
-        <a
-          href={entity.path}
-          className="w-full flex items-center justify-center space-x-2 bg-[#e8e8e8] hover:bg-[#ffffff] text-[#050505] font-semibold text-xs py-2.5 px-4 rounded transition-colors tracking-wider"
+        <button
+          onClick={handleEnter}
+          className="w-full flex items-center justify-center space-x-2 bg-[#e8e8e8] hover:bg-[#ffffff] text-[#050505] font-semibold text-xs py-2.5 px-4 rounded transition-all tracking-wider shadow-lg active:scale-95"
         >
           <span>ENTER {entity.name}</span>
           <span>→</span>
-        </a>
+        </button>
       </div>
     </div>
   );

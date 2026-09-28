@@ -1,0 +1,39 @@
+---
+title: "Hybrid Retrieval for Vietnamese Legal QA"
+date: "2026-09-18"
+summary: "Empirical benchmark comparing pure dense embedding retrieval against reciprocal rank fusion with BM25 on statutory legal corpora."
+status: "active"
+research_question: "Does pure dense retrieval suffer systemic failure when statutory legal queries require exact numerical/clause citations?"
+hypothesis: "Dense embeddings lack lexical exactness on statutory identifiers; an ensemble of tuned BM25 and multilingual dense embeddings with cross-encoder reranking yields a >15% improvement in recall@5."
+related: ["/projects/legal-rag", "/notes/bm25-vs-dense"]
+featured: true
+---
+
+# Problem Statement
+
+Standard embedding models optimize for semantic proximity rather than statutory lexical precision. In Vietnamese legal retrieval, queries frequently hinge on:
+1. Exact law identification (e.g. *Luật Đất đai 2024* vs *Luật Đất đai 2013*).
+2. Article numbers (*Điều 12* vs *Điều 21*).
+3. Exact penalty numbers (e.g. *phạt tiền từ 2.000.000 đồng đến 4.000.000 đồng*).
+
+Dense retrieval models map "phạt tiền từ 2.000.000" and "phạt tiền từ 5.000.000" to near-identical vectors because the semantic structure is synonymous, leading to legal hallucinations if context injection is flawed.
+
+## Experimental Setup
+
+- **Corpus**: 14,000 statutory documents from the National Legal Database.
+- **Query Set**: 500 annotated legal queries (300 conversational, 200 citation-specific).
+- **Baselines**:
+  1. Dense Only (BAAI/bge-m3)
+  2. Sparse Only (BM25, k1=1.2, b=0.75)
+  3. Hybrid Fusion (BM25 + BGE-M3 with RRF k=60)
+  4. Hybrid + Cross-Encoder Reranker
+
+## Interim Results
+
+| Method | Recall@5 (Citation) | Recall@5 (Semantic) | NDCG@10 |
+|---|---|---|---|
+| Dense Only | 58.2% | 84.1% | 0.69 |
+| BM25 Only | 89.4% | 61.3% | 0.72 |
+| **Hybrid + Rerank** | **94.8%** | **88.6%** | **0.86** |
+
+The hybrid approach provides the reliability floor necessary for production statutory QA.

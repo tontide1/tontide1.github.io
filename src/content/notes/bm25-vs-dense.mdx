@@ -1,0 +1,28 @@
+---
+title: "BM25 vs Dense Retrieval: Failure Modes & Parameter Tuning"
+date: "2026-09-15"
+category: "RAG / INFORMATION RETRIEVAL"
+summary: "Why dense embeddings alone are insufficient for technical search, and how tuning BM25 k1 and b parameters stabilizes hybrid retrieval pipelines."
+related: ["/projects/legal-rag", "/research/hybrid-retrieval-legal-qa"]
+---
+
+# Why Dense Embeddings Fail on Lexical Exactness
+
+Dense models compress sentences into fixed-dimensional vectors (e.g., 768 or 1024 floats). By design, they compress syntactic and semantic meaning into dot products. However:
+
+- **Entity IDs & Serial Codes**: Vectors for `CVE-2024-38077` and `CVE-2024-38078` are virtually identical.
+- **Negation**: Dense vectors notoriously under-weight explicit negations (*"without using Docker"* vs *"using Docker"*).
+- **Out-of-vocabulary technical jargon**: Brand-new package names or custom internal structs get mapped to generic centroids.
+
+# Tuning BM25 for Code & Technical Corpora
+
+The standard BM25 score is parameterized by k1 and b:
+
+```text
+Score(D, Q) = Σ IDF(q_i) * [ f(q_i, D) * (k1 + 1) ] / [ f(q_i, D) + k1 * (1 - b + b * (|D| / avgdl)) ]
+```
+
+- **$k_1$ (Term frequency saturation)**: Default is usually `1.2`. For code documentation where keywords repeat intentionally (e.g. repeated method calls), setting $k_1 = 1.5 - 1.8$ rewards documents with substantive coverage.
+- **$b$ (Length normalization)**: Default is `0.75`. For short code snippets, lower $b = 0.5$ prevents penalizing succinct implementations. For verbose prose, $b = 0.8$ ensures long rambling pages are penalized.
+
+**Key Rule**: Always normalize and combine sparse and dense rank lists with **Reciprocal Rank Fusion (RRF)** rather than linear score addition, because dense cosine scores and BM25 unbounded scores inhabit incomparable distributions.

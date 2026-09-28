@@ -1,20 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 
-const notes = [
-  {
-    title: 'BM25 vs Dense Retrieval Failure Modes',
-    category: 'RAG / IR',
-    date: '2026-09-15',
-    detail: 'Dense retrieval struggles on exact legal citations, specific serial IDs, and rare acronyms. BM25 with tuned b=0.75, k1=1.2 acts as an indispensable safety floor.',
-  },
-  {
-    title: 'Linux eBPF Tracing for Slow System Calls',
-    category: 'LINUX / TOOLING',
-    date: '2026-08-20',
-    detail: 'Using bpftrace to inspect latency spikes on disk write barriers in high-throughput database nodes.',
-  },
-];
+const notes = await getCollection('notes');
 ---
 
 <ContentLayout
@@ -26,18 +14,25 @@ const notes = [
 >
   <div class="space-y-4">
     {notes.map((note) => (
-      <div class="bg-[#0a0a0a] border border-[#1f1f1f] p-4 rounded">
+      <article class="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#3a3a3a] transition-colors p-4 rounded">
         <div class="flex items-center justify-between text-[10px] text-[#525252] mb-1.5">
-          <span class="text-[#fde68a] font-bold">{note.category}</span>
-          <span>{note.date}</span>
+          <span class="text-[#fde68a] font-bold">{note.data.category}</span>
+          <span>{note.data.date}</span>
         </div>
         <h2 class="text-sm font-bold text-[#ffffff] mb-1.5">
-          {note.title}
+          <a href={`/notes/${note.id}`} class="hover:text-[#fde68a] transition-colors">
+            {note.data.title} →
+          </a>
         </h2>
-        <p class="text-xs text-[#a3a3a3] leading-relaxed">
-          {note.detail}
+        <p class="text-xs text-[#a3a3a3] leading-relaxed mb-3">
+          {note.data.summary}
         </p>
-      </div>
+        <div class="pt-2 border-t border-[#1a1a1a] text-xs">
+          <a href={`/notes/${note.id}`} class="text-[#fde68a] hover:underline">
+            Read Fragment Notes →
+          </a>
+        </div>
+      </article>
     ))}
   </div>
 </ContentLayout>

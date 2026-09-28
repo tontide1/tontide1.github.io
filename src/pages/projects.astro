@@ -1,22 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 
-const projects = [
-  {
-    title: 'DriveBook',
-    status: 'COMPLETED',
-    stack: ['Go', 'PostgreSQL', 'Redis', 'Docker'],
-    summary: 'High-scale management platform optimizing driver dispatching, scheduling, and live operational metrics.',
-    github: 'https://github.com/tontide1/drivebook-optimize',
-  },
-  {
-    title: 'Legal-RAG (VinaLawRAG)',
-    status: 'ACTIVE',
-    stack: ['Python', 'FastAPI', 'pgvector', 'Hybrid Search', 'Qdrant'],
-    summary: 'Specialized Vietnamese legal question-answering system combining BM25 keyword matching with dense semantic embeddings and cross-encoder reranking.',
-    github: 'https://github.com/tontide1/VinaLawRAG',
-  },
-];
+const projects = await getCollection('projects');
 ---
 
 <ContentLayout
@@ -30,35 +16,43 @@ const projects = [
     {projects.map((proj) => (
       <article class="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#3a3a3a] transition-colors p-6 rounded">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-lg font-bold text-[#ffffff] tracking-wide">
-            {proj.title}
-          </h2>
+          <a href={`/projects/${proj.id}`} class="text-lg font-bold text-[#ffffff] hover:text-[#6ea8fe] tracking-wide transition-colors">
+            {proj.data.title} →
+          </a>
           <span class="text-[10px] px-2 py-0.5 rounded border border-[#262626] text-[#6ea8fe] bg-[#111111]">
-            {proj.status}
+            {proj.data.status.toUpperCase()}
           </span>
         </div>
 
         <p class="text-[#a3a3a3] text-xs md:text-sm mb-4 leading-relaxed">
-          {proj.summary}
+          {proj.data.summary}
         </p>
 
         <div class="flex flex-wrap items-center gap-2 mb-4">
-          {proj.stack.map((tech) => (
+          {proj.data.stack.map((tech) => (
             <span class="text-[10px] text-[#777777] bg-[#141414] px-2 py-0.5 rounded">
               {tech}
             </span>
           ))}
         </div>
 
-        <div class="text-xs pt-2 border-t border-[#1a1a1a]">
+        <div class="text-xs pt-3 border-t border-[#1a1a1a] flex items-center justify-between">
           <a
-            href={proj.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-[#6ea8fe] hover:underline"
+            href={`/projects/${proj.id}`}
+            class="text-[#e8e8e8] hover:text-[#6ea8fe] underline font-semibold"
           >
-            View Repository ↗
+            Read Technical Spec →
           </a>
+          {proj.data.github && (
+            <a
+              href={proj.data.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[#777777] hover:text-[#e8e8e8]"
+            >
+              GitHub ↗
+            </a>
+          )}
         </div>
       </article>
     ))}

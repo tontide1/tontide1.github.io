@@ -1,0 +1,59 @@
+---
+import { getCollection, render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+
+export async function getStaticPaths() {
+  const items = await getCollection('research');
+  return items.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+---
+
+<ContentLayout
+  domain="RESEARCH"
+  title={item.data.title}
+  role="Empirical Investigation"
+  meta={item.data.status.toUpperCase()}
+  description={item.data.summary}
+>
+  <div class="bg-[#0a0a0a] border border-[#1f1f1f] p-4 rounded mb-8 space-y-3 text-xs">
+    <div>
+      <span class="text-[#525252] block text-[10px] uppercase font-bold">
+        RESEARCH QUESTION
+      </span>
+      <p class="text-[#e8e8e8] font-medium">{item.data.research_question}</p>
+    </div>
+    <div>
+      <span class="text-[#525252] block text-[10px] uppercase font-bold">
+        WORKING HYPOTHESIS
+      </span>
+      <p class="text-[#a3a3a3]">{item.data.hypothesis}</p>
+    </div>
+  </div>
+
+  <article class="prose prose-invert max-w-none space-y-4 text-xs md:text-sm text-[#cccccc] leading-relaxed border-t border-[#1f1f1f] pt-6">
+    <Content />
+  </article>
+
+  {item.data.related && item.data.related.length > 0 && (
+    <div class="mt-12 pt-6 border-t border-[#262626]">
+      <h3 class="text-xs font-bold text-[#777777] uppercase tracking-wider mb-3">
+        Gravitationally Related Artifacts
+      </h3>
+      <ul class="space-y-1.5 text-xs">
+        {item.data.related.map((rel) => (
+          <li>
+            <a href={rel} class="text-[#6ea8fe] hover:underline">
+              • {rel}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</ContentLayout>

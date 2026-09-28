@@ -1,0 +1,60 @@
+---
+title: "Legal-RAG (VinaLawRAG)"
+date: "2026-09-20"
+summary: "Specialized Vietnamese legal question-answering system combining BM25 keyword matching with dense semantic embeddings and cross-encoder reranking."
+stack: ["Python", "FastAPI", "Qdrant", "pgvector", "BM25", "Cross-Encoder"]
+status: "active"
+github: "https://github.com/tontide1/VinaLawRAG"
+related: ["/research/hybrid-retrieval-legal-qa", "/notes/bm25-vs-dense"]
+featured: true
+---
+
+# Overview
+
+**Legal-RAG** is an automated retrieval-augmented generation engine engineered specifically for Vietnamese statutory legislation and legal decrees.
+
+In legal domains, standard semantic vector search frequently fails because citations, specific article references (e.g. *Điều 32 khoản 1*), and formal decree numbers have little semantic variance in vector space, yet represent the critical distinction between correct jurisprudence and an invalid citation.
+
+```text
+User Query
+   ↓
+Query Expansion & Clause Parsing
+   ├────────────────────────┐
+   ↓                        ↓
+Dense Semantic Vector    BM25 Sparse Inverted Index
+(Qdrant / pgvector)      (Tuned k1=1.2, b=0.75)
+   │                        │
+   └───────────┬────────────┘
+               ↓
+    Reciprocal Rank Fusion (RRF)
+               ↓
+    Cross-Encoder Reranker
+               ↓
+    Final Augmented Context for LLM
+```
+
+## Architectural Highlights
+
+### 1. Statutory Chunking Strategy
+Instead of uniform character-length chunking (which slices through paragraphs arbitrarily), Legal-RAG parses the legal hierarchy natively:
+- **Law / Decree (Luật / Nghị định)**
+- **Chapter (Chương)**
+- **Article (Điều)**
+- **Clause (Khoản)**
+- **Point (Điểm)**
+
+Every chunk preserves its ancestral hierarchy metadata in document payloads.
+
+### 2. Hybrid Retrieval with RRF
+We execute simultaneous retrieval across two distinct indices:
+- **Dense index**: Captures semantic intent and natural-language query semantics.
+- **Sparse BM25 index**: Guarantees deterministic recall of article numbers, monetary fines, and statutory identifiers.
+
+The candidate sets are combined using Reciprocal Rank Fusion:
+
+```text
+RRF_Score(d) = Σ [ 1 / (60 + rank_m(d)) ]
+```
+
+### 3. Cross-Encoder Reranking
+Top-30 candidates from the fusion stage pass through a bilingual cross-encoder model trained on legal question-passage pairs to produce calibrated relevance scores before context injection.

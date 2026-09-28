@@ -5,6 +5,7 @@ import {
   $hoveredEntityId,
   $selectedEntityId,
   selectEntity,
+  triggerTransition,
 } from '../../stores/universe';
 
 export const HUD: React.FC = () => {
@@ -38,15 +39,14 @@ export const HUD: React.FC = () => {
         </div>
 
         <nav className="flex items-center space-x-4 text-[11px]">
-          <a
-            href="/about"
+          <button
+            onClick={() => triggerTransition('tai', '/about')}
             className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm"
           >
             ABOUT
-          </a>
+          </button>
           <button
             onClick={() => {
-              // Focus search / shortcut trigger
               alert('Search modal will be available in Slice 5 (Search + Map)');
             }}
             className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm flex items-center space-x-1"
@@ -81,15 +81,15 @@ export const HUD: React.FC = () => {
               onClick={() => selectEntity(activeEntity.id)}
               className="text-[#6ea8fe] hover:underline"
             >
-              [CLICK TO INSPECT]
+              [INSPECT]
             </button>
             <span className="text-[#3a3a3a]">·</span>
-            <a
-              href={activeEntity.path}
-              className="text-[#e8e8e8] hover:text-[#6ea8fe] underline"
+            <button
+              onClick={() => triggerTransition(activeEntity.id, activeEntity.path)}
+              className="text-[#e8e8e8] hover:text-[#6ea8fe] underline font-medium"
             >
-              READ DOMAIN →
-            </a>
+              ENTER DOMAIN →
+            </button>
           </div>
         </div>
       )}

@@ -95,9 +95,17 @@ export const ENTITY_MAP: Record<string, EntityInfo> = {
   },
 };
 
+export interface TransitionState {
+  targetId: string;
+  targetPath: string;
+  startTime: number;
+  duration: number;
+}
+
 export const $selectedEntityId = atom<string | null>(null);
 export const $hoveredEntityId = atom<string | null>(null);
 export const $isInspectOpen = atom<boolean>(false);
+export const $transitionState = atom<TransitionState | null>(null);
 
 export function selectEntity(id: string | null) {
   $selectedEntityId.set(id);
@@ -115,4 +123,13 @@ export function closeInspect() {
 
 export function hoverEntity(id: string | null) {
   $hoveredEntityId.set(id);
+}
+
+export function triggerTransition(targetId: string, targetPath: string) {
+  $transitionState.set({
+    targetId,
+    targetPath,
+    startTime: Date.now(),
+    duration: 650,
+  });
 }
