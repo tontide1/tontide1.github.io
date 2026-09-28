@@ -10,6 +10,7 @@ import { CelestialBody } from './CelestialBody';
 import { OrbitRing } from './OrbitRing';
 import { StarField } from './StarField';
 import { UniverseControls } from './UniverseControls';
+import { AsciiEffect } from './AsciiEffect';
 
 export const UniverseCanvas: React.FC = () => {
   const selectedId = useStore($selectedEntityId);
@@ -59,6 +60,9 @@ export const UniverseCanvas: React.FC = () => {
 
         {/* Orbit & Drag Camera Controls */}
         <UniverseControls />
+
+        {/* GPU Fragment Shader ASCII Post-Processing (Slice 6) */}
+        <AsciiEffect />
       </Canvas>
     </div>
   );

@@ -119,7 +119,12 @@ export const $hoveredEntityId = atom<string | null>(null);
 export const $isInspectOpen = atom<boolean>(false);
 export const $isSearchOpen = atom<boolean>(false);
 export const $isMapOpen = atom<boolean>(false);
+export const $isAsciiMode = atom<boolean>(true);
 export const $transitionState = atom<TransitionState | null>(null);
+
+export function toggleAsciiMode() {
+  $isAsciiMode.set(!$isAsciiMode.get());
+}
 
 export function selectEntity(id: string | null) {
   $selectedEntityId.set(id);

@@ -5,16 +5,19 @@ import {
   $hoveredEntityId,
   $selectedEntityId,
   $isInspectOpen,
+  $isAsciiMode,
   selectEntity,
   triggerTransition,
   openSearch,
   toggleMap,
+  toggleAsciiMode,
 } from '../../stores/universe';
 
 export const HUD: React.FC = () => {
   const hoveredId = useStore($hoveredEntityId);
   const selectedId = useStore($selectedEntityId);
   const isInspectOpen = useStore($isInspectOpen);
+  const isAscii = useStore($isAsciiMode);
 
   const activeEntity = hoveredId
     ? ENTITY_MAP[hoveredId]
@@ -42,7 +45,25 @@ export const HUD: React.FC = () => {
           </span>
         </div>
 
-        <nav className="flex items-center space-x-4 text-[11px]">
+        <nav className="flex items-center space-x-3 sm:space-x-4 text-[11px]">
+          <button
+            onClick={toggleAsciiMode}
+            className={`transition-colors border px-2 py-1 rounded backdrop-blur-sm flex items-center space-x-1.5 ${
+              isAscii
+                ? 'border-[#6ea8fe]/50 text-[#6ea8fe] bg-[#6ea8fe]/10'
+                : 'border-[#262626] text-[#777777] hover:text-[#e8e8e8] bg-[#050505]/70'
+            }`}
+            title="Toggle GPU Fragment Shader ASCII Pipeline"
+          >
+            <span>ASCII</span>
+            <span
+              className={`text-[9px] px-1 rounded ${
+                isAscii ? 'bg-[#6ea8fe]/25 text-[#6ea8fe]' : 'bg-[#1a1a1a] text-[#525252]'
+              }`}
+            >
+              {isAscii ? 'ON' : 'OFF'}
+            </span>
+          </button>
           <button
             onClick={() => triggerTransition('tai', '/about')}
             className="hover:text-[#e8e8e8] transition-colors border border-[#262626] px-2 py-1 rounded bg-[#050505]/70 backdrop-blur-sm"
