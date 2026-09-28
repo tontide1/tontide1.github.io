@@ -19,6 +19,41 @@ export const UniverseControls: React.FC = () => {
   const mouseParallax = useRef({ x: 0, y: 0 });
   const hasNavigated = useRef(false);
 
+  // Reset state on mount and handle bfcache restorations
+  useEffect(() => {
+    const onPageShow = (e: PageTransitionEvent) => {
+      $transitionState.set(null);
+      hasNavigated.current = false;
+    };
+
+    window.addEventListener('pageshow', onPageShow);
+    $transitionState.set(null);
+    hasNavigated.current = false;
+
+    return () => {
+      window.removeEventListener('pageshow', onPageShow);
+    };
+  }, []);
+
+  // Manage transition lifecycle and guarantee navigation with safety timer
+  useEffect(() => {
+    if (!transition) return;
+
+    hasNavigated.current = false;
+
+    // Safety timeout ensuring navigation always completes even if useFrame is throttled
+    const timer = setTimeout(() => {
+      if (!hasNavigated.current && transition) {
+        hasNavigated.current = true;
+        const targetPath = transition.targetPath;
+        $transitionState.set(null);
+        window.location.href = targetPath;
+      }
+    }, transition.duration + 200);
+
+    return () => clearTimeout(timer);
+  }, [transition]);
+
   useEffect(() => {
     const dom = gl.domElement;
 
@@ -98,7 +133,9 @@ export const UniverseControls: React.FC = () => {
 
       if (progress >= 1 && !hasNavigated.current) {
         hasNavigated.current = true;
-        window.location.href = transition.targetPath;
+        const targetPath = transition.targetPath;
+        $transitionState.set(null);
+        window.location.href = targetPath;
       }
       return;
     }
