@@ -4,6 +4,7 @@ import {
   ENTITY_MAP,
   $hoveredEntityId,
   $selectedEntityId,
+  $isInspectOpen,
   selectEntity,
   triggerTransition,
 } from '../../stores/universe';
@@ -11,10 +12,11 @@ import {
 export const HUD: React.FC = () => {
   const hoveredId = useStore($hoveredEntityId);
   const selectedId = useStore($selectedEntityId);
+  const isInspectOpen = useStore($isInspectOpen);
 
   const activeEntity = hoveredId
     ? ENTITY_MAP[hoveredId]
-    : selectedId
+    : !isInspectOpen && selectedId
     ? ENTITY_MAP[selectedId]
     : null;
 
@@ -57,9 +59,9 @@ export const HUD: React.FC = () => {
         </nav>
       </header>
 
-      {/* Center Tooltip / Hover Inspector */}
+      {/* Telemetry / Hover Inspector Panel (pointer-events-none to prevent flicker loops) */}
       {activeEntity && (
-        <div className="pointer-events-auto self-center bg-[#0a0a0a]/90 backdrop-blur-md border border-[#262626] rounded px-4 py-2.5 shadow-xl text-center max-w-sm transition-all duration-200">
+        <div className="pointer-events-none absolute bottom-20 left-1/2 -translate-x-1/2 bg-[#0a0a0a]/90 backdrop-blur-md border border-[#262626] rounded px-4 py-2.5 shadow-2xl text-center max-w-sm transition-all duration-200">
           <div className="flex items-center justify-center space-x-2 mb-1">
             <span
               className="w-1.5 h-1.5 rounded-full"
@@ -76,20 +78,8 @@ export const HUD: React.FC = () => {
           <p className="text-[11px] text-[#a3a3a3] leading-relaxed">
             {activeEntity.description}
           </p>
-          <div className="mt-2 flex items-center justify-center space-x-2 text-[10px]">
-            <button
-              onClick={() => selectEntity(activeEntity.id)}
-              className="text-[#6ea8fe] hover:underline"
-            >
-              [INSPECT]
-            </button>
-            <span className="text-[#3a3a3a]">·</span>
-            <button
-              onClick={() => triggerTransition(activeEntity.id, activeEntity.path)}
-              className="text-[#e8e8e8] hover:text-[#6ea8fe] underline font-medium"
-            >
-              ENTER DOMAIN →
-            </button>
+          <div className="mt-2 text-[10px] text-[#6ea8fe] tracking-wider font-medium">
+            [CLICK TO INSPECT OR ENTER DOMAIN]
           </div>
         </div>
       )}

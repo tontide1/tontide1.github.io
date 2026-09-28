@@ -56,19 +56,19 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
   const hitRadius = useMemo(() => {
     switch (entity.id) {
       case 'tai':
-        return 1.8;
+        return 2.0;
       case 'projects':
         return 1.6;
       case 'notes':
         return 1.5;
       case 'thoughts':
-        return 1.4;
+        return 1.5;
       case 'research':
-        return 1.4;
+        return 1.5;
       case 'life':
-        return 1.4;
+        return 1.5;
       default:
-        return 1.2;
+        return 1.3;
     }
   }, [entity.id]);
 
@@ -81,7 +81,8 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
           document.body.style.cursor = 'pointer';
           hoverEntity(entity.id);
         }}
-        onPointerOut={() => {
+        onPointerOut={(e) => {
+          e.stopPropagation();
           document.body.style.cursor = 'default';
           hoverEntity(null);
         }}
