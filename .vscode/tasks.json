@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Serve Drafts",
+            "label": "Dev",
             "type": "shell",
-            "command": "hugo server -D",
+            "command": "pnpm dev",
             "group": {
                 "kind": "test",
                 "isDefault": true
@@ -17,7 +17,7 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "hugo",
+            "command": "pnpm build",
             "group": {
                 "kind": "build",
                 "isDefault": true
