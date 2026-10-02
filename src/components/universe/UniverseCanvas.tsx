@@ -14,6 +14,7 @@ import {
 } from '../../stores/environment';
 import { CelestialBody } from './CelestialBody';
 import { OrbitRing } from './OrbitRing';
+import { HoverLight } from './HoverLight';
 import { StarField } from './StarField';
 import { UniverseControls } from './UniverseControls';
 import { AsciiEffect } from './AsciiEffect';
@@ -76,6 +77,10 @@ export const UniverseCanvas: React.FC = () => {
             isSelected={selectedId === entity.id}
           />
         ))}
+
+        {/* Single persistent highlight light: see HoverLight for why it is not
+            mounted per body. */}
+        <HoverLight />
 
         {/* Orbit & Drag Camera Controls */}
         <UniverseControls />

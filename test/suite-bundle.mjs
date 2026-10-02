@@ -108,6 +108,67 @@ export default async function run({ baseUrl }) {
     s.check('noscript fallback still present', boot.noscript === true);
     await screenshot(cdp, path.join(ARTIFACTS, 'bundle-home.png'));
 
+    /**
+     * The ASCII toggle swaps the render path: off draws the scene straight to
+     * the canvas, on routes it through the post-processing composer. Freeze the
+     * scene so one region can be compared byte for byte — turning ASCII on must
+     * change those pixels, and turning it back off must restore them exactly. If
+     * the direct render ever silently goes through the composer again, the two
+     * frames become the same and the first check fails.
+     */
+    await cdp.send('Emulation.setEmulatedMedia', {
+      features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
+    });
+    await sleep(600);
+
+    const asciiButton = await evaluate(
+      cdp,
+      `(() => {
+         const b = document.querySelector('button[title="Toggle GPU Fragment Shader ASCII Pipeline"]');
+         if (!b) return null;
+         const r = b.getBoundingClientRect();
+         return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+       })()`
+    );
+    s.check('the ASCII toggle is in the HUD', !!asciiButton);
+
+    const crop = async () =>
+      (await cdp.send('Page.captureScreenshot', {
+        format: 'png',
+        clip: { x: 520, y: 250, width: 400, height: 400, scale: 1 },
+      })).data;
+
+    const toggleAscii = async () => {
+      const args = { x: asciiButton.x, y: asciiButton.y, button: 'left', clickCount: 1 };
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', buttons: 1, ...args });
+      await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', buttons: 0, ...args });
+    };
+
+    /** The first ASCII frame compiles its shader, so poll rather than guess a delay. */
+    const captureUntil = async (direct, same, timeoutMs = 6000) => {
+      const deadline = Date.now() + timeoutMs;
+      let last = await crop();
+      while (Date.now() < deadline && (last === direct) !== same) {
+        await sleep(300);
+        last = await crop();
+      }
+      return last;
+    };
+
+    if (asciiButton) {
+      const direct = await crop();
+      await toggleAscii();
+      const ascii = await captureUntil(direct, false);
+      s.check('turning ASCII on changes what the canvas draws', ascii !== direct);
+      await screenshot(cdp, path.join(ARTIFACTS, 'bundle-ascii.png'), {
+        x: 520, y: 250, width: 400, height: 400, scale: 1,
+      });
+
+      await toggleAscii();
+      const restored = await captureUntil(direct, true);
+      s.check('turning it back off restores the direct render exactly', restored === direct);
+    }
+
     // Chrome probes /favicon.ico by default; the declared icon is /img/favicon.png.
     const unexpected = badResponses.filter((r) => !r.includes('/favicon.ico'));
     s.check('no unexpected 4xx or 5xx responses', unexpected.length === 0, unexpected.join(' | '));

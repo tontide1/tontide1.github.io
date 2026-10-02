@@ -52,7 +52,6 @@ const AsciiShader = {
     uResolution: { value: new THREE.Vector2() },
     uCharSize: { value: 8.5 }, // Character width in pixels
     uCharCount: { value: 10.0 },
-    uEnabled: { value: 1.0 },
   },
   vertexShader: `
     varying vec2 vUv;
@@ -67,15 +66,9 @@ const AsciiShader = {
     uniform vec2 uResolution;
     uniform float uCharSize;
     uniform float uCharCount;
-    uniform float uEnabled;
     varying vec2 vUv;
 
     void main() {
-      if (uEnabled < 0.5) {
-        gl_FragColor = texture2D(tDiffuse, vUv);
-        return;
-      }
-
       // Monospace cell dimensions (width : height = 1.0 : 1.5)
       vec2 cellSize = vec2(uCharSize, uCharSize * 1.5);
       vec2 cellCount = uResolution / cellSize;
@@ -111,7 +104,6 @@ const AsciiShader = {
 
 export const AsciiEffect: React.FC = () => {
   const { gl, scene, camera, size, viewport } = useThree();
-  const isAscii = useStore($isAsciiMode);
   const deviceTier = useStore($deviceTier);
   const reducedMotion = useStore($prefersReducedMotion);
 
@@ -125,18 +117,14 @@ export const AsciiEffect: React.FC = () => {
   const shaderPassRef = useRef<ShaderPass | null>(null);
 
   useEffect(() => {
-    // viewport.dpr is the pixel ratio R3F actually renders at, so the ASCII
-    // pass samples the same buffer the scene was drawn into.
-    const dpr = viewport.dpr;
-    const renderTarget = new THREE.WebGLRenderTarget(
-      size.width * dpr,
-      size.height * dpr,
-      {
-        minFilter: THREE.LinearFilter,
-        magFilter: THREE.LinearFilter,
-        format: THREE.RGBAFormat,
-      }
-    );
+    // Composer sizes are CSS pixels: `EffectComposer` multiplies by the
+    // renderer's pixel ratio itself, and `viewport.dpr` is already that ratio.
+    // Passing device pixels here rendered the post-processing buffer at dpr².
+    const renderTarget = new THREE.WebGLRenderTarget(size.width, size.height, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      format: THREE.RGBAFormat,
+    });
 
     const composer = new EffectComposer(gl, renderTarget);
     const renderPass = new RenderPass(scene, camera);
@@ -148,9 +136,9 @@ export const AsciiEffect: React.FC = () => {
       fragmentShader: AsciiShader.fragmentShader,
     };
     asciiShader.uniforms.uCharAtlas.value = charAtlasTexture;
-    asciiShader.uniforms.uResolution.value.set(size.width * dpr, size.height * dpr);
+    // The shader compares cell size against the buffer in *device* pixels.
+    asciiShader.uniforms.uResolution.value.set(size.width * viewport.dpr, size.height * viewport.dpr);
     asciiShader.uniforms.uCharSize.value = getQualityProfile().asciiCharSize;
-    asciiShader.uniforms.uEnabled.value = isAscii ? 1.0 : 0.0;
 
     const shaderPass = new ShaderPass(asciiShader);
     composer.addPass(shaderPass);
@@ -167,25 +155,29 @@ export const AsciiEffect: React.FC = () => {
   // Update resolution on viewport resize and cell size on device tier change
   useEffect(() => {
     if (composerRef.current && shaderPassRef.current) {
-      const dpr = viewport.dpr;
-      composerRef.current.setSize(size.width * dpr, size.height * dpr);
-      shaderPassRef.current.uniforms.uResolution.value.set(size.width * dpr, size.height * dpr);
+      composerRef.current.setSize(size.width, size.height);
+      shaderPassRef.current.uniforms.uResolution.value.set(
+        size.width * viewport.dpr,
+        size.height * viewport.dpr
+      );
       shaderPassRef.current.uniforms.uCharSize.value = quality.asciiCharSize;
     }
   }, [size, viewport.dpr, quality.asciiCharSize]);
 
-  // Update enabled state when toggled
-  useEffect(() => {
-    if (shaderPassRef.current) {
-      shaderPassRef.current.uniforms.uEnabled.value = isAscii ? 1.0 : 0.0;
-    }
-  }, [isAscii]);
-
-  // Execute composer render with priority 1 (overrides default R3F render loop)
+  /**
+   * Render the frame, and take over from R3F's own render because a positive
+   * `useFrame` priority suppresses it.
+   *
+   * The composer only earns its cost while ASCII mode is on. With it off — the
+   * default — it still allocated a full-screen render target and copied the
+   * scene through a second full-screen pass for nothing, so the scene is drawn
+   * straight to the canvas instead. The store is read imperatively so toggling
+   * ASCII does not re-render the canvas tree.
+   */
   useFrame(() => {
-    if (composerRef.current) {
-      composerRef.current.render();
-    }
+    const composer = composerRef.current;
+    if (composer && $isAsciiMode.get()) composer.render();
+    else gl.render(scene, camera);
   }, 1);
 
   return null;

@@ -41,7 +41,7 @@ const FALLBACK_FOV = 50;
 /** R3F hands over a synthetic event; only these three fields are needed. */
 type PointerSample = Pick<PointerEvent, 'pointerId' | 'clientX' | 'clientY'>;
 
-export const CelestialBody: React.FC<CelestialBodyProps> = ({
+const CelestialBodyBody: React.FC<CelestialBodyProps> = ({
   entity,
   isHovered,
   isSelected,
@@ -194,8 +194,6 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
   // Never leave a pull armed if the canvas unmounts mid-gesture.
   useEffect(() => () => drag.current.finish?.(), []);
 
-  const baseColor = useMemo(() => new THREE.Color(entity.color), [entity.color]);
-
   // Radius for the invisible click/hover hitbox
   const hitRadius = useMemo(() => {
     switch (entity.id) {
@@ -267,15 +265,13 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
       {entity.id === 'research' && (
         <ResearchBinary isHovered={isHovered} isSelected={isSelected} />
       )}
-
-      {/* Subtle dynamic illumination when hovered or selected */}
-      {(isHovered || isSelected) && (
-        <pointLight
-          color={baseColor}
-          intensity={isSelected ? 3.0 : 1.6}
-          distance={5}
-        />
-      )}
     </group>
   );
 };
+
+/**
+ * Memoised because the hover state lives in the canvas and changes it re-render
+ * the whole tree: without this every one of the six bodies, and every visual
+ * inside them, re-renders when a single body is hovered.
+ */
+export const CelestialBody = React.memo(CelestialBodyBody);
