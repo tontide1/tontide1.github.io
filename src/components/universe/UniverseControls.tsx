@@ -9,7 +9,6 @@ const MIN_DISTANCE = 8;
 const MAX_DISTANCE = 32;
 const MIN_PHI = 0.1;
 const MAX_PHI = Math.PI / 2.2;
-const NO_PARALLAX = { x: 0, y: 0 };
 
 export const UniverseControls: React.FC = () => {
   const { camera, gl } = useThree();
@@ -27,7 +26,6 @@ export const UniverseControls: React.FC = () => {
   const targetDistance = useRef(initialDistance);
   const currentDistance = useRef(initialDistance);
 
-  const mouseParallax = useRef({ x: 0, y: 0 });
   const hasNavigated = useRef(false);
 
   // Reset state on mount and handle bfcache restorations
@@ -102,12 +100,6 @@ export const UniverseControls: React.FC = () => {
 
     const onPointerMove = (e: PointerEvent) => {
       if (transition) return;
-
-      if (e.pointerType === 'mouse') {
-        const nx = (e.clientX / window.innerWidth) * 2 - 1;
-        const ny = (e.clientY / window.innerHeight) * 2 - 1;
-        mouseParallax.current = { x: nx * 0.4, y: ny * 0.2 };
-      }
 
       if (!pointers.current.has(e.pointerId)) return;
 
@@ -213,9 +205,8 @@ export const UniverseControls: React.FC = () => {
     currentRotation.current.y += (targetRotation.current.y - currentRotation.current.y) * factor;
     currentDistance.current += (targetDistance.current - currentDistance.current) * factor;
 
-    const parallax = reducedMotion ? NO_PARALLAX : mouseParallax.current;
-    const phi = currentRotation.current.x + parallax.y * 0.05;
-    const theta = currentRotation.current.y + parallax.x * 0.05;
+    const phi = currentRotation.current.x;
+    const theta = currentRotation.current.y;
     const dist = currentDistance.current;
 
     const x = dist * Math.sin(phi) * Math.sin(theta);

@@ -10,7 +10,7 @@
  */
 import path from 'node:path';
 import {
-  launch, emulateDevice, evaluate, navigate, screenshot, sleep, bindStores,
+  launch, emulateDevice, evaluate, navigate, screenshot, sleep, bindStores, readCameraPosition,
 } from './cdp.mjs';
 import { ARTIFACTS, createSuite, collectPageErrors, waitForCanvas } from './harness.mjs';
 
@@ -210,6 +210,28 @@ export default async function run({ devUrl }) {
     // --- spring, with motion allowed ---------------------------------------
     await evaluate(cdp, 'window.__stores.environment.$prefersReducedMotion.set(false)');
     await sleep(400);
+
+    /**
+     * Only a held button orbits the camera.
+     *
+     * Judged on the camera itself, not on pixels: the parallax this replaced
+     * applied only while motion was enabled, so a frozen scene cannot see it and
+     * this is the one point in the suite that cannot freeze. The tolerance is a
+     * hundredth of the ~0.15 world units a parallax across the screen produced.
+     */
+    const restBefore = await readCameraPosition(cdp);
+    for (let i = 0; i < 6; i++) {
+      await moveMouse(180 + i * 200, 240 + (i % 2) * 300);
+      await sleep(60);
+    }
+    await sleep(600);
+    const restAfter = await readCameraPosition(cdp);
+    s.check(
+      'moving the pointer with no button held leaves the camera alone',
+      restBefore && restAfter && dist(restBefore, restAfter) < 0.01,
+      `${JSON.stringify(restBefore)} -> ${JSON.stringify(restAfter)}`
+    );
+
     // TÀI's orbit base is the origin, so its published position IS the offset.
     const tai = await locate('tai', null);
     s.check('TÀI is grabbable', !!tai);

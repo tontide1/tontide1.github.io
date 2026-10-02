@@ -275,5 +275,32 @@ export async function bindStores(cdp, names) {
   return result;
 }
 
+/**
+ * Read the R3F camera's world position from the page.
+ *
+ * The camera lives in an R3F root's store, and the root is only reachable from
+ * the app's own copy of @react-three/fiber — the same module-duplication trap
+ * `bindStores` documents. Suites judging camera motion need this, because pixel
+ * comparison only works while the scene is frozen, and a hover parallax would
+ * only ever apply while motion was enabled.
+ */
+export async function readCameraPosition(cdp) {
+  return JSON.parse(
+    await evaluate(
+      cdp,
+      `(async () => {
+         const urls = performance.getEntriesByType('resource').map(r => r.name);
+         const url = urls.find(u => /@react-three\\/fiber|@react-three_fiber/.test(u));
+         if (!url) return 'null';
+         const mod = await import(url);
+         const root = [...(mod._roots?.values() ?? [])][0];
+         if (!root) return 'null';
+         const p = root.store.getState().camera.position;
+         return JSON.stringify([p.x, p.y, p.z]);
+       })()`
+    )
+  );
+}
+
 // Re-exported so suites can import the whole browser toolkit from one place.
 export { sleep };

@@ -413,11 +413,10 @@ Target: **exploration, not gaming**.
 Desktop:
 
 ```text
-pointer movement → subtle parallax
- drag             → rotate
- scroll           → zoom
- hover            → inspect
- click            → enter
+drag             → rotate
+scroll           → zoom
+hover            → inspect
+click            → enter
 ```
 
 Do not require:
