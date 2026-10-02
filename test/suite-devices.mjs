@@ -16,9 +16,9 @@ import { createSuite, collectPageErrors, waitForCanvas } from './harness.mjs';
  * pass or fail for reasons that have nothing to do with the site.
  */
 const PROFILES = [
-  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
-  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 1, stars: 110, cell: 11 },
-  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, cores: 4, memoryGB: 4, tier: 'medium', maxDpr: 1.5, stars: 220, cell: 9.5 },
+  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 110, cell: 11 },
+  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 110, cell: 11 },
+  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, cores: 4, memoryGB: 4, tier: 'medium', maxDpr: 2, stars: 220, cell: 9.5 },
 ];
 
 export default async function run({ devUrl }) {
@@ -55,7 +55,16 @@ export default async function run({ devUrl }) {
       s.check(`${p.name} reduced-motion flag`, q.reduced === p.reduced, String(q.reduced));
       s.check(`${p.name} canvas is present`, !!boot);
       s.check(`${p.name} canvas is sized to the viewport`, boot?.cssW === p.width && boot?.cssH === p.height, JSON.stringify(boot));
-      s.check(`${p.name} backing store honours the dpr budget`, boot && boot.w / boot.cssW <= p.maxDpr + 0.01, `${boot?.w}/${boot?.cssW} > ${p.maxDpr}`);
+      // The backing store must be the screen's own pixel density up to the cap.
+      // A `<` bound here is what let a phone render at a third of its physical
+      // pixels and look blurred, so this is an equality on the real scale.
+      const expectedScale = Math.min(p.dpr, p.maxDpr);
+      s.check(
+        `${p.name} backing store is min(screen dpr, cap)`,
+        boot && Math.abs(boot.w / boot.cssW - expectedScale) < 0.02,
+        `${boot?.w}/${boot?.cssW} = ${boot && (boot.w / boot.cssW).toFixed(2)}, expected ${expectedScale}`
+      );
+      s.note(`${p.name} backing store`, `${boot?.w}x${boot?.h} at scale ${boot && (boot.w / boot.cssW).toFixed(2)} (screen dpr ${p.dpr})`);
 
       // Frames are compared as real screenshots. canvas.toDataURL() is useless
       // here: with preserveDrawingBuffer false the WebGL buffer is already

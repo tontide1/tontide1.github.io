@@ -138,7 +138,8 @@ export const AsciiEffect: React.FC = () => {
     asciiShader.uniforms.uCharAtlas.value = charAtlasTexture;
     // The shader compares cell size against the buffer in *device* pixels.
     asciiShader.uniforms.uResolution.value.set(size.width * viewport.dpr, size.height * viewport.dpr);
-    asciiShader.uniforms.uCharSize.value = getQualityProfile().asciiCharSize;
+    // The shader works in device pixels; the budget is stated in CSS pixels.
+    asciiShader.uniforms.uCharSize.value = getQualityProfile().asciiCharSize * viewport.dpr;
 
     const shaderPass = new ShaderPass(asciiShader);
     composer.addPass(shaderPass);
@@ -160,7 +161,7 @@ export const AsciiEffect: React.FC = () => {
         size.width * viewport.dpr,
         size.height * viewport.dpr
       );
-      shaderPassRef.current.uniforms.uCharSize.value = quality.asciiCharSize;
+      shaderPassRef.current.uniforms.uCharSize.value = quality.asciiCharSize * viewport.dpr;
     }
   }, [size, viewport.dpr, quality.asciiCharSize]);
 

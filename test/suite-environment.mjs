@@ -99,14 +99,14 @@ export default async function run() {
     const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
     s.check('high budget', same(budget('high'), { tier: 'high', maxDpr: 2, starCount: 400, asciiCharSize: 8.5 }), JSON.stringify(budget('high')));
-    s.check('medium budget', same(budget('medium'), { tier: 'medium', maxDpr: 1.5, starCount: 220, asciiCharSize: 9.5 }), JSON.stringify(budget('medium')));
-    s.check('low budget', same(budget('low'), { tier: 'low', maxDpr: 1, starCount: 110, asciiCharSize: 11 }), JSON.stringify(budget('low')));
+    s.check('medium budget', same(budget('medium'), { tier: 'medium', maxDpr: 2, starCount: 220, asciiCharSize: 9.5 }), JSON.stringify(budget('medium')));
+    s.check('low budget', same(budget('low'), { tier: 'low', maxDpr: 2, starCount: 110, asciiCharSize: 11 }), JSON.stringify(budget('low')));
 
     // Reduced motion thins particles but must not silently drop desktop resolution.
     const reducedHigh = mod.getQualityProfile('high', true);
     s.check('reduced motion thins the starfield to the low count', reducedHigh.starCount === 110, String(reducedHigh.starCount));
     s.check('reduced motion keeps desktop maxDpr', reducedHigh.maxDpr === 2, String(reducedHigh.maxDpr));
-    s.note('high/medium/low budgets', '400/220/110 stars, dpr 2/1.5/1');
+    s.note('high/medium/low budgets', '400/220/110 stars, dpr 2/2/2');
     s.note('reduced motion on high tier', `stars=${reducedHigh.starCount} maxDpr=${reducedHigh.maxDpr}`);
   }
 

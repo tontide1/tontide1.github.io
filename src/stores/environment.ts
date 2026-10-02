@@ -8,16 +8,32 @@ export interface QualityProfile {
   maxDpr: number;
   /** Number of background stars rendered in the universe. */
   starCount: number;
-  /** Character cell width in device pixels for the ASCII pass. */
+  /**
+   * Character cell width for the ASCII pass, in CSS pixels. The pass runs in
+   * device pixels, so `AsciiEffect` scales it by the pixel ratio — otherwise
+   * raising the resolution cap would silently halve the glyph size on a phone.
+   */
   asciiCharSize: number;
 }
 
-type TierBudget = Omit<QualityProfile, 'tier'>;
+/**
+ * Device pixels per CSS pixel the canvas may render at, on every tier.
+ *
+ * Resolution is a property of the screen, not of the device's power: on a 3x
+ * phone the old budget of 1 drew the universe at a third of the physical pixels
+ * and the browser stretched it back up, which read as a blurry render. R3F
+ * clamps this against the real `devicePixelRatio`, so a 1x screen still renders
+ * at 1x. Tiers buy their headroom in particles, anti-aliasing and ASCII cell
+ * size instead.
+ */
+const MAX_DPR = 2;
+
+type TierBudget = Omit<QualityProfile, 'tier' | 'maxDpr'>;
 
 const TIER_BUDGETS: Record<DeviceTier, TierBudget> = {
-  high: { maxDpr: 2, starCount: 400, asciiCharSize: 8.5 },
-  medium: { maxDpr: 1.5, starCount: 220, asciiCharSize: 9.5 },
-  low: { maxDpr: 1, starCount: 110, asciiCharSize: 11 },
+  high: { starCount: 400, asciiCharSize: 8.5 },
+  medium: { starCount: 220, asciiCharSize: 9.5 },
+  low: { starCount: 110, asciiCharSize: 11 },
 };
 
 function isBrowser() {
@@ -55,7 +71,7 @@ export function getQualityProfile(
 
   return {
     tier,
-    maxDpr: budget.maxDpr,
+    maxDpr: MAX_DPR,
     // Reduced motion thins the particle field; render resolution stays a device concern.
     starCount: reducedMotion
       ? Math.min(budget.starCount, TIER_BUDGETS.low.starCount)
