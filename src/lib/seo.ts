@@ -26,7 +26,7 @@ export const PERSON = {
 export const WEBSITE = {
   '@type': 'WebSite',
   '@id': '#website',
-  name: 'TÀI — A Personal Gravity System',
+  name: 'TONTIDE1 — A Personal Gravity System',
   description:
     'Personal digital universe where Tài is the stable gravitational center and his public life, thoughts, notes, projects, and research orbit around him.',
   inLanguage: IN_LANGUAGE,

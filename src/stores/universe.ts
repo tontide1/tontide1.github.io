@@ -17,7 +17,7 @@ export interface EntityInfo {
 export const ENTITY_MAP: Record<string, EntityInfo> = {
   tai: {
     id: 'tai',
-    name: 'TÀI',
+    name: 'TONTIDE1',
     role: 'Central Gravitational Anchor',
     description: 'Software developer, AI researcher, and builder. Center of mass of this digital system.',
     meta: 'STABLE CORE',

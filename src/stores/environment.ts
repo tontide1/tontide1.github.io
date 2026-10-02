@@ -31,9 +31,9 @@ const MAX_DPR = 2;
 type TierBudget = Omit<QualityProfile, 'tier' | 'maxDpr'>;
 
 const TIER_BUDGETS: Record<DeviceTier, TierBudget> = {
-  high: { starCount: 400, asciiCharSize: 8.5 },
-  medium: { starCount: 220, asciiCharSize: 9.5 },
-  low: { starCount: 110, asciiCharSize: 11 },
+  high: { starCount: 5000, asciiCharSize: 8.5 },
+  medium: { starCount: 3000, asciiCharSize: 9.5 },
+  low: { starCount: 1500, asciiCharSize: 11 },
 };
 
 function isBrowser() {

@@ -37,7 +37,7 @@ export const TaiCore: React.FC<TaiCoreProps> = ({ isHovered, isSelected }) => {
     }
   });
 
-  const emissiveIntensity = isSelected ? 0.9 : isHovered ? 0.6 : 0.3;
+  const emissiveIntensity = isSelected ? 1.3 : isHovered ? 0.95 : 0.6;
 
   return (
     <group>

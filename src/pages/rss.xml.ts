@@ -22,7 +22,7 @@ async function entries() {
 
 export async function GET(context: { site: URL }) {
   return rss({
-    title: 'TÀI — A Personal Gravity System',
+    title: 'TONTIDE1 — A Personal Gravity System',
     description:
       'Projects, research, life, thoughts, and notes orbiting one stable center.',
     site: context.site,

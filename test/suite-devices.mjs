@@ -16,9 +16,9 @@ import { createSuite, collectPageErrors, waitForCanvas } from './harness.mjs';
  * pass or fail for reasons that have nothing to do with the site.
  */
 const PROFILES = [
-  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 110, cell: 11 },
-  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 110, cell: 11 },
-  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, cores: 4, memoryGB: 4, tier: 'medium', maxDpr: 2, stars: 220, cell: 9.5 },
+  { name: 'phone (coarse, dpr 3)', width: 390, height: 844, dpr: 3, mobile: true, reduced: false, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 1500, cell: 11 },
+  { name: 'phone + reduced motion', width: 390, height: 844, dpr: 3, mobile: true, reduced: true, cores: 4, memoryGB: 3, tier: 'low', maxDpr: 2, stars: 1500, cell: 11 },
+  { name: 'desktop 1440x900', width: 1440, height: 900, dpr: 1, mobile: false, reduced: false, cores: 4, memoryGB: 4, tier: 'medium', maxDpr: 2, stars: 3000, cell: 9.5 },
 ];
 
 export default async function run({ devUrl }) {
@@ -65,6 +65,22 @@ export default async function run({ devUrl }) {
         `${boot?.w}/${boot?.cssW} = ${boot && (boot.w / boot.cssW).toFixed(2)}, expected ${expectedScale}`
       );
       s.note(`${p.name} backing store`, `${boot?.w}x${boot?.h} at scale ${boot && (boot.w / boot.cssW).toFixed(2)} (screen dpr ${p.dpr})`);
+
+      // The HUD sits over the canvas in a fixed layer, so a header wider than the
+      // screen clips its last control instead of scrolling: at 375px the MAP
+      // button used to be cut off the right edge.
+      const hud = await evaluate(
+        cdp,
+        `(() => {
+           const header = document.querySelector('header');
+           return { scroll: header?.scrollWidth ?? 0, client: header?.clientWidth ?? 0 };
+         })()`
+      );
+      s.check(
+        `${p.name} the HUD header fits the viewport`,
+        hud.scroll <= hud.client + 1,
+        `header content ${hud.scroll}px in ${hud.client}px`
+      );
 
       // Frames are compared as real screenshots. canvas.toDataURL() is useless
       // here: with preserveDrawingBuffer false the WebGL buffer is already

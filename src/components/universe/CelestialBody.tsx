@@ -38,6 +38,45 @@ const MAX_CORE_OFFSET = 1.6;
 /** Fallback perspective when the active camera is orthographic. */
 const FALLBACK_FOV = 50;
 
+/** Halo reach as a multiple of the body's hit radius, and its peak opacity. */
+const HALO_SCALE = 3.4;
+const HALO_OPACITY_HOVER = 0.6;
+const HALO_OPACITY_SELECTED = 0.85;
+const HALO_FADE_PER_SECOND = 7;
+
+/**
+ * Radial-gradient glow for the highlight, built once for every body.
+ *
+ * A sprite rather than a shader: the gradient is the only thing it needs, and
+ * one 128px texture drawn additively costs less than another material per body.
+ * With depth testing left on, the body itself occludes the middle of the
+ * sprite, so what shows is a soft ring around it.
+ */
+let haloTexture: THREE.CanvasTexture | null = null;
+function getHaloTexture(): THREE.CanvasTexture {
+  if (haloTexture) return haloTexture;
+
+  const size = 128;
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+    gradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.35)');
+    gradient.addColorStop(0.65, 'rgba(255, 255, 255, 0.08)');
+    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+  }
+
+  haloTexture = new THREE.CanvasTexture(canvas);
+  haloTexture.needsUpdate = true;
+  return haloTexture;
+}
+
 /** R3F hands over a synthetic event; only these three fields are needed. */
 type PointerSample = Pick<PointerEvent, 'pointerId' | 'clientX' | 'clientY'>;
 
@@ -48,6 +87,8 @@ const CelestialBodyBody: React.FC<CelestialBodyProps> = ({
 }) => {
   const { camera, size } = useThree();
   const groupRef = useRef<THREE.Group>(null);
+  const haloRef = useRef<THREE.Sprite>(null);
+  const haloOpacity = useRef(0);
   const angleRef = useRef(entity.orbitAngle);
   const pointerDownAt = useRef<{ x: number; y: number } | null>(null);
 
@@ -111,6 +152,16 @@ const CelestialBodyBody: React.FC<CelestialBodyProps> = ({
 
     group.position.set(base.x + body.offset.x, base.y + body.offset.y, base.z + body.offset.z);
     updateEntityPosition(entity.id, group.position.x, group.position.y, group.position.z);
+
+    // Highlight halo: eased in place of a prop-driven opacity, so hovering never
+    // re-renders the scene graph mid-pointer-move.
+    const halo = haloRef.current;
+    if (halo) {
+      const target = isSelected ? HALO_OPACITY_SELECTED : isHovered ? HALO_OPACITY_HOVER : 0;
+      haloOpacity.current += (target - haloOpacity.current) * Math.min(delta * HALO_FADE_PER_SECOND, 1);
+      halo.material.opacity = haloOpacity.current;
+      halo.visible = haloOpacity.current > 0.01;
+    }
   });
 
   /**
@@ -216,6 +267,19 @@ const CelestialBodyBody: React.FC<CelestialBodyProps> = ({
 
   return (
     <group ref={groupRef} position={[0, 0, 0]}>
+      {/* Highlight halo. Depth testing stays on so the body occludes its middle
+          and only the ring around it lights up. */}
+      <sprite ref={haloRef} scale={[hitRadius * HALO_SCALE, hitRadius * HALO_SCALE, 1]} visible={false}>
+        <spriteMaterial
+          map={getHaloTexture()}
+          color={entity.color}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </sprite>
+
       {/* Invisible Interactive Hitbox for responsive hover and selection */}
       <mesh
         onPointerOver={(e) => {

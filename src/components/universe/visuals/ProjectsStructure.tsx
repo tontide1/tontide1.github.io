@@ -42,7 +42,7 @@ export const ProjectsStructure: React.FC<ProjectsStructureProps> = ({
     }
   });
 
-  const emissiveIntensity = isSelected ? 0.9 : isHovered ? 0.6 : 0.25;
+  const emissiveIntensity = isSelected ? 1.25 : isHovered ? 0.95 : 0.55;
 
   return (
     <group>

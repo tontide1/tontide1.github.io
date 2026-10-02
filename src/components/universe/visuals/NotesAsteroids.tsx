@@ -74,7 +74,7 @@ export const NotesAsteroids: React.FC<NotesAsteroidsProps> = ({
     });
   });
 
-  const emissiveIntensity = isSelected ? 0.9 : isHovered ? 0.6 : 0.25;
+  const emissiveIntensity = isSelected ? 1.25 : isHovered ? 0.95 : 0.55;
 
   return (
     <group>
@@ -103,7 +103,7 @@ export const NotesAsteroids: React.FC<NotesAsteroidsProps> = ({
             <meshStandardMaterial
               color="#fde68a"
               emissive="#b45309"
-              emissiveIntensity={isHovered ? 0.5 : 0.2}
+              emissiveIntensity={isHovered ? 0.8 : 0.4}
               roughness={0.9}
             />
           </mesh>

@@ -31,17 +31,19 @@ export const HUD: React.FC = () => {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-4 md:p-6 text-xs text-[#777777] font-mono">
-      {/* Top Bar */}
-      <header className="flex items-center justify-between pointer-events-auto">
+      {/* Top Bar. Wraps rather than overflows: on a 375px phone the identity and
+          the four controls together are wider than the screen, and the MAP
+          button used to be clipped off the right edge. */}
+      <header className="flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
         <div className="flex items-center space-x-3">
           <button
             onClick={() => selectEntity('tai')}
             className={`flex items-center space-x-2 text-[#e8e8e8] hover:text-[#6ea8fe] transition-colors ${focusRing}`}
           >
             <span className="inline-block w-2 h-2 rounded-full bg-[#e8e8e8] animate-pulse" />
-            <span className="font-semibold tracking-wider">TÀI</span>
+            <span className="font-semibold tracking-wider">TONTIDE1</span>
           </button>
-          <span className="text-[#3a3a3a]">/</span>
+          <span className="hidden sm:inline text-[#3a3a3a]">/</span>
           <span className="hidden sm:inline tracking-wider">GRAVITY SYSTEM</span>
           <span className="text-[#3a3a3a] hidden sm:inline">·</span>
           <span className="hidden sm:inline text-[10px] text-[#3a3a3a] border border-[#262626] px-1.5 py-0.5 rounded">
@@ -116,17 +118,8 @@ export const HUD: React.FC = () => {
         </div>
       )}
 
-      {/* Bottom Bar: Telemetry & Domain Switcher */}
-      <footer className="flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-auto">
-        <div className="text-[9px] sm:text-[11px] text-[#525252] text-center sm:text-left">
-          <span>DRAG BACKGROUND TO ROTATE</span> ·{' '}
-          <span>DRAG A BODY TO PULL IT</span> ·{' '}
-          <span className="hidden sm:inline">SCROLL TO ZOOM</span>
-          <span className="sm:hidden">PINCH TO ZOOM</span> ·{' '}
-          <span className="hidden sm:inline">CLICK TO ENTER</span>
-          <span className="sm:hidden">TAP TO ENTER</span>
-        </div>
-
+      {/* Bottom Bar: Domain Switcher, anchored left */}
+      <footer className="flex items-center justify-start pointer-events-auto">
         {/* Domain Navigation Pills */}
         <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[#0a0a0a]/80 backdrop-blur-sm border border-[#262626] p-1 rounded">
           {Object.values(ENTITY_MAP).map((entity) => {

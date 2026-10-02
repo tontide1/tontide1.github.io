@@ -58,7 +58,7 @@ export const ThoughtsConstellation: React.FC<ThoughtsConstellationProps> = ({
     }
   });
 
-  const emissiveIntensity = isSelected ? 0.9 : isHovered ? 0.65 : 0.3;
+  const emissiveIntensity = isSelected ? 1.25 : isHovered ? 1.0 : 0.6;
 
   return (
     <group ref={groupRef}>

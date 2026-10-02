@@ -29,7 +29,7 @@ export const LifeBody: React.FC<LifeBodyProps> = ({ isHovered, isSelected }) => 
     }
   });
 
-  const emissiveIntensity = isSelected ? 0.8 : isHovered ? 0.5 : 0.2;
+  const emissiveIntensity = isSelected ? 1.15 : isHovered ? 0.85 : 0.45;
 
   return (
     <group>

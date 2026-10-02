@@ -85,7 +85,7 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
           </button>
         </div>
 
-        {/* Central Core: TÀI */}
+        {/* Central Core: TONTIDE1 */}
         <div className="flex flex-col items-center mb-6">
           <button
             type="button"
@@ -97,7 +97,7 @@ export const OrientationMap: React.FC<OrientationMapProps> = ({ items }) => {
             <div className="flex items-center justify-center space-x-2">
               <span className="text-sm">☀</span>
               <span className="text-xs font-bold text-[#ffffff] tracking-wider">
-                TÀI
+                TONTIDE1
               </span>
             </div>
             <div className="text-[10px] text-[#777777] group-hover:text-[#a3a3a3] mt-0.5">
