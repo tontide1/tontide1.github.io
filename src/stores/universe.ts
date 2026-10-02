@@ -118,7 +118,6 @@ export const $selectedEntityId = atom<string | null>(null);
 export const $hoveredEntityId = atom<string | null>(null);
 /** Set while a body is being pulled, so camera orbit can stand down. */
 export const $draggingEntityId = atom<string | null>(null);
-export const $isInspectOpen = atom<boolean>(false);
 export const $isSearchOpen = atom<boolean>(false);
 export const $isMapOpen = atom<boolean>(false);
 export const $isAsciiMode = atom<boolean>(false);
@@ -131,23 +130,14 @@ export function toggleAsciiMode() {
 export function selectEntity(id: string | null) {
   $selectedEntityId.set(id);
   if (id) {
-    $isInspectOpen.set(true);
     $isSearchOpen.set(false);
     $isMapOpen.set(false);
-  } else {
-    $isInspectOpen.set(false);
   }
-}
-
-export function closeInspect() {
-  $selectedEntityId.set(null);
-  $isInspectOpen.set(false);
 }
 
 export function openSearch() {
   $isSearchOpen.set(true);
   $isMapOpen.set(false);
-  $isInspectOpen.set(false);
 }
 
 export function closeSearch() {
@@ -157,7 +147,6 @@ export function closeSearch() {
 export function openMap() {
   $isMapOpen.set(true);
   $isSearchOpen.set(false);
-  $isInspectOpen.set(false);
 }
 
 export function closeMap() {
@@ -169,7 +158,6 @@ export function toggleMap() {
   $isMapOpen.set(!current);
   if (!current) {
     $isSearchOpen.set(false);
-    $isInspectOpen.set(false);
   }
 }
 

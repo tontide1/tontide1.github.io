@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import {
   hoverEntity,
-  selectEntity,
+  triggerTransition,
   updateEntityPosition,
   $draggingEntityId,
   $transitionState,
@@ -241,7 +241,7 @@ export const CelestialBody: React.FC<CelestialBodyProps> = ({
           pointerDownAt.current = null;
           // A touch that travelled is an orbit drag, not a tap to enter.
           if (from && Math.hypot(e.clientX - from.x, e.clientY - from.y) > TAP_TRAVEL_PX) return;
-          selectEntity(entity.id);
+          triggerTransition(entity.id, entity.path);
         }}
       >
         <sphereGeometry args={[hitRadius, 16, 16]} />

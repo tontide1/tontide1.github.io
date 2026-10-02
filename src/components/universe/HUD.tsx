@@ -4,7 +4,6 @@ import {
   ENTITY_MAP,
   $hoveredEntityId,
   $selectedEntityId,
-  $isInspectOpen,
   $isAsciiMode,
   selectEntity,
   triggerTransition,
@@ -26,14 +25,9 @@ const focusRing =
 export const HUD: React.FC = () => {
   const hoveredId = useStore($hoveredEntityId);
   const selectedId = useStore($selectedEntityId);
-  const isInspectOpen = useStore($isInspectOpen);
   const isAscii = useStore($isAsciiMode);
 
-  const activeEntity = hoveredId
-    ? ENTITY_MAP[hoveredId]
-    : !isInspectOpen && selectedId
-    ? ENTITY_MAP[selectedId]
-    : null;
+  const activeEntity = hoveredId ? ENTITY_MAP[hoveredId] : selectedId ? ENTITY_MAP[selectedId] : null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10 flex flex-col justify-between p-4 md:p-6 text-xs text-[#777777] font-mono">

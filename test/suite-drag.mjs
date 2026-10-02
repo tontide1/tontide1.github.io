@@ -156,17 +156,32 @@ export default async function run({ devUrl }) {
     s.check('the scene is pixel-stable while idle', cropBefore === (await crop(refBefore)), 'idle frames differ, so the camera check would be meaningless');
     s.check('camera holds still during a body pull', cropBefore === (await crop(refBefore)), 'an untouched body region changed');
 
-    // A tap must still open the inspector. Do it while the scene is frozen, so
-    // the ray cannot miss a body that has moved on.
+    // A tap must enter the domain (spec §6.3 click → enter): it arms the enter
+    // transition instead of opening an inspector. Locate the body while the
+    // scene is frozen, then allow motion only for the tap itself so the
+    // fly-through can be cancelled before navigation leaves the page; the
+    // scene is frozen again for the checks below.
     const tap = await locate(targetId, target);
     await moveMouse(tap.x, tap.y);
     await sleep(150);
+    await evaluate(cdp, 'window.__stores.environment.$prefersReducedMotion.set(false)');
+    await sleep(50);
     await press(tap.x, tap.y);
     await sleep(60);
     await release(tap.x, tap.y);
-    await sleep(700);
-    const selected = await evaluate(cdp, 'window.__stores.universe.$selectedEntityId.get()');
-    s.check('a tap still selects the body', selected === targetId, String(selected));
+    await sleep(150);
+    const transition = JSON.parse(await evaluate(cdp, 'JSON.stringify(window.__stores.universe.$transitionState.get())'));
+    s.check('a tap arms the enter transition for its domain', transition?.targetId === targetId, JSON.stringify(transition));
+    s.check(
+      'a tap does not open an inspector panel',
+      !(await evaluate(cdp, `!!document.querySelector('[role="dialog"][aria-label$="inspector"]')`)),
+      'inspector dialog is in the DOM'
+    );
+    // Cancel before the fly-through ends (650ms + 200ms safety) or the page
+    // navigates away and the rest of this suite has no universe to test.
+    await evaluate(cdp, 'window.__stores.universe.$transitionState.set(null)');
+    await evaluate(cdp, 'window.__stores.environment.$prefersReducedMotion.set(true)');
+    await sleep(300);
 
     // A background drag must still orbit the camera, so the same crop changes.
     // It has to genuinely miss every hitbox, or this is a body pull again.
