@@ -121,7 +121,7 @@ export const $draggingEntityId = atom<string | null>(null);
 export const $isInspectOpen = atom<boolean>(false);
 export const $isSearchOpen = atom<boolean>(false);
 export const $isMapOpen = atom<boolean>(false);
-export const $isAsciiMode = atom<boolean>(true);
+export const $isAsciiMode = atom<boolean>(false);
 export const $transitionState = atom<TransitionState | null>(null);
 
 export function toggleAsciiMode() {
