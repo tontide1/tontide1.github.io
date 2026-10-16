@@ -1,5 +1,10 @@
 # Migrate from Hugo to Astro with React Three Fiber
 
+> **Superseded in part by [ADR-0005](0005-terminal-identity.md)** — the R3F/GLSL
+> island and the gravity-universe identity are gone, and the React integration
+> was removed with them. The Astro, Content Collections, English-first, and
+> server-rendered-HTML decisions below remain in force.
+
 ## Context
 
 The previous site architecture ran on Hugo with `hugo-theme-stack` as a traditional static portfolio/blog. The site vision evolved into **TÀI — A Personal Gravity System**, an interactive ASCII/WebGL celestial universe operating as the discovery layer while preserving readable HTML/MDX as the consumption layer.

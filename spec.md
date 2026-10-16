@@ -1,18 +1,24 @@
-# TÀI — Personal Gravity System
+# TONTIDE1 — Terminal Portfolio
 
 ## 1. Document Status
 
-- **Version:** 1.1
-- **Status:** Implementation-ready MVP specification
+- **Version:** 2.0
+- **Status:** Shipped specification — describes the deployed site
 - **Product:** Personal website + portfolio + blog + research archive
-- **Primary experience:** Interactive ASCII/WebGL gravity universe
+- **Primary experience:** A terminal session: a fastfetch-style panel as the front door, one command-framed page per piece of content
 - **Primary audience:** Developers, technical readers, recruiters
-- **Secondary audience:** Visitors interested in Tài as a person
+- **Secondary audience:** Visitors interested in Tai as a person
 - **Content authoring:** Git + Markdown/MDX
-- **Theme:** Dark only for v1
-- **Core rule:** **WebGL to explore; HTML/MDX to read.**
+- **Theme:** Dark only
+- **Core rule:** **HTML to read; the terminal is the frame, never the source of truth.**
 
-This document is the source of truth for the product concept, UX, information architecture, and technical constraints.
+This document is the source of truth for the product concept, UX, information
+architecture, and technical constraints.
+
+Version 1 of this document specified *TÀI — A Personal Gravity System*, an
+interactive ASCII/WebGL celestial universe. That build was removed in the
+terminal rewrite; [ADR-0005](docs/adr/0005-terminal-identity.md) records the
+decision, and the universe survives in git history at `ef8dcd4`.
 
 ---
 
@@ -20,50 +26,38 @@ This document is the source of truth for the product concept, UX, information ar
 
 ### 2.1 Concept
 
-**TÀI — A Personal Gravity System** is a personal digital universe where **Tài is the stable center** and the public parts of his life, thoughts, notes, projects, and research orbit around him.
+**TONTIDE1** is a personal site that presents itself as a terminal session.
+The home page is a fastfetch-style panel: an ASCII wordmark, a host line, and
+labelled identity rows. Every content page reads like the output of one
+command, with the prompt line stating where you are and what produced the page.
 
-The website is not a conventional portfolio with a navbar. The primary information architecture is represented as a deterministic celestial system rendered with ASCII/WebGL.
+The interface is visual: nothing on the site executes a command. The terminal
+is a lens on ordinary, crawlable HTML.
 
-> The universe is the map of Tài's identity and work.
+> The terminal is the map; the pages are the territory.
 
 ### 2.2 Core hierarchy
 
 ```text
-                         ✦ THOUGHTS
-                       ·    ·    ·
-
-                🌍 LIFE
-
-                         ☀
-                        TÀI
-
-            🪐 PROJECTS       ✦ RESEARCH
-
-                       · NOTES
-```
-
-Semantic hierarchy:
-
-```text
-TÀI / Identity
+TONTIDE1 / identity            ("tontide1@github")
     ↓
-Domain / Celestial system
+Domain                         (one directory per domain: ~/projects …)
     ↓
-Content object
+Content object                 (one file per entry)
     ↓
-Readable page
+Readable page                  (the output of `cat`)
 ```
 
 ### 2.3 Product principles
 
-1. **Gravity is information architecture, not decoration.**
-2. **TÀI is the stable center.**
-3. **Each domain has its own visual grammar.**
-4. **Semantic relationships may affect spatial relationships.**
-5. **Visual size must not become a ranking system.**
-6. **Exploration may be novel; reading must remain conventional.**
-7. **The site must remain usable without WebGL.**
-8. **The visual system must stay calm, sparse, and intentional.**
+1. **Reading is the product.** The terminal frame must never compete with the text.
+2. **Navigation is real HTML.** Every route is reachable with JavaScript disabled.
+3. **The site never executes commands.** Input exists only in the search dialog.
+4. **One command per page.** The prompt states cwd and the command the page is "the output of".
+5. **Flat and quiet.** One accent color, 1px borders, no shadows, no glow.
+6. **Motion is brief and optional.** Reveal and cursor animations are disabled under reduced motion.
+7. **Every page is reachable three ways:** URL, keyboard, search.
+8. **No framework runtime.** No React, no 3D engine, no store library.
 
 ### 2.4 Desired character
 
@@ -71,14 +65,17 @@ The site should feel:
 
 - personal
 - technical
-- curious
 - calm
-- experimental
-- slightly mysterious
-- computational
+- precise
 - readable
 
-Avoid making it feel like a generic cyberpunk dashboard or a game.
+Avoid:
+
+- neon cyberpunk
+- glowing-green hacker cosplay
+- glitch effects and scanlines
+- fake boot sequences
+- blur/glass chrome for its own sake
 
 ---
 
@@ -86,10 +83,9 @@ Avoid making it feel like a generic cyberpunk dashboard or a game.
 
 ### 3.1 Primary domains
 
-Version 1 has exactly five primary domains:
-
 ```text
-TÀI
+TONTIDE1
+├── ABOUT      (identity, skills, contact)
 ├── LIFE
 ├── THOUGHTS
 ├── NOTES
@@ -97,517 +93,132 @@ TÀI
 └── RESEARCH
 ```
 
-No additional top-level domain should be added during MVP without a strong information-architecture reason.
+No additional top-level directory is added during MVP.
 
 ### 3.2 Domain definitions
 
-#### TÀI
+#### ABOUT
 
-Identity / About.
-
-May contain:
-
-- short bio
-- professional identity
-- education
-- skills / roles
-- CV / resume
-- selected links
-- contact
-- optional portrait
-
-`TÀI` is the central identity, not a normal content category.
+Identity page. Bio, skills, contact links. The analog of `tontide1@github`
+itself; not a normal content category.
 
 #### LIFE
 
-Public personal experiences only.
-
-Examples:
-
-- experiences
-- travel
-- hobbies
-- workspace
-- public internship experiences
-- personal milestones
-
-Private or sensitive personal information is excluded.
-
-Information model:
-
-```text
-LIFE → editorial / timeline archive
-```
+Public personal experiences only: milestones, workspace, journey.
+Frame: an editorial timeline.
 
 #### THOUGHTS
 
-What Tài thinks.
-
-Examples:
-
-- reflections
-- opinions
-- career thoughts
-- technology perspectives
-- personal essays
-
-Information model:
-
-```text
-THOUGHTS → constellation / network of ideas
-```
+Reflections, opinions, technology perspectives, personal essays.
+Frame: long-form writing.
 
 #### NOTES
 
-What Tài learns or records.
-
-Examples:
-
-- technical notes
-- Linux / tooling notes
-- debugging notes
-- small implementation references
-- concise lessons learned
-
-Information model:
-
-```text
-NOTES → compact knowledge fragments
-```
+Technical notes, tooling, debugging logs, concise implementation references.
+Frame: compact knowledge fragments.
 
 #### PROJECTS
 
-What Tài builds.
-
-Examples:
-
-- DriveBook
-- Legal-RAG
-- experiments
-- open-source work
-- personal applications
-- prototypes
-
-Projects may link to repositories, demos, architecture, experiments, and related notes.
-
-Information model:
-
-```text
-PROJECTS → concrete systems with related artifacts
-```
+Concrete systems with related artifacts: repositories, demos, architecture,
+experiments, related notes.
 
 #### RESEARCH
 
-What Tài investigates.
-
-Examples:
-
-- research questions
-- hypotheses
-- experiments
-- benchmarks
-- papers
-- datasets
-- research pipelines
-- conclusions
-
-Information model:
-
-```text
-RESEARCH → question → hypothesis → experiment → result → conclusion
-```
-
-Research is more structured and rigorous than `THOUGHTS` or `NOTES`.
+Structured investigation: question → hypothesis → experiment → result →
+conclusion. More rigorous than THOUGHTS or NOTES.
 
 ---
 
-## 4. Gravity Language
+## 4. Terminal Interface
 
-### 4.1 Semantic mapping
+### 4.1 Home — the fastfetch panel
 
-| Visual | Meaning |
-|---|---|
-| Central core / sun | Tài / identity |
-| Planet | Major domain |
-| Star | Individual content |
-| Asteroid / small object | Small note or supporting content |
-| Orbit | Contextual relationship |
-| Distance | Semantic relationship, never importance |
-| Brightness | Freshness / activity |
-| Density | Amount of content |
-| Movement | Living / changing system |
-| Zoom | Increasing information density |
-
-### 4.2 Visual size is not ranking
-
-Object size must **not** encode:
-
-- quality
-- popularity
-- importance
-- professional seniority
-- personal value
-
-Size primarily represents entity type or a deliberate visual role.
-
-### 4.3 Semantic distance
-
-Spatial proximity may be derived from:
-
-- same domain
-- shared tags
-- explicit `related` links
-- strong project ↔ note relationships
-- shared topics
-
-Unrelated content may be farther apart.
-
-Distance must never communicate that one domain is more valuable than another.
-
-### 4.4 Brightness
-
-Brightness may indicate activity/freshness:
+The home page is a panel in the visual language of fastfetch/neofetch:
 
 ```text
-new / active       → brighter
-older              → dimmer
-archived           → dimmer
+tontide1@github ───────────────────────────
+
+OS:                     Omarchy, Hackintosh, Windows
+Host:                   Ho Chi Minh City, Vietnam
+Kernel:                 Software Developer & AI Engineer
+IDE:                    Zed
+Coding Agents:          pi, opencode, omp, Claude Code
+Languages.Programming:  Python, C, TypeScript
+Languages.Real:         Vietnamese, English
+Hobbies:                Cars, food, walks
+
+– Contact
+Email:                  phantantaiforwork@gmail.com
+LinkedIn:               in/tontide1
+GitHub:                 github.com/tontide1
+
+– Directories
+~/about  ~/life  ~/notes  ~/projects  ~/research  ~/thoughts
 ```
 
-Archived content remains fully accessible.
+Rules:
 
-### 4.5 Stable center
+- Rows are owner-supplied data (`src/lib/profile.ts`). Never invent a row.
+- The ASCII wordmark is decorative and `aria-hidden`; the page carries a real `h1`.
+- The Directories listing is real links in HTML — it is the navigation.
+- A missing value means the row is removed, not filled with a placeholder.
 
-`TÀI` is a stable gravitational anchor.
+### 4.2 Content frame
 
-The center does not drift because of random physics.
-
-### 4.6 Deterministic layout
-
-Core positioning must be deterministic and reproducible.
-
-Use:
-
-- predefined orbital planes
-- deterministic seeded positions
-- semantic placement rules
-- light procedural variation
-
-Do **not** depend on an uncontrolled physics simulation for information architecture.
-
-### 4.7 Semantic gravity
-
-A content relationship may influence spatial proximity.
-
-Conceptual model:
+Every content page is built from the same frame:
 
 ```text
-relationship strength
-    = same domain
-    + shared tags
-    + explicit links
-    + project/content association
+tontide1@github:~/projects $ ls ▊        [Search /]      GitHub
+─────────────────────────────────────────────────────────────
+~/about          │  Engineered Systems & Projects
+~/life           │  What Tai builds: concrete systems, …
+~/notes          │
+~/projects  ←    │  – list / article body
+~/research       │
+~/thoughts       │
+─────────────────────────────────────────────────────────────
+[/] search · [esc] close                                    cd ~
 ```
 
-The exact scoring algorithm is implementation detail and should remain simple in MVP.
+- **Prompt line** — `{handle}:{cwd} $ {command}`, with a blinking block cursor.
+- **Sticky header** — brand, search trigger, GitHub link.
+- **Sidebar tree** — the six directories; the current one is marked and bold.
+- **Mobile** — the sidebar collapses into a `<details>` tree under the header.
+- **Footer** — shortcut hints and `cd ~` (the way home).
+- **Back navigation** — `cd ~` replaces v1's `RETURN TO ORBIT`.
+
+### 4.3 Search
+
+- Opens with `/` (when not typing) or `Ctrl/⌘ + K`, from the header trigger, or
+  any `[data-search-open]` element.
+- Closes with `Escape`, the `esc` button, or a form submit.
+- Index: every directory plus every published entry (title, summary, domain,
+  tags, meta, date), serialised into the page as JSON.
+- Filtering is client-side, all query terms must match, capped at 8 hits.
+- `Enter` follows the first hit shown; ranking is index order, not relevance.
+- Implemented as a native `<dialog>` plus one inline script. No framework.
+
+### 4.4 Interaction budget
+
+The site is **semi-interactive**: it looks alive, it is not a shell.
+
+- Rows reveal with a short stagger on first paint (CSS only, 45 ms steps).
+- The block cursor blinks.
+- Nothing responds to typing outside the search dialog; there is no command
+  parser, no history, no tab completion.
+
+Reduced motion keeps everything visible and still (see §8.3).
 
 ---
 
-## 5. Domain-Specific Visual Grammar
+## 5. Content Model
 
-Domains must not be identical spheres with different labels.
+Content is authored through Git + Markdown/MDX under `src/content/`.
 
-### LIFE
-
-Visual character:
-
-- organic planetary body
-- subtle atmosphere
-- slower motion
-- softer visual density
-
-### THOUGHTS
-
-Visual character:
-
-- constellation
-- connected stars
-- sparse
-- exploratory
-
-### NOTES
-
-Visual character:
-
-- small scattered objects
-- asteroid-field feeling
-- compact
-- relatively high density
-
-### PROJECTS
-
-Visual character:
-
-- larger structured celestial bodies
-- solid geometry
-- related satellite objects
-
-### RESEARCH
-
-Visual character:
-
-- clustered / connected systems
-- binary-like or multi-body composition
-- analytical / technical feeling
-
-The visual grammar should remain subtle. The user should discover meaning rather than seeing five obvious UI widgets.
-
----
-
-## 6. Core UX
-
-### 6.1 Primary journey
+### 5.1 Repository structure
 
 ```text
-Universe
-   ↓
-Domain
-   ↓
-Content object
-   ↓
-Readable page
-```
-
-Reverse journey:
-
-```text
-Readable page
-   ↓
-RETURN TO ORBIT
-   ↓
-Universe
-```
-
-### 6.2 Homepage
-
-The homepage is the Gravity universe.
-
-It contains:
-
-- TÀI central core
-- five primary domains
-- subtle orbital motion
-- sparse ASCII star field
-- domain-specific objects
-- lightweight HUD
-- Search
-- Map
-- accessible HTML navigation
-
-No mandatory splash or `ENTER UNIVERSE` screen.
-
-### 6.3 Interaction level
-
-Target: **exploration, not gaming**.
-
-Desktop:
-
-```text
-drag             → rotate
-scroll           → zoom
-hover            → inspect
-click            → enter
-```
-
-Do not require:
-
-- WASD
-- character control
-- collision
-- game mechanics
-
-### 6.4 Object inspection
-
-Hover/focus should expose concise metadata.
-
-Example:
-
-```text
-┌───────────────────────┐
-│ LIFE                  │
-│ 14 entries            │
-│ Last update           │
-│ Sep 24, 2026          │
-└───────────────────────┘
-```
-
-The user should understand what an object represents before entering it.
-
-### 6.5 Domain transition
-
-Expected transition:
-
-```text
-select object
-    ↓
-object highlights
-    ↓
-camera moves toward object
-    ↓
-ASCII / geometry expands
-    ↓
-visual transition
-    ↓
-domain/content page
-```
-
-The transition may be skipped or simplified under reduced-motion settings.
-
-### 6.6 Content transition
-
-Example:
-
-```text
-Universe
-   ↓
-PROJECTS
-   ↓
-Legal-RAG
-   ↓
-/projects/legal-rag
-```
-
-A content page should offer a clear:
-
-```text
-← RETURN TO ORBIT
-```
-
-### 6.7 Mobile
-
-Mobile is a simplified representation, not a desktop simulation.
-
-Preferred behavior:
-
-- simplified orbital composition
-- tap to select
-- optional swipe interaction
-- lower particle density
-- lower render resolution
-- obvious Search / Map access
-
-The user must never need complex gestures to read content.
-
----
-
-## 7. Progressive Disclosure / LOD
-
-The system must scale with content volume.
-
-### Level 0 — Universe
-
-Shows major domains only.
-
-```text
-               ☀
-      🌍              🪐
-            ✦
-```
-
-### Level 1 — Domain
-
-Shows clusters, topics, or selected content.
-
-```text
-             THOUGHTS
-
-        ✦ AI
-                 ✦ Linux
-
-  ✦ Career             ✦ Life
-```
-
-### Level 2 — Content
-
-Shows individual articles, projects, notes, or research objects.
-
-### Scaling rule
-
-Do not render hundreds/thousands of individual content objects in the initial universe.
-
-Use:
-
-```text
-Universe
-  → domain-level objects
-  → clusters / selected objects
-  → individual content
-```
-
-The information remains available through Search, Map, and direct URLs.
-
----
-
-## 8. Search and Map
-
-### 8.1 Search
-
-`/` focuses Search.
-
-Search fields:
-
-- title
-- summary
-- tags
-- domain
-- selected metadata
-
-Example:
-
-```text
-PROJECT
-Legal-RAG
-
-RESEARCH
-Hybrid Retrieval for Vietnamese Legal QA
-
-NOTE
-BM25 vs Dense Retrieval
-```
-
-Search may highlight matching objects in the universe.
-
-### 8.2 Map
-
-Map is a 2D orientation layer.
-
-```text
-                    TÀI
-                     ☀
-          ┌──────────┼──────────┐
-          ↓          ↓          ↓
-        LIFE      PROJECTS    THOUGHTS
-          ↓          ↓          ↓
-        posts      projects    posts
-```
-
-Map is important for:
-
-- orientation
-- mobile
-- accessibility
-- users who prefer explicit navigation
-
----
-
-## 9. Content Model
-
-Content is authored through Git + Markdown/MDX.
-
-### 9.1 Repository structure
-
-```text
-content/
+src/content/
 ├── life/
 ├── thoughts/
 ├── notes/
@@ -615,30 +226,27 @@ content/
 └── research/
 ```
 
-### 9.2 Common frontmatter
+### 5.2 Common frontmatter
 
 ```yaml
 title: ""
-slug: ""
 date: "YYYY-MM-DD"
-updated: "YYYY-MM-DD"
-domain: "life | thoughts | notes | projects | research"
+updated: "YYYY-MM-DD"        # optional
 tags: []
 summary: ""
-featured: false
 draft: false
 ```
 
-### 9.3 Project metadata
+### 5.3 Project metadata
 
 ```yaml
 stack: []
 status: "active | archived | completed"
-github: ""
-demo: ""
+github: ""                    # optional
+demo: ""                      # optional
 ```
 
-### 9.4 Research metadata
+### 5.4 Research metadata
 
 ```yaml
 status: "idea | active | completed | archived"
@@ -646,94 +254,97 @@ research_question: ""
 hypothesis: ""
 ```
 
-### 9.5 Relationships
+### 5.5 Notes metadata
 
-Explicit relationships may be declared:
+```yaml
+category: "GENERAL"
+```
+
+### 5.6 Relationships
+
+Explicit relationships are declared in frontmatter and rendered as a `related`
+section on the page:
 
 ```yaml
 related:
   - /projects/legal-rag
-  - /notes/bm25
+  - /notes/bm25-vs-dense
 ```
 
-These relationships may influence the visual layout and related-content sections.
+### 5.7 Drafts
+
+Every collection read filters `data.draft`. Drafts are never built, never
+listed, never indexed, never fed. The `source` suite enforces the filter at
+every call site.
 
 ---
 
-## 10. URL Architecture
+## 6. URL Architecture
 
-Web URLs are independent of WebGL scene state.
+URLs are independent of any presentation state.
 
 ```text
 /
-/life
-/life/<slug>
-/thoughts
-/thoughts/<slug>
-/notes
-/notes/<slug>
-/projects
-/projects/<slug>
-/research
-/research/<slug>
+/about
+/life            /life/<slug>
+/thoughts        /thoughts/<slug>
+/notes           /notes/<slug>
+/projects        /projects/<slug>
+/research        /research/<slug>
+/rss.xml
 ```
 
 Requirements:
 
 - direct deep links work
 - refresh preserves content
-- canonical URLs are stable
-- visual scene state is not part of the canonical URL
+- canonical URLs are stable and trailing-slash normalised
 - URLs remain meaningful without JavaScript
+- no page-state parameter exists
 
 ---
 
-## 11. Visual Design System
+## 7. Visual Design System
 
-### 11.1 Theme
+### 7.1 Theme: dark only
 
-Dark only for v1.
-
-Suggested starting palette:
-
-```text
-Background   #050505
-Primary      #E8E8E8
-Secondary    #777777
-Muted        #3A3A3A
-Accent       #6EA8FE
-```
-
-Exact values may change during implementation.
-
-### 11.2 Typography
-
-Preferred direction:
-
-- JetBrains Mono
-- IBM Plex Mono
-- Space Mono
-- Geist Mono
-
-Use 1–2 font families maximum.
-
-Monospace should define the identity, while long-form body text remains comfortable to read.
-
-### 11.3 ASCII identity
-
-ASCII is the visual identity; WebGL is the rendering technology.
-
-Possible luminance mapping:
+The palette follows the OpenCode website (anomalyco/opencode,
+`services/www`, MIT). Tokens live in `src/styles/global.css`:
 
 ```text
-Bright  → @ # █
-Medium  → % * +
-Dark    → . ·
+Background      #090909
+Foreground      #efefef
+Muted           #929292
+Border          #303030
+Surface         #101010
+Surface-hover   #181818
+Link / accent   #4d8eff
+Secondary blue  #73a7ff     (host line, wordmark)
+Green           #70c997     (cwd, prompt accents)
+Amber           #e0af68     (row labels, statuses, badges)
+Red             #e67c7c     (404 / error line)
 ```
 
-The implementation should favor GPU-side or low-resolution rendering over thousands of DOM text nodes.
+### 7.2 Typography
 
-### 11.4 Avoid clichés
+- **OpenTUI Mono**, self-hosted (`public/fonts/`, four faces: regular, bold,
+  italic, bold-italic). Sourced from the OpenCode website.
+- Fallback stack: `ui-monospace, SFMono-Regular, Menlo, Consolas, monospace`.
+- Base size 14px, line-height 1.8. All-caps micro-labels at 12px with 0.04em
+  letter-spacing.
+- No external font request is made on any page.
+
+### 7.3 Layout rules
+
+- Flat: 1px `#303030` borders, no border radius, no box shadows.
+- fastfetch rows align values right on desktop and stack on narrow screens.
+- Article typography is adapted from the OpenCode docs prose rules
+  (`.term-article`): 20px h2 with 3rem top margin, inline code with a 10%
+  currentColor background, bordered `pre` blocks, 2px blockquote rule, and
+  underlined table rows.
+- Cards are flat bordered boxes; hover raises the surface, never a shadow.
+
+### 7.4 Avoid clichés
 
 Do not default to:
 
@@ -747,561 +358,290 @@ Do not default to:
 
 Target aesthetic:
 
-> **quiet computational + astronomical + terminal-inspired + experimental**
+> **quiet computational + terminal-native + editorial + readable**
 
 ---
 
-## 12. Content Page Design
+## 8. Accessibility
 
-The universe is the **discovery layer**. Content pages are the **consumption layer**.
+Accessibility is a core requirement, and the terminal frame makes it cheaper:
+there is no canvas to duplicate.
 
-### 12.1 Principles
+### 8.1 HTML-first
 
-Content pages prioritize:
+- Every directory is a real `<a href>` in the page HTML — sidebar, mobile tree,
+  home panel, and 404 all carry the complete set.
+- No page needs JavaScript to navigate or read.
+- The decorative wordmark is `aria-hidden`; each page has exactly one real `h1`.
 
-1. readability
-2. information hierarchy
-3. navigation
-4. technical depth
-5. personality
-
-### 12.2 Shared visual DNA
-
-Keep subtle elements such as:
-
-- monospace headings
-- ASCII separators
-- small metadata
-- technical labels
-- subtle visual effects
-- `RETURN TO ORBIT`
-
-Do not make every article a full-screen WebGL experience.
-
-### 12.3 Project pages
-
-Support:
-
-- overview
-- motivation
-- architecture
-- implementation
-- experiments
-- results
-- lessons learned
-- repository
-- demo
-- related content
-
-### 12.4 Research pages
-
-Support:
-
-- research question
-- context
-- hypothesis
-- methodology
-- experiments
-- results
-- interpretation
-- limitations
-- references
-- related work
-
-### 12.5 LIFE / THOUGHTS / NOTES
-
-`LIFE` → editorial / timeline-friendly.
-
-`THOUGHTS` → long-form personal writing.
-
-`NOTES` → concise, technical, scan-friendly.
-
----
-
-## 13. Accessibility
-
-Accessibility is a core requirement.
-
-### 13.1 HTML fallback
-
-Primary navigation must exist as real HTML outside the Canvas/WebGL layer.
-
-At minimum:
-
-- Tài / About
-- Life
-- Thoughts
-- Notes
-- Projects
-- Research
-- Search
-- Map
-- content links
-
-If WebGL fails, the site remains navigable and readable.
-
-### 13.2 Keyboard
+### 8.2 Keyboard
 
 Minimum:
 
-- Tab → focus
-- Enter → activate
-- Escape → close overlay / return context
-- `/` → focus Search
+- `Tab` → move focus
+- `Enter` → activate
+- `Escape` → close the search dialog
+- `/` → open search
+- `Ctrl/⌘ + K` → open search
 
-Optional advanced shortcuts:
+Focus is always visible: a global `:focus-visible` ring (2px `#4d8eff`,
+2px offset) is never suppressed. The `keyboard` suite walks the tab ring and
+fails on any focusable control without an indicator.
 
-```text
-H → Home / Universe
-P → Projects
-R → Research
-B → Life / blog-like content
-N → Notes
-/ → Search
-M → Map
-```
+Shortcuts never fire while a text field is focused.
 
-Shortcuts must never interfere with normal text entry.
+### 8.3 Reduced motion
 
-### 13.3 Reduced motion
+Respect `prefers-reduced-motion: reduce`:
 
-Respect:
+- the row reveal animation is not applied (rows are visible immediately)
+- the cursor stops blinking
+- no transition or smooth scrolling
 
-```text
-prefers-reduced-motion: reduce
-```
+### 8.4 Contrast
 
-Disable or simplify:
-
-- orbital animation
-- camera fly-through
-- heavy particles
-- dramatic transitions
-
-All content remains accessible.
-
-### 13.4 Contrast
-
-ASCII effects must not reduce body-text readability.
+Body text (`#efefef` on `#090909`) and labels (`#e0af68`) stay well above
+WCAG AA. The frame's dim text (`#929292`) is metadata only, never the sole
+carrier of information.
 
 ---
 
-## 14. Performance and Progressive Enhancement
+## 9. Performance and Progressive Enhancement
 
-This is a personal website, not a game.
+This is a personal website, not an application.
 
-### Requirements
+The shipped site contains **no JavaScript bundle**:
 
-- render the HTML shell before heavy WebGL initialization
-- progressively enhance with WebGL
-- lazy-load heavy visual modules
-- avoid unnecessary textures
-- keep geometry simple
-- adapt particle count and render resolution
-- avoid persistent heavy GPU usage on content pages
+- content pages ship no external script at all
+- the only script is the inline search dialog (a few KB per page)
+- fonts are self-hosted and preloaded; no third-party request is made
+- there is no WebGL, no island hydration, no store library
 
 Target behavior:
 
 ```text
-High capability
-→ full ASCII/WebGL
-
-Medium capability
-→ reduced particles / resolution
-
-Low capability / mobile
-→ simplified scene
-
-WebGL unavailable
-→ HTML/CSS experience
+Any browser      → full experience (HTML + CSS + inline search)
+JavaScript off   → everything except the search dialog
 ```
-
-The website must never depend on WebGL availability.
 
 ---
 
-## 15. SEO
+## 10. SEO
 
 Important information must exist in HTML.
 
 Requirements:
 
 - semantic headings
-- crawlable links
+- crawlable links on every page
 - canonical URLs
-- metadata per content page
-- Open Graph metadata
-- RSS feed for content where appropriate
-- sitemap
+- per-page metadata
+- Open Graph and Twitter metadata
+- RSS feed for content
+- sitemap covering every page
 - direct indexable article/project/research pages
+- a useful `noindex` 404 with the full directory tree
 
-Canvas/WebGL must never be the only representation of important navigation or content.
+The `seo` suite holds every built page to this contract.
 
 ---
 
-## 16. Technical Architecture
+## 11. Technical Architecture
 
-Recommended v1 stack:
+Shipped stack:
 
 ```text
 Astro
- ├── Markdown / MDX
- ├── React islands
- ├── React Three Fiber
- ├── Three.js
- └── GLSL
+ ├── Markdown / MDX (content collections, Zod schemas)
+ ├── Tailwind CSS v4 (tokens via @theme, component classes in a layer)
+ └── One inline vanilla-JS script (search dialog)
 ```
 
-Potential supporting tools:
+No runtime framework. No React, no Three.js, no nanostores.
 
-- content collections / schema validation
-- Shiki or equivalent for code highlighting
-- MiniSearch / Fuse.js or equivalent for local search
-
-These are implementation choices, not product requirements.
-
-### 16.1 Data flow
+### 11.1 Data flow
 
 ```text
 Markdown / MDX
       ↓
 Content collection
       ↓
-Normalized content model
+Astro page markup  ──→  HTML (canonical, crawlable)
       ↓
-Gravity layout model
-      ↓
-WebGL renderer
+Search index (JSON, serialised into each page)
 ```
 
-Semantic content must remain independent from the renderer.
+Content stays independent of presentation: the same collection feeds pages,
+search, RSS, and sitemap.
 
-This same model should support:
-
-- WebGL
-- Map
-- Search
-- HTML fallback
-- related-content sections
-- testing
-
-### 16.2 Suggested component structure
+### 11.2 Component structure
 
 ```text
 src/
-├── components/
-│   ├── universe/
-│   │   ├── UniverseCanvas
-│   │   ├── GravitySystem
-│   │   ├── CelestialBody
-│   │   ├── Orbit
-│   │   ├── StarField
-│   │   ├── AsciiRenderer
-│   │   └── HUD
-│   ├── navigation/
-│   │   ├── Search
-│   │   ├── Map
-│   │   └── ReturnToOrbit
-│   └── content/
-│       ├── ArticleLayout
-│       ├── ProjectLayout
-│       ├── ResearchLayout
-│       └── LifeLayout
-├── content/
-│   ├── life/
-│   ├── thoughts/
-│   ├── notes/
-│   ├── projects/
-│   └── research/
+├── assets/
+│   └── banner.txt                 # ASCII wordmark (imported ?raw)
+├── components/terminal/
+│   ├── CommandLine.astro          # prompt line
+│   ├── SearchDialog.astro         # <dialog> + index + inline script
+│   └── SearchTrigger.astro
+├── content/                       # one directory per domain
 ├── layouts/
-└── pages/
+│   ├── Layout.astro               # head, SEO, fonts
+│   └── ContentLayout.astro        # header + tree + article frame
+├── lib/
+│   ├── domains.ts                 # the six directories
+│   ├── profile.ts                 # fastfetch rows (owner data)
+│   ├── search.ts                  # SearchItem + index builder
+│   └── seo.ts                     # JSON-LD builders
+├── pages/
+└── styles/global.css
 ```
-
-Structure may change without changing the product requirements.
-
-### 16.3 ASCII rendering strategy
-
-Prefer:
-
-```text
-3D scene
-   ↓
-low-resolution render target
-   ↓
-luminance / density sampling
-   ↓
-character mapping
-   ↓
-ASCII visual
-```
-
-Do not build the main visual using thousands of DOM text nodes.
 
 ---
 
-## 17. Prototype Baseline
-
-The current prototype validates the core concept and should be treated as the visual starting point, not as a final implementation.
-
-Prototype already validates:
-
-- TÀI at the center
-- five domains
-- orbit-like placement
-- deterministic composition
-- HUD / search affordance
-- HTML fallback navigation
-- content/object counts
-- dark technical aesthetic
-
-### Prototype gaps to resolve
-
-1. **Domain grammar is not distinct enough yet.**
-   The domains currently read too much like a generic graph. Implement distinct LIFE / THOUGHTS / NOTES / PROJECTS / RESEARCH visual forms.
-
-2. **ASCII identity is still weak.**
-   Celestial bodies should become visibly ASCII/dithered rather than mostly circles and labels.
-
-3. **Semantic links must be meaningful.**
-   Lines should represent actual relationships rather than decorative graph edges.
-
-4. **Domain → content navigation must be demonstrated.**
-   The next validation target is a full vertical slice:
-
-```text
-Universe
-   ↓
-PROJECTS
-   ↓
-Legal-RAG
-   ↓
-Project page
-   ↓
-RETURN TO ORBIT
-```
-
-5. **Debug information should be removable.**
-   Development overlays such as node counts, link counts, and `spike` labels belong in a debug mode, not the normal production UI.
-
-6. **HTML fallback should remain functional but visually quiet.**
-   It is a navigation/accessibility layer, not a debug message.
-
----
-
-## 18. MVP Scope
+## 12. MVP Scope
 
 ### Must have
 
 ```text
-[ ] Gravity universe
-[ ] TÀI central identity
-[ ] 5 primary domains
-[ ] deterministic layout
-[ ] domain-specific visual grammar
-[ ] hover / focus metadata
-[ ] click-to-enter interaction
-[ ] domain → content navigation
-[ ] content pages
-[ ] return-to-orbit flow
-[ ] Search
-[ ] Map
-[ ] Markdown/MDX authoring
-[ ] semantic relationships
-[ ] HTML fallback
-[ ] mobile adaptation
-[ ] reduced-motion support
-[ ] direct URLs
-[ ] SEO basics
-[ ] adaptive WebGL quality
+[x] fastfetch home panel
+[x] 5 primary domains + about
+[x] command-framed content pages
+[x] directory-tree navigation in HTML
+[x] search (/ and Ctrl+K)
+[x] Markdown/MDX authoring with typed frontmatter
+[x] related-content links
+[x] direct URLs
+[x] keyboard + focus visibility
+[x] reduced-motion support
+[x] zero-JS content pages
+[x] SEO basics (canonical, OG, JSON-LD, sitemap, RSS)
+[x] verification suites (source, seo, layout, terminal, keyboard)
 ```
 
 ### Explicitly out of MVP
 
 ```text
-[ ] real-time physics simulation
-[ ] character / game mechanics
+[ ] a working shell / command execution
+[ ] a light theme
 [ ] CMS / admin dashboard
 [ ] comments
-[ ] light theme
-[ ] complex multiplayer / social features
-[ ] large-scale knowledge-graph engine
+[ ] real-time anything
+[ ] multiplayer / social features
 [ ] heavy procedural generation
 [ ] elaborate Easter eggs
+[ ] a 3D universe
 ```
 
-These may be considered later without changing the core information architecture.
+These may be considered later without changing the core information
+architecture.
 
 ---
 
-## 19. Non-Goals
+## 13. Non-Goals
 
-The project is **not** intended to be:
+The project is **not**:
 
+- a terminal emulator — it never executes a command, and its only text input is search
 - a game
 - a WebGL benchmark
 - a visual-only art piece
 - a generic portfolio template
-- a terminal emulator
 - a full CMS
 - a social network
 
-The website must remain useful as a personal website even when the interactive layer is unavailable.
+The site must remain useful as a personal website with JavaScript disabled.
 
 ---
 
-## 20. Acceptance Criteria
+## 14. Acceptance Criteria
 
 ### Product
 
-- A first-time visitor can understand that the center is Tài and the surrounding objects are parts of his personal/professional world.
-- A visitor can reach Projects, Research, Life, Thoughts, and Notes without learning a game mechanic.
-- A visitor can enter content and read it normally.
-- A visitor can return from content to the Gravity universe.
+- A first-time visitor can see who runs the site from the home panel alone.
+- A visitor can reach every directory without reading documentation.
+- A visitor can read any entry normally, and return home with `cd ~`.
 
-### Gravity system
+### Terminal
 
-- TÀI remains a stable center.
-- Layout is deterministic.
-- Domains have distinct visual grammars.
-- Semantic relationships influence proximity where useful.
-- Visual size does not rank content.
+- Every page states its cwd and its command.
+- The wordmark renders identically on every load (no randomness).
+- Search finds directories and entries.
+- No interaction executes anything.
 
 ### Content
 
-- Every published content item has a stable URL.
-- Content can be authored through Git + Markdown/MDX.
+- Every published item has a stable URL.
+- Content is authored through Git + Markdown/MDX.
 - Related content can be linked explicitly.
 
 ### Accessibility
 
-- Major navigation exists as HTML.
-- Site remains usable without WebGL.
-- Keyboard navigation works.
-- Reduced-motion mode works.
+- Navigation is real HTML on every page.
+- The site is usable without JavaScript (except search).
+- Keyboard navigation works and focus is always visible.
+- Reduced motion is honoured.
 
 ### Performance
 
-- HTML content does not wait for heavy WebGL initialization.
-- WebGL quality adapts to device capability.
-- Content pages do not continuously run expensive visual effects unnecessarily.
+- No JavaScript bundle is emitted.
+- No third-party request is made.
+- Fonts are preloaded and self-hosted.
 
 ### SEO
 
-- Important navigation and content exist in crawlable HTML.
-- Deep links work directly.
-- Content pages have metadata and canonical URLs.
+- Navigation and content are crawlable HTML.
+- Deep links work directly and carry canonical URLs.
+- Metadata, sitemap, and RSS pass the `seo` suite.
 
 ---
 
-## 21. Implementation Order
+## 15. Future Direction
 
-Build in vertical slices rather than implementing the entire visual system first.
+Possible extensions that fit the current architecture:
 
-### Slice 1 — Core universe
-
-```text
-TÀI
-+ 5 domains
-+ deterministic layout
-+ basic interactions
-```
-
-### Slice 2 — Domain transition
-
-```text
-Universe
-→ Projects
-→ domain scene
-```
-
-### Slice 3 — Real content
-
-```text
-Projects
-→ Legal-RAG
-→ project page
-→ Return to Orbit
-```
-
-### Slice 4 — Domain visual grammar
-
-Implement distinct rendering for:
-
-- Life
-- Thoughts
-- Notes
-- Projects
-- Research
-
-### Slice 5 — Search + Map
-
-### Slice 6 — ASCII renderer
-
-### Slice 7 — Mobile + accessibility
-
-### Slice 8 — Performance + SEO + polish
-
-Do not over-polish the homepage before the `Universe → Domain → Content → Return` loop is proven.
-
----
-
-## 22. Future Direction
-
-Possible future extensions:
-
-- richer semantic knowledge graph
-- deeper content clustering
-- dynamic constellation generation
-- content freshness visualization
-- timeline overlays
-- CLI-style discovery mode
-- optional Easter eggs
-- richer project/research satellites
-- experimental WebGPU renderer
+- richer search ranking (today: index order)
+- tag/directory filtering views
+- a `man`-style page for how the site works
+- optional keyboard navigation for directory jumps (e.g. `g p`)
+- experimental colour themes (still dark-first)
 
 Future features must preserve the core rule:
 
-> **The visual system explains and exposes the content; it must not compete with the content.**
+> **The frame explains and exposes the content; it must not compete with it.**
 
 ---
 
-## 23. Final Product Definition
-
-The website can be summarized as:
+## 16. Final Product Definition
 
 ```text
-                         ✦ THOUGHTS
-                       ·    ·    ·
+$ fastfetch
 
-                🌍 LIFE
+tontide1@github ───────────────────────────
+OS:                     Omarchy, Hackintosh, Windows
+Host:                   Ho Chi Minh City, Vietnam
+Kernel:                 Software Developer & AI Engineer
 
-                         ☀
-                        TÀI
-                    /     |     \
-                   /      |      \
-          🪐 PROJECTS     ·      ✦ RESEARCH
-             / |  \                     \
-            ✦  ✦   ✦                     ✦
-
-                       · NOTES
+– Directories
+~/about  ~/life  ~/notes  ~/projects  ~/research  ~/thoughts
 ```
 
 The user experience is:
 
 ```text
-                PERSONAL UNIVERSE
-                       ↓
-                Explore the system
-                       ↓
-                  Enter a domain
-                       ↓
-                 Discover content
-                       ↓
-                  Read normally
-                       ↓
-                Return to orbit
+                THE PANEL
+                    ↓
+             pick a directory
+                    ↓
+            read the entries
+                    ↓
+              `cat` a page
+                    ↓
+               read normally
+                    ↓
+                  cd ~
 ```
 
 The product principle is:
 
-> **WebGL to explore. HTML to read. Gravity to organize. Tài at the center.**
+> **HTML to read. A terminal to frame it. One command per page.**

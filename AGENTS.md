@@ -1,6 +1,6 @@
 ## UI rules
 
-- Interface type is sans-serif everywhere — hero, headings, and titles included (Geist is the loaded family). Serif faces are banned from all UI: they read as novel typesetting.
+- Interface type is sans-serif everywhere — hero, headings, and titles included (OpenTUI Mono, self-hosted in `public/fonts/`, is the loaded family). Serif faces are banned from all UI: they read as novel typesetting.
 
 ## Agent skills
 

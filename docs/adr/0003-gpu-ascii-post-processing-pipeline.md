@@ -1,5 +1,8 @@
 # GPU Fragment Shader ASCII Post-Processing Pipeline
 
+> **Superseded by [ADR-0005](0005-terminal-identity.md)** — the 3D scene this
+> pipeline post-processed no longer exists; the site ships no WebGL at all.
+
 ## Context
 
 The visual identity of **TÀI — A Personal Gravity System** requires an ASCII/dithered appearance for celestial bodies and the gravity universe. 
