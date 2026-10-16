@@ -1,12 +1,18 @@
 ---
 import Layout from './Layout.astro';
 import { toIsoDate } from '../lib/seo';
+import { DOMAINS } from '../lib/domains';
+import { buildSearchIndex } from '../lib/search';
+import CommandLine from '../components/terminal/CommandLine.astro';
+import SearchTrigger from '../components/terminal/SearchTrigger.astro';
+import SearchDialog from '../components/terminal/SearchDialog.astro';
 
 interface Props {
-  domain: string;
   title: string;
-  role?: string;
-  meta?: string;
+  /** The command this page is the output of, e.g. `cat about.md`. */
+  command: string;
+  /** Working directory shown in the prompt, e.g. `~/projects`. */
+  cwd?: string;
   description?: string;
   /** og:type + article timestamps; content pages are dated articles. */
   type?: 'website' | 'article';
@@ -19,10 +25,9 @@ interface Props {
 }
 
 const {
-  domain,
   title,
-  role,
-  meta,
+  command,
+  cwd = '~',
   description,
   type = 'article',
   image,
@@ -32,6 +37,13 @@ const {
   structuredData,
   robots,
 } = Astro.props;
+
+const items = await buildSearchIndex();
+
+// Mark the active directory in the tree without letting `/projects/x` also
+// match `/projects-y`.
+const currentPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isCurrent = (path: string) => currentPath === path || currentPath.startsWith(`${path}/`);
 ---
 
 <Layout
@@ -45,51 +57,57 @@ const {
   structuredData={structuredData}
   robots={robots}
 >
-  <div class="min-h-screen bg-[#050505] text-[#e8e8e8] font-mono flex flex-col justify-between p-6 md:p-12 max-w-4xl mx-auto">
-    {/* Navigation */}
-    <header class="border-b border-[#262626] pb-6 mb-12 flex items-center justify-between">
-      <a
-        href="/"
-        class="inline-flex items-center space-x-2 text-xs text-[#777777] hover:text-[#6ea8fe] transition-colors border border-[#262626] px-3 py-1.5 rounded bg-[#0a0a0a]"
-      >
-        <span>← RETURN TO ORBIT</span>
-      </a>
-
-      <div class="flex items-center space-x-2 text-xs text-[#525252]">
-        <span>DOMAIN:</span>
-        <span class="text-[#e8e8e8] font-bold">{domain}</span>
-        {meta && <span class="text-[#6ea8fe]">[{meta}]</span>}
-      </div>
-    </header>
-
-    {/* Header Info */}
-    <div class="mb-10">
-      <div class="text-[11px] text-[#6ea8fe] tracking-widest uppercase mb-2">
-        {role || 'CELESTIAL DOMAIN'}
-      </div>
-      <h1 class="text-3xl md:text-4xl font-bold tracking-tight mb-4 text-[#ffffff]">
-        {title}
-      </h1>
-      {description && (
-        <p class="text-sm md:text-base text-[#a3a3a3] leading-relaxed max-w-2xl">
-          {description}
-        </p>
-      )}
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/">TONTIDE1</a>
+      <span class="flex-1"></span>
+      <SearchTrigger />
+      <a class="github-link" href="https://github.com/tontide1" aria-label="TONTIDE1 on GitHub">GitHub</a>
     </div>
+  </header>
 
-    {/* Main Content Area */}
-    <main class="flex-grow space-y-8 text-xs md:text-sm text-[#cccccc] leading-relaxed">
-      <slot />
-    </main>
+  <details class="mobile-nav">
+    <summary>~ navigate</summary>
+    <ul class="tree">
+      {DOMAINS.map((domain) => (
+        <li>
+          <a class="tree-link" href={domain.path} aria-current={isCurrent(domain.path) ? 'page' : undefined}>
+            <span>~/{domain.label}</span><span class="tree-blurb">{domain.blurb}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </details>
 
-    {/* Footer */}
-    <footer class="border-t border-[#262626] pt-8 mt-16 flex flex-col sm:flex-row items-center justify-between text-xs text-[#525252]">
-      <div>TONTIDE1 // PERSONAL GRAVITY SYSTEM</div>
-      <div class="mt-2 sm:mt-0">
-        <a href="/" class="text-[#777777] hover:text-[#6ea8fe]">
-          Back to Universe
-        </a>
+  <div class="term-frame">
+    <aside class="sidebar">
+      <nav aria-label="Domains">
+        <ul class="tree">
+          {DOMAINS.map((domain) => (
+            <li>
+              <a class="tree-link" href={domain.path} aria-current={isCurrent(domain.path) ? 'page' : undefined}>
+                <span>~/{domain.label}</span><span class="tree-blurb">{domain.blurb}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+
+    <main id="content" class="min-w-0 pb-16 pt-8 lg:pt-12">
+      <CommandLine cwd={cwd} cmd={command} />
+      <h1 class="mb-3 mt-6 text-[1.875rem] font-bold leading-tight">{title}</h1>
+      {description && <p class="mb-8 max-w-[46rem] text-muted">{description}</p>}
+      <div class:list={['term-article', !description && 'mt-8']}>
+        <slot />
       </div>
-    </footer>
+    </main>
   </div>
+
+  <footer class="mx-auto flex w-full max-w-[72rem] flex-wrap items-center justify-between gap-3 px-6 py-6 text-xs text-muted">
+    <span>[/] search · [esc] close</span>
+    <a href="/">cd ~</a>
+  </footer>
+
+  <SearchDialog items={items} />
 </Layout>

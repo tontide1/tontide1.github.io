@@ -1,7 +1,7 @@
 {
-  "name": "tontide1-gravity-system",
+  "name": "tontide1.github.io",
   "version": "1.0.0",
-  "description": "TÀI — A Personal Gravity System",
+  "description": "TONTIDE1 — a personal portfolio rendered as a terminal session",
   "type": "module",
   "packageManager": "pnpm@12.6.0",
   "engines": {
@@ -24,24 +24,13 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.14",
-    "@astrojs/react": "^4.4.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "@nanostores/react": "^1.1.0",
-    "@react-three/fiber": "^9.8.1",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^5.18.2",
-    "lucide-react": "^1.48.0",
-    "nanostores": "^1.5.4",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.3",
-    "three": "^0.174.0"
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@types/three": "^0.174.0",
     "sharp": "^0.35.5",
     "typescript": "^5.9.3"
   }

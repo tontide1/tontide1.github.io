@@ -22,9 +22,8 @@ async function entries() {
 
 export async function GET(context: { site: URL }) {
   return rss({
-    title: 'TONTIDE1 — A Personal Gravity System',
-    description:
-      'Projects, research, life, thoughts, and notes orbiting one stable center.',
+    title: 'TONTIDE1 — Feed',
+    description: 'Projects, research, notes, thoughts, and life entries from TONTIDE1.',
     site: context.site,
     items: (await entries()).map(({ entry, section, url }) => ({
       title: entry.data.title,

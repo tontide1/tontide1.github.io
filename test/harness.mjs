@@ -127,21 +127,6 @@ export async function startServer({ label, cmd, args, url, cwd = ROOT, timeoutMs
   throw new Error(`${label} did not come up within ${timeoutMs}ms; log at ${file}`);
 }
 
-/** Wait for the canvas to exist AND for R3F to have sized it (not the 300x150 default). */
-export async function waitForCanvas(cdp, evaluate, { timeoutMs = 15000 } = {}) {
-  const sized = `(() => {
-    const c = document.querySelector('canvas');
-    if (!c) return false;
-    return c.width > 300 || c.height > 150 || (c.clientWidth > 300 && c.clientHeight > 150);
-  })()`;
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (await evaluate(cdp, sized)) return true;
-    await sleep(150);
-  }
-  return false;
-}
-
 /** Console errors and uncaught exceptions, ignoring the favicon.ico probe. */
 export function collectPageErrors(events) {
   return events.filter(

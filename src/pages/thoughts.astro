@@ -5,17 +5,16 @@ import { collectionPage } from '../lib/seo';
 
 const essays = await getCollection('thoughts', ({ data }) => !data.draft);
 
-const title = 'Constellation of Ideas';
+const title = 'Long-Form Thoughts';
 const description =
   'What Tài thinks: reflections, software engineering perspectives, opinions, and personal essays.';
 ---
 
 <ContentLayout
-  domain="THOUGHTS"
   title={title}
-  role="Connected Constellation"
+  command="ls"
+  cwd="~/thoughts"
   type="website"
-  meta="ESSAYS / PERSPECTIVES"
   description={description}
   structuredData={collectionPage({
     title,
@@ -25,25 +24,19 @@ const description =
     items: essays.map((e) => ({ name: e.data.title, url: new URL(`/thoughts/${e.id}/`, Astro.url).href })),
   })}
 >
-  <div class="space-y-6">
+  <div class="space-y-4">
     {essays.map((post) => (
-      <article class="bg-[#0a0a0a] border border-[#1f1f1f] p-5 rounded hover:border-[#3a3a3a] transition-colors">
-        <div class="flex items-center justify-between text-[11px] text-[#525252] mb-2">
-          <span>ESSAY</span>
+      <article class="card">
+        <div class="card-eyebrow">
+          <span class="text-amber">Essay</span>
           <span>{post.data.date}</span>
         </div>
-        <h2 class="text-base font-bold text-[#ffffff] mb-2">
-          <a href={`/thoughts/${post.id}`} class="hover:text-[#e9d5ff] transition-colors">
-            {post.data.title} →
-          </a>
+        <h2 class="mb-1 mt-0 text-base font-bold leading-snug">
+          <a href={`/thoughts/${post.id}`}>{post.data.title}</a>
         </h2>
-        <p class="text-xs text-[#a3a3a3] leading-relaxed mb-3">
-          {post.data.summary}
-        </p>
-        <div class="pt-2 border-t border-[#1a1a1a] text-xs">
-          <a href={`/thoughts/${post.id}`} class="text-[#e9d5ff] hover:underline">
-            Read Full Essay →
-          </a>
+        <p class="mt-0 text-sm text-muted">{post.data.summary}</p>
+        <div class="tags">
+          {post.data.tags.map((tag) => <span>#{tag}</span>)}
         </div>
       </article>
     ))}

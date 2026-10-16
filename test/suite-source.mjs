@@ -44,17 +44,20 @@ export default async function run() {
   s.check('every getCollection call site filters drafts', unfiltered.length === 0, unfiltered.join(' | '));
   s.note('getCollection call sites checked', callSites);
 
-  // spec.md §18 lists deterministic layout as a must-have: the universe is a
-  // stable place, not a reshuffle on reload. StarField uses a seeded PRNG.
+  // A rendered page must be byte-identical on every reload: randomness in the
+  // output is a bug, not decoration. The deleted universe used a seeded PRNG;
+  // the terminal has no legitimate use for randomness at all.
   const random = [];
   for (const file of files) {
     const text = fs.readFileSync(file, 'utf8');
     if (text.includes('Math.random()')) random.push(path.relative(ROOT, file));
   }
-  s.check('no unseeded randomness in the scene graph', random.length === 0, random.join(', '));
+  s.check('no unseeded randomness in rendered output', random.length === 0, random.join(', '));
 
   // `prose` needs @tailwindcss/typography, which this project does not depend on,
-  // so the classes silently did nothing. Catch them reappearing.
+  // so the classes silently did nothing. Catch them reappearing. Note the word
+  // boundary: a `-prose` suffix (e.g. `term-prose`) trips this check too, which
+  // is why the article wrapper is named `term-article`.
   const deadProse = [];
   for (const file of files) {
     const text = fs.readFileSync(file, 'utf8');

@@ -115,10 +115,6 @@ export async function launch({ width = 1440, height = 900, port } = {}) {
       '--no-first-run',
       '--no-default-browser-check',
       '--hide-scrollbars',
-      // Software WebGL so the ASCII shader pipeline actually renders headless.
-      '--enable-unsafe-swiftshader',
-      '--use-gl=angle',
-      '--use-angle=swiftshader',
       'about:blank',
     ],
     { stdio: 'ignore', detached: true }
@@ -166,33 +162,9 @@ export async function launch({ width = 1440, height = 900, port } = {}) {
 
 /**
  * Emulate a device: viewport, DPR, touch, and optional reduced motion.
- *
- * `cores` and `memoryGB` exist because the Emulation domain has no command for
- * either, so headless Chrome reports the *host's* CPU count and omits
- * deviceMemory entirely. `detectDeviceTier` keys off exactly those two numbers,
- * so without them a "phone" profile silently reads as a fast machine and the
- * tier assertions measure the host rather than the device under test. They are
- * injected before any page script runs, which keeps the app's real detection
- * logic in the path — only the browser-reported values are staged.
  */
 export async function emulateDevice(cdp, opts) {
-  const { width, height, dpr = 3, mobile = true, reducedMotion = false, cores, memoryGB } = opts;
-  if (cores !== undefined || memoryGB !== undefined) {
-    const overrides = [];
-    if (cores !== undefined) {
-      overrides.push(
-        `Object.defineProperty(Navigator.prototype, 'hardwareConcurrency', { get: () => ${Number(cores)}, configurable: true });`
-      );
-    }
-    if (memoryGB !== undefined) {
-      overrides.push(
-        `Object.defineProperty(Navigator.prototype, 'deviceMemory', { get: () => ${Number(memoryGB)}, configurable: true });`
-      );
-    }
-    await cdp.send('Page.addScriptToEvaluateOnNewDocument', {
-      source: overrides.join('\n'),
-    });
-  }
+  const { width, height, dpr = 3, mobile = true, reducedMotion = false } = opts;
   await cdp.send('Emulation.setDeviceMetricsOverride', {
     width,
     height,
@@ -241,65 +213,6 @@ export async function navigate(cdp, url) {
   const loaded = cdp.once('Page.loadEventFired');
   await cdp.send('Page.navigate', { url });
   await loaded;
-}
-
-/**
- * Bind the page's own copies of the app's nanostores onto `window.__stores`.
- *
- * The dev server serves src modules with a Vite HMR cache-busting query
- * (`universe.ts?t=1790577…`), so importing the bare path builds a SECOND copy of
- * every atom. Reading that copy shows an empty store while the app runs fine,
- * which is how a whole run of assertions once passed while measuring nothing.
- * Always resolve the URL the app actually loaded.
- */
-export async function bindStores(cdp, names) {
-  const wanted = names ?? ['universe', 'environment'];
-  const result = await evaluate(
-    cdp,
-    `(async () => {
-       const urls = performance.getEntriesByType('resource').map(r => r.name);
-       const bound = {};
-       ${wanted
-         .map(
-           (n) => `{
-         const url = urls.find(u => u.includes('/stores/${n}.ts'));
-         if (!url) return;
-         bound.${n} = await import(url);
-       }`
-         )
-         .join('\n       ')}
-       window.__stores = Object.assign(window.__stores || {}, bound);
-       return Object.keys(bound);
-     })()`
-  );
-  return result;
-}
-
-/**
- * Read the R3F camera's world position from the page.
- *
- * The camera lives in an R3F root's store, and the root is only reachable from
- * the app's own copy of @react-three/fiber — the same module-duplication trap
- * `bindStores` documents. Suites judging camera motion need this, because pixel
- * comparison only works while the scene is frozen, and a hover parallax would
- * only ever apply while motion was enabled.
- */
-export async function readCameraPosition(cdp) {
-  return JSON.parse(
-    await evaluate(
-      cdp,
-      `(async () => {
-         const urls = performance.getEntriesByType('resource').map(r => r.name);
-         const url = urls.find(u => /@react-three\\/fiber|@react-three_fiber/.test(u));
-         if (!url) return 'null';
-         const mod = await import(url);
-         const root = [...(mod._roots?.values() ?? [])][0];
-         if (!root) return 'null';
-         const p = root.store.getState().camera.position;
-         return JSON.stringify([p.x, p.y, p.z]);
-       })()`
-    )
-  );
 }
 
 // Re-exported so suites can import the whole browser toolkit from one place.

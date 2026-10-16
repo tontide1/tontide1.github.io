@@ -5,10 +5,10 @@
  *   pnpm test:static        only the suites that need neither a browser nor a server
  *   pnpm test:seo           just the built-HTML metadata suite
  *
- * Two servers are started because two suites need different things: the browser
- * suites that read the app's own stores need the dev server, because a production
- * build serves no source modules; the bundle suite needs the preview build,
- * because it asserts on the emitted chunk names.
+ * Two servers exist because the suites need different things: the browser
+ * suites load pages from the dev server, and nothing needs the preview build
+ * any more — there is no emitted JavaScript to assert on. The runner starts a
+ * server only when a selected suite asks for it.
  */
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -26,14 +26,10 @@ const ASTRO = path.join(ROOT, 'node_modules', 'astro', 'astro.js');
 const astro = (command) => [process.execPath, [ASTRO, command]];
 
 const SUITES = [
-  { id: 'environment', needs: { browser: false, server: null }, run: () => import('./suite-environment.mjs') },
   { id: 'source', needs: { browser: false, server: null }, run: () => import('./suite-source.mjs') },
   { id: 'seo', needs: { browser: false, server: null }, run: () => import('./suite-seo.mjs') },
   { id: 'layout', needs: { browser: false, server: null }, run: () => import('./suite-layout.mjs') },
-  { id: 'bundle', needs: { browser: true, server: 'preview' }, run: () => import('./suite-bundle.mjs') },
-  { id: 'devices', needs: { browser: true, server: 'dev' }, run: () => import('./suite-devices.mjs') },
-  { id: 'drag', needs: { browser: true, server: 'dev' }, run: () => import('./suite-drag.mjs') },
-  { id: 'touch-drag', needs: { browser: true, server: 'dev' }, run: () => import('./suite-touch-drag.mjs') },
+  { id: 'terminal', needs: { browser: true, server: 'dev' }, run: () => import('./suite-terminal.mjs') },
   { id: 'keyboard', needs: { browser: true, server: 'dev' }, run: () => import('./suite-keyboard.mjs') },
 ];
 

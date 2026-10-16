@@ -11,11 +11,10 @@ const description =
 ---
 
 <ContentLayout
-  domain="RESEARCH"
   title={title}
-  role="Binary Clustered System"
+  command="ls"
+  cwd="~/research"
   type="website"
-  meta="HYPOTHESIS / EXPERIMENTS"
   description={description}
   structuredData={collectionPage({
     title,
@@ -25,38 +24,24 @@ const description =
     items: researches.map((r) => ({ name: r.data.title, url: new URL(`/research/${r.id}/`, Astro.url).href })),
   })}
 >
-  <div class="space-y-6">
+  <div class="space-y-4">
     {researches.map((item) => (
-      <article class="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-[#3a3a3a] transition-colors p-6 rounded space-y-4">
-        <div class="flex items-center justify-between">
-          <a href={`/research/${item.id}`} class="text-base md:text-lg font-bold text-[#ffffff] hover:text-[#93c5fd] transition-colors">
-            {item.data.title} →
-          </a>
-          <span class="text-[10px] text-[#93c5fd] border border-[#262626] px-2 py-0.5 rounded">
-            {item.data.status.toUpperCase()}
-          </span>
+      <article class="card">
+        <div class="card-eyebrow">
+          <span class="text-amber">{item.data.status}</span>
+          <span>{item.data.date}</span>
         </div>
-
-        <div class="space-y-2 text-xs">
-          <div>
-            <span class="text-[#525252] block text-[10px] uppercase font-bold">
-              RESEARCH QUESTION
-            </span>
-            <p class="text-[#e8e8e8]">{item.data.research_question}</p>
-          </div>
-
-          <div>
-            <span class="text-[#525252] block text-[10px] uppercase font-bold">
-              WORKING HYPOTHESIS
-            </span>
-            <p class="text-[#a3a3a3]">{item.data.hypothesis}</p>
-          </div>
-        </div>
-
-        <div class="pt-3 border-t border-[#1a1a1a] text-xs">
-          <a href={`/research/${item.id}`} class="text-[#93c5fd] hover:underline font-semibold">
-            Read Benchmark & Methodology →
-          </a>
+        <h2 class="mb-2 mt-0 text-base font-bold leading-snug">
+          <a href={`/research/${item.id}`}>{item.data.title}</a>
+        </h2>
+        <dl class="m-0 text-sm">
+          <dt class="text-xs uppercase tracking-wide text-muted">research question</dt>
+          <dd class="mb-3 mt-0">{item.data.research_question}</dd>
+          <dt class="text-xs uppercase tracking-wide text-muted">working hypothesis</dt>
+          <dd class="m-0 text-muted">{item.data.hypothesis}</dd>
+        </dl>
+        <div class="mt-3 border-t border-line pt-3 text-xs">
+          <a href={`/research/${item.id}`}>read benchmark & methodology →</a>
         </div>
       </article>
     ))}

@@ -26,9 +26,9 @@ export const PERSON = {
 export const WEBSITE = {
   '@type': 'WebSite',
   '@id': '#website',
-  name: 'TONTIDE1 — A Personal Gravity System',
+  name: 'TONTIDE1',
   description:
-    'Personal digital universe where Tài is the stable gravitational center and his public life, thoughts, notes, projects, and research orbit around him.',
+    'Software developer and AI engineer in Ho Chi Minh City. Projects, research, notes, thoughts, and life — rendered as a terminal session.',
   inLanguage: IN_LANGUAGE,
   author: PERSON,
 };

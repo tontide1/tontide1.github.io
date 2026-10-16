@@ -1,156 +1,94 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { UniverseLoader } from '../components/universe/UniverseLoader';
-import { HUD } from '../components/universe/HUD';
-import { SearchModal } from '../components/universe/SearchModal';
-import { OrientationMap } from '../components/universe/OrientationMap';
-import HtmlFallback from '../components/navigation/HtmlFallback.astro';
-import { getCollection } from 'astro:content';
+import banner from '../assets/banner.txt?raw';
+import { DOMAINS } from '../lib/domains';
+import { HANDLE, ROWS, SECTIONS } from '../lib/profile';
+import { buildSearchIndex } from '../lib/search';
 import { WEBSITE } from '../lib/seo';
-import type { SearchItem } from '../stores/universe';
+import CommandLine from '../components/terminal/CommandLine.astro';
+import SearchTrigger from '../components/terminal/SearchTrigger.astro';
+import SearchDialog from '../components/terminal/SearchDialog.astro';
 
-const projects = await getCollection('projects', ({ data }) => !data.draft);
-const research = await getCollection('research', ({ data }) => !data.draft);
-const life = await getCollection('life', ({ data }) => !data.draft);
-const thoughts = await getCollection('thoughts', ({ data }) => !data.draft);
-const notes = await getCollection('notes', ({ data }) => !data.draft);
+const items = await buildSearchIndex();
 
-const allItems: SearchItem[] = [
-  // Primary Domains
-  {
-    id: 'domain-about',
-    title: 'TONTIDE1 — Central Gravitational Anchor',
-    summary: 'Software developer, AI researcher, and builder. Center of mass of this digital system.',
-    domain: 'tai',
-    tags: ['identity', 'bio', 'cv', 'contact'],
-    path: '/about',
-    meta: 'CORE',
-    entityId: 'tai',
-  },
-  {
-    id: 'domain-projects',
-    title: 'PROJECTS — Structured Celestial Body',
-    summary: 'Concrete software systems, architecture, experiments, and technical artifacts.',
-    domain: 'projects',
-    tags: ['systems', 'code', 'deployments'],
-    path: '/projects',
-    meta: 'DOMAIN',
-    entityId: 'projects',
-  },
-  {
-    id: 'domain-research',
-    title: 'RESEARCH — Binary Clustered System',
-    summary: 'Hypothesis-driven investigations, legal QA retrieval benchmarks, and datasets.',
-    domain: 'research',
-    tags: ['benchmarks', 'nlp', 'papers'],
-    path: '/research',
-    meta: 'DOMAIN',
-    entityId: 'research',
-  },
-  {
-    id: 'domain-life',
-    title: 'LIFE — Organic Celestial Body',
-    summary: 'Public personal experiences, milestones, workspace, and technical journey.',
-    domain: 'life',
-    tags: ['timeline', 'archive', 'journey'],
-    path: '/life',
-    meta: 'DOMAIN',
-    entityId: 'life',
-  },
-  {
-    id: 'domain-thoughts',
-    title: 'THOUGHTS — Connected Constellation',
-    summary: 'Reflections, software engineering perspectives, and long-form personal essays.',
-    domain: 'thoughts',
-    tags: ['essays', 'ideas', 'philosophy'],
-    path: '/thoughts',
-    meta: 'DOMAIN',
-    entityId: 'thoughts',
-  },
-  {
-    id: 'domain-notes',
-    title: 'NOTES — Compact Asteroid Field',
-    summary: 'Concise technical fragments, tooling discoveries, and debugging references.',
-    domain: 'notes',
-    tags: ['fragments', 'tooling', 'debugging'],
-    path: '/notes',
-    meta: 'DOMAIN',
-    entityId: 'notes',
-  },
-  // Published Articles & Artifacts
-  ...projects.map((p) => ({
-    id: p.id,
-    title: p.data.title,
-    summary: p.data.summary,
-    domain: 'projects',
-    tags: p.data.tags || [],
-    path: `/projects/${p.id}`,
-    date: p.data.date,
-    meta: p.data.stack?.join(', ') || 'SYSTEM',
-    entityId: 'projects',
-  })),
-  ...research.map((r) => ({
-    id: r.id,
-    title: r.data.title,
-    summary: r.data.summary,
-    domain: 'research',
-    tags: r.data.tags || [],
-    path: `/research/${r.id}`,
-    date: r.data.date,
-    meta: r.data.status?.toUpperCase() || 'RESEARCH',
-    entityId: 'research',
-  })),
-  ...life.map((l) => ({
-    id: l.id,
-    title: l.data.title,
-    summary: l.data.summary,
-    domain: 'life',
-    tags: l.data.tags || [],
-    path: `/life/${l.id}`,
-    date: l.data.date,
-    meta: 'TIMELINE',
-    entityId: 'life',
-  })),
-  ...thoughts.map((t) => ({
-    id: t.id,
-    title: t.data.title,
-    summary: t.data.summary,
-    domain: 'thoughts',
-    tags: t.data.tags || [],
-    path: `/thoughts/${t.id}`,
-    date: t.data.date,
-    meta: 'ESSAY',
-    entityId: 'thoughts',
-  })),
-  ...notes.map((n) => ({
-    id: n.id,
-    title: n.data.title,
-    summary: n.data.summary,
-    domain: 'notes',
-    tags: n.data.tags || [],
-    path: `/notes/${n.id}`,
-    date: n.data.date,
-    meta: n.data.category || 'NOTE',
-    entityId: 'notes',
-  })),
-];
+// Stagger offsets run continuously from the first row through the last
+// directory, so the panel reveals top to bottom in one pass.
+let cursor = ROWS.length;
+const sectionOffsets = SECTIONS.map((section) => {
+  const offset = cursor;
+  cursor += section.rows.length;
+  return offset;
+});
+const directoryOffset = cursor;
 ---
 
-<Layout title="TONTIDE1 — A Personal Gravity System" structuredData={WEBSITE}>
-  <main class="relative w-screen h-dvh overflow-hidden bg-[#050505]">
-    {/* HTML-first accessible navigation & noscript fallback */}
-    <HtmlFallback />
+<Layout title="TONTIDE1 — Software Developer & AI Engineer" structuredData={WEBSITE}>
+  <h1 class="sr-only">TONTIDE1 — Software Developer & AI Engineer</h1>
 
-    {/* 3D WebGL Gravity Universe — bundle deferred until the shell has painted */}
-    <UniverseLoader client:only="react" />
+  <main class="mx-auto w-full max-w-[72rem] px-6 py-10 lg:py-16">
+    <div class="grid gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-16">
+      <pre class="banner" aria-hidden="true">{banner.trimEnd()}</pre>
 
-    {/* Interactive HUD Overlay */}
-    <HUD client:load />
+      <div class="min-w-0">
+        <div class="hostline">
+          <span class="cmd-user">{HANDLE}</span>
+          <span class="hostline-rule" aria-hidden="true"></span>
+        </div>
 
-    {/* Search Modal (Keyboard shortcut: /) */}
-    <SearchModal items={allItems} client:load />
+        <div class="ff">
+          {ROWS.map((row, i) => (
+            <div class="ff-row stagger" style={`--i:${i}`}>
+              <span class="ff-label">{row.label}</span>
+              <span class="ff-value">{row.value}</span>
+            </div>
+          ))}
+        </div>
 
-    {/* 2D Orientation Map (Keyboard shortcut: M) */}
-    <OrientationMap items={allItems} client:load />
+        {SECTIONS.map((section, s) => (
+          <section class="ff-section">
+            <h2 class="ff-title">– {section.title}</h2>
+            <div class="ff">
+              {section.rows.map((row, i) => (
+                <div class="ff-row stagger" style={`--i:${sectionOffsets[s] + i}`}>
+                  <span class="ff-label">{row.label}</span>
+                  <span class="ff-value">
+                    {row.href ? (
+                      <a href={row.href} target={row.href.startsWith('http') ? '_blank' : undefined} rel={row.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
+                        {row.value}
+                      </a>
+                    ) : (
+                      row.value
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <section class="ff-section">
+          <h2 class="ff-title">– Directories</h2>
+          <ul class="tree">
+            {DOMAINS.map((domain, i) => (
+              <li>
+                <a class="tree-link stagger" style={`--i:${directoryOffset + i}`} href={domain.path}>
+                  <span>~/{domain.label}</span><span class="tree-blurb">{domain.blurb}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    </div>
   </main>
+
+  <footer class="mx-auto flex w-full max-w-[72rem] flex-wrap items-center justify-between gap-4 px-6 pb-10">
+    <CommandLine cwd="~" />
+    <div class="flex items-center gap-3">
+      <SearchTrigger />
+      <a class="github-link" href="https://github.com/tontide1">GitHub</a>
+    </div>
+  </footer>
+
+  <SearchDialog items={items} />
 </Layout>
