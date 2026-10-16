@@ -2,6 +2,9 @@
 dist/
 .astro/
 
+# Browser tooling artifacts
+.playwright-mcp/
+
 # Dependencies
 node_modules/
 
