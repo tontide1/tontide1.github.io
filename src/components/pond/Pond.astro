@@ -1,0 +1,35 @@
+---
+/**
+ * The pond behind the home page: a canvas of ASCII monkeys plus its live
+ * counts. All motion lives in engine.ts; the canvas is decorative, so it is
+ * aria-hidden and the counts are only a mood.
+ */
+---
+
+<canvas class="home-canvas" data-pond aria-hidden="true"></canvas>
+<div class="pond-stats" data-pond-avoid aria-hidden="true" hidden>
+  <div data-pond-monkeys>0</div>
+  <div data-pond-peanuts>0</div>
+</div>
+
+<script>
+  import { PondEngine } from './engine';
+
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-pond]');
+  const stats = document.querySelector<HTMLElement>('.pond-stats');
+  const monkeysEl = document.querySelector<HTMLElement>('[data-pond-monkeys]');
+  const peanutsEl = document.querySelector<HTMLElement>('[data-pond-peanuts]');
+
+  if (canvas) {
+    new PondEngine(canvas, ({ monkeys, peanuts }) => {
+      if (stats) stats.hidden = monkeys === 0;
+      if (monkeysEl && monkeysEl.textContent !== String(monkeys)) monkeysEl.textContent = String(monkeys);
+      if (peanutsEl && peanutsEl.textContent !== String(peanuts)) {
+        peanutsEl.textContent = String(peanuts);
+        // Flash the count each time a peanut changes, tying a click or a bite to the number.
+        peanutsEl.classList.add('flash');
+        window.setTimeout(() => peanutsEl.classList.remove('flash'), 350);
+      }
+    });
+  }
+</script>
