@@ -1,0 +1,78 @@
+---
+import { NAV } from '../../lib/domains';
+
+interface Props {
+  path: string;
+}
+
+const { path } = Astro.props;
+const normalize = (p: string) => p.replace(/\/+$/, '') || '/';
+const current = normalize(path);
+const isCurrent = (href: string) => (href === '/' ? current === '/' : current === href || current.startsWith(`${href}/`));
+---
+
+<div class="mobile-bar" data-pond-ignore>
+  <button class="mobile-pill" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">
+    <span class="mobile-pill-title">Tài Phan</span>
+    <span class="mobile-pill-mark" aria-hidden="true">
+      <svg data-menu-icon="open" viewBox="0 0 16 16" fill="color-mix(in srgb, var(--foreground-color) 50%, transparent)">
+        <circle cx="4" cy="4" r="1.5"></circle>
+        <circle cx="12" cy="4" r="1.5"></circle>
+        <circle cx="4" cy="12" r="1.5"></circle>
+        <circle cx="12" cy="12" r="1.5"></circle>
+      </svg>
+      <svg data-menu-icon="close" viewBox="0 0 16 16" fill="none" stroke="color-mix(in srgb, var(--foreground-color) 50%, transparent)" stroke-width="1.5" stroke-linecap="round" hidden>
+        <path d="M3 3L13 13M13 3L3 13"></path>
+      </svg>
+    </span>
+  </button>
+</div>
+
+<div class="mobile-menu" id="mobile-menu" data-mobile-menu data-open="false" data-pond-ignore>
+  <div class="mobile-menu-links">
+    {NAV.map((item) => (
+      <a href={item.path} aria-current={isCurrent(item.path) ? 'page' : undefined} data-menu-close>{item.label}</a>
+    ))}
+  </div>
+  <div class="mobile-menu-foot">
+    <a href="https://github.com/tontide1" target="_blank" rel="noopener noreferrer">github</a>
+    <a href="https://www.linkedin.com/in/tontide1" target="_blank" rel="noopener noreferrer">linkedin</a>
+    <button type="button" data-search-open data-menu-close aria-label="Search the site">search</button>
+    <button type="button" data-theme-toggle aria-label="Toggle theme">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true" class="dark:hidden">
+        <path d="M236.37,139.4a12,12,0,0,0-12-3A84.07,84.07,0,0,1,119.6,31.59a12,12,0,0,0-15-15A108.86,108.86,0,0,0,49.69,55.07,108,108,0,0,0,136,228a107.09,107.09,0,0,0,64.93-21.69,108.86,108.86,0,0,0,38.44-54.94A12,12,0,0,0,236.37,139.4Zm-49.88,47.74A84,84,0,0,1,68.86,69.51,84.93,84.93,0,0,1,92.27,48.29Q92,52.13,92,56A108.12,108.12,0,0,0,200,164q3.87,0,7.71-.27A84.79,84.79,0,0,1,186.49,187.14Z"></path>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true" class="hidden dark:inline">
+        <path d="M116,36V20a12,12,0,0,1,24,0V36a12,12,0,0,1-24,0Zm80,92a68,68,0,1,1-68-68A68.07,68.07,0,0,1,196,128Zm-24,0a44,44,0,1,0-44,44A44.05,44.05,0,0,0,172,128ZM51.51,68.49a12,12,0,1,0,17-17l-12-12a12,12,0,0,0-17,17Zm0,119-12,12a12,12,0,0,0,17,17l12-12a12,12,0,1,0-17-17ZM196,72a12,12,0,0,0,8.49-3.51l12-12a12,12,0,0,0-17-17l-12,12A12,12,0,0,0,196,72Zm8.49,115.51a12,12,0,0,0-17,17l12,12a12,12,0,0,0,17-17ZM48,128a12,12,0,0,0-12-12H20a12,12,0,0,0,0,24H36A12,12,0,0,0,48,128Zm80,80a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V220A12,12,0,0,0,128,208Zm108-92H220a12,12,0,0,0,0,24h16a12,12,0,0,0,0-24Z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    if (!toggle || !menu) return;
+    const openIcon = toggle.querySelector('[data-menu-icon="open"]');
+    const closeIcon = toggle.querySelector('[data-menu-icon="close"]');
+
+    const setOpen = (open) => {
+      menu.dataset.open = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      // `hidden` is an HTMLElement property; on an SVG it is only an expando and
+      // never reaches the attribute, so toggle the attribute itself.
+      if (openIcon) openIcon.toggleAttribute('hidden', open);
+      if (closeIcon) closeIcon.toggleAttribute('hidden', !open);
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+    };
+
+    toggle.addEventListener('click', () => setOpen(menu.dataset.open !== 'true'));
+    for (const closer of menu.querySelectorAll('[data-menu-close]')) {
+      closer.addEventListener('click', () => setOpen(false));
+    }
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu.dataset.open === 'true') setOpen(false);
+    });
+  })();
+</script>

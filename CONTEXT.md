@@ -1,6 +1,6 @@
-# TONTIDE1 — Terminal Portfolio
+# TONTIDE1 — Personal Site
 
-The owner's public site, rendered as a terminal session: a fastfetch-style panel is the front door, and every content page reads like the output of one command. Plain HTML/MDX; no WebGL, no framework runtime.
+The owner's public site: a single-screen home with an ASCII pond behind it, and quiet warm-mono reading pages for each domain. Plain HTML/MDX; the only runtime code is one canvas engine on the home page.
 
 ## Language
 
@@ -12,17 +12,29 @@ _Avoid_: TÀI, Home page, Homepage, Trang chủ
 One of the five primary directories under `~/`: LIFE, THOUGHTS, NOTES, PROJECTS, RESEARCH (plus ABOUT, the identity page).
 _Avoid_: Category, Section, Folder, Tag, Collection
 
-**Terminal**:
-The site's presentation layer: prompt lines, labelled rows, a directory tree, flat borders. Visual only — it never executes commands.
-_Avoid_: Shell, Console, Command line, CLI
+**Pond**:
+The home screen: an ASCII canvas of a monkey perched on a branch above rippling blue water, avoiding the prose, and coming over to whatever the visitor drops. Decorative only — it never carries content and is `aria-hidden`.
+_Avoid_: Street, Koi, Background, Hero animation, Canvas playground
 
-**Panel**:
-The home page: an ASCII wordmark beside labelled identity rows, the contact block, and the directory listing.
-_Avoid_: Hero, Landing, Dashboard, fastfetch clone
+**Monkey**:
+One perched body over the pond. The hero silhouette (branch, leaves, tail) is drawn as tiles of etched ASCII glyphs. It has no content meaning.
+_Avoid_: Vehicle, Car object, Entity, Sprite, NPC
 
-**Directory tree**:
-The navigation: the six directories listed as `~/name` links, in the sidebar, the mobile details block, and the home panel.
-_Avoid_: Menu, Navbar, Site map
+**Citation**:
+An underlined mention on the home page (`Legal-RAG`, `hybrid retrieval`) whose hover card shows the source, role, date and one line, and whose click opens the project or research page. The surrounding prose dims while a card is open.
+_Avoid_: Tooltip, Popover, Link preview
+
+**Strip**:
+The projects page: project covers side by side in one horizontal track that scrolls with the wheel, keys, or touch.
+_Avoid_: Carousel, Slider, Gallery, Grid
+
+**Reading page**:
+A content page: one project, research entry, note, thought, or life entry; or the About page. Mono metadata above sans prose in a 54rem column.
+_Avoid_: Article, Post page, Detail view, Terminal output
+
+**Mobile pill**:
+The floating rounded bar at the top of every page below 1024px; it opens the full-screen menu whose labels are set in Playfair Display.
+_Avoid_: Hamburger, Navbar, Drawer
 
 **LIFE**:
 The domain archiving public personal experiences, milestones, and the technical journey in an editorial timeline.

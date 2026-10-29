@@ -1,94 +1,48 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import banner from '../assets/banner.txt?raw';
-import { DOMAINS } from '../lib/domains';
-import { HANDLE, ROWS, SECTIONS } from '../lib/profile';
+import SiteNav from '../components/site/SiteNav.astro';
+import MobileNav from '../components/site/MobileNav.astro';
+import SearchDialog from '../components/site/SearchDialog.astro';
+import Cited from '../components/site/Cited.astro';
+import Pond from '../components/pond/Pond.astro';
 import { buildSearchIndex } from '../lib/search';
 import { WEBSITE } from '../lib/seo';
-import CommandLine from '../components/terminal/CommandLine.astro';
-import SearchTrigger from '../components/terminal/SearchTrigger.astro';
-import SearchDialog from '../components/terminal/SearchDialog.astro';
 
 const items = await buildSearchIndex();
-
-// Stagger offsets run continuously from the first row through the last
-// directory, so the panel reveals top to bottom in one pass.
-let cursor = ROWS.length;
-const sectionOffsets = SECTIONS.map((section) => {
-  const offset = cursor;
-  cursor += section.rows.length;
-  return offset;
-});
-const directoryOffset = cursor;
+const path = Astro.url.pathname;
 ---
 
-<Layout title="TONTIDE1 — Software Developer & AI Engineer" structuredData={WEBSITE}>
-  <h1 class="sr-only">TONTIDE1 — Software Developer & AI Engineer</h1>
+<Layout
+  title="TONTIDE1 — Software Developer & AI Engineer"
+  description="Tai Phan — a software developer and AI engineer in Ho Chi Minh City. Retrieval systems, backend services, and a pond that never quite holds still."
+  structuredData={WEBSITE}
+>
+  <div class="home">
+    <Pond />
+    <MobileNav path={path} />
+    <SiteNav path={path} />
 
-  <main class="mx-auto w-full max-w-[72rem] px-6 py-10 lg:py-16">
-    <div class="grid gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-16">
-      <pre class="banner" aria-hidden="true">{banner.trimEnd()}</pre>
+    <main class="home-main">
+      <header class="home-head">
+        <blockquote class="quote" data-pond-avoid>
+          in a quiet pond,<br />cast a fine net.<span class="cursor" aria-hidden="true"></span>
+        </blockquote>
 
-      <div class="min-w-0">
-        <div class="hostline">
-          <span class="cmd-user">{HANDLE}</span>
-          <span class="hostline-rule" aria-hidden="true"></span>
+        <div class="intro cited-text" data-pond-avoid>
+          <h1>Xin chào, I&apos;m Tài.</h1>
+          <p>
+            Software Developer &amp; AI Engineer in Ho Chi Minh City, focused on retrieval systems and LLM applications.
+          </p>
+          <p>
+            Currently building <Cited source="legal-rag">Legal-RAG</Cited> for Vietnamese legal question answering and exploring <Cited source="hybrid-retrieval">hybrid retrieval</Cited>.
+          </p>
+          <p class="socials">
+            <span><a class="quiet-link" href="https://github.com/tontide1" target="_blank" rel="noopener noreferrer">github</a></span><span><span class="socials-sep"> / </span><a class="quiet-link" href="https://www.linkedin.com/in/tontide1" target="_blank" rel="noopener noreferrer">linkedin</a></span><span><span class="socials-sep"> / </span><a class="quiet-link" href="mailto:phantantaiforwork@gmail.com">mail</a></span>
+          </p>
         </div>
-
-        <div class="ff">
-          {ROWS.map((row, i) => (
-            <div class="ff-row stagger" style={`--i:${i}`}>
-              <span class="ff-label">{row.label}</span>
-              <span class="ff-value">{row.value}</span>
-            </div>
-          ))}
-        </div>
-
-        {SECTIONS.map((section, s) => (
-          <section class="ff-section">
-            <h2 class="ff-title">– {section.title}</h2>
-            <div class="ff">
-              {section.rows.map((row, i) => (
-                <div class="ff-row stagger" style={`--i:${sectionOffsets[s] + i}`}>
-                  <span class="ff-label">{row.label}</span>
-                  <span class="ff-value">
-                    {row.href ? (
-                      <a href={row.href} target={row.href.startsWith('http') ? '_blank' : undefined} rel={row.href.startsWith('http') ? 'noopener noreferrer' : undefined}>
-                        {row.value}
-                      </a>
-                    ) : (
-                      row.value
-                    )}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-
-        <section class="ff-section">
-          <h2 class="ff-title">– Directories</h2>
-          <ul class="tree">
-            {DOMAINS.map((domain, i) => (
-              <li>
-                <a class="tree-link stagger" style={`--i:${directoryOffset + i}`} href={domain.path}>
-                  <span>~/{domain.label}</span><span class="tree-blurb">{domain.blurb}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <footer class="mx-auto flex w-full max-w-[72rem] flex-wrap items-center justify-between gap-4 px-6 pb-10">
-    <CommandLine cwd="~" />
-    <div class="flex items-center gap-3">
-      <SearchTrigger />
-      <a class="github-link" href="https://github.com/tontide1">GitHub</a>
-    </div>
-  </footer>
+      </header>
+    </main>
+  </div>
 
   <SearchDialog items={items} />
 </Layout>

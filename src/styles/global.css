@@ -1,94 +1,120 @@
 @import "tailwindcss";
 
 /*
- * Typeface and palette follow the OpenCode website (anomalyco/opencode,
- * services/www, MIT): OpenTUI Mono self-hosted, near-black ground, one blue
- * accent, amber for metadata. Flat 1px borders, no shadows, no radii.
+ * Visual language ported from daoho.dev: warm two-theme monochrome, Geist Mono
+ * for every interface word, Geist Sans for reading prose, Playfair Display only
+ * for the mobile menu labels. No accent colour: hierarchy is opacity + hairlines.
  */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
-  font-family: "OpenTUI Mono";
-  src: url("/fonts/OpenTUIMono-Regular.woff2") format("woff2");
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono-latin-400-normal.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "OpenTUI Mono";
-  src: url("/fonts/OpenTUIMono-Bold.woff2") format("woff2");
-  font-weight: 700;
+  font-family: "Geist Sans";
+  src: url("/fonts/geist-sans-latin-400-normal.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "OpenTUI Mono";
-  src: url("/fonts/OpenTUIMono-Italic.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
+  font-family: "Geist Sans";
+  src: url("/fonts/geist-sans-latin-500-normal.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "OpenTUI Mono";
-  src: url("/fonts/OpenTUIMono-BoldItalic.woff2") format("woff2");
-  font-weight: 700;
-  font-style: italic;
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-latin-400.woff2") format("woff2");
+  font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Playfair Display";
+  src: url("/fonts/playfair-display-vietnamese-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
 }
 
 @theme {
-  --color-bg: #090909;
-  --color-fg: #efefef;
-  --color-muted: #929292;
-  --color-line: #303030;
-  --color-surface: #101010;
-  --color-surface-hover: #181818;
-  --color-link: #4d8eff;
-  --color-blue: #73a7ff;
-  --color-green: #70c997;
-  --color-amber: #e0af68;
-  --color-red: #e67c7c;
+  --color-bg: var(--background-color);
+  --color-fg: var(--foreground-color);
+  --color-muted: var(--muted-color);
+  --color-line: var(--line-color);
 
-  --font-mono: 'OpenTUI Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: "Geist Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
 }
 
+/* Paper and ink, both themes. Dark is the same ink inverted, not a different palette. */
 :root {
-  --background: #090909;
-  --foreground: #efefef;
-  --muted: #929292;
-  --border: #303030;
-  --surface: #101010;
-  --surface-hover: #181818;
-  --link: #4d8eff;
-  --blue: #73a7ff;
-  --green: #70c997;
-  --amber: #e0af68;
-  --header-height: 3.875rem;
-  --gutter: 1.5rem;
+  --background-color: #f5f4f1;
+  --foreground-color: #262523;
+  --muted-color: color-mix(in srgb, var(--foreground-color) 64%, transparent);
+  --line-color: color-mix(in srgb, var(--foreground-color) 11%, transparent);
+  --card-bg: color-mix(in srgb, var(--background-color) 45%, #ffffff);
+  --card-border: color-mix(in srgb, var(--foreground-color) 11%, transparent);
+  --card-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.8),
+    0 1px 2px rgb(38 37 35 / 0.06),
+    0 12px 32px -12px rgb(38 37 35 / 0.18);
+  color-scheme: light;
+}
 
-  background-color: var(--background);
-  color: var(--foreground);
+.dark {
+  --background-color: #1a1917;
+  --foreground-color: #fff7f0;
+  --muted-color: color-mix(in srgb, var(--foreground-color) 50%, transparent);
+  --line-color: color-mix(in srgb, var(--foreground-color) 9%, transparent);
+  --card-bg: color-mix(in srgb, var(--background-color) 93%, var(--foreground-color));
+  --card-border: color-mix(in srgb, var(--foreground-color) 9%, transparent);
+  --card-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--foreground-color) 6%, transparent),
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 16px 40px -12px rgb(0 0 0 / 0.6);
   color-scheme: dark;
-  font-family: var(--font-mono);
 }
 
 html {
   scrollbar-gutter: stable;
+  -webkit-text-size-adjust: 100%;
+}
+
+html:has(.home) {
+  scrollbar-gutter: auto;
 }
 
 body {
   margin: 0;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-size: 0.875rem;
-  line-height: 1.8;
+  background-color: var(--background-color);
+  color: var(--foreground-color);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--link) 30%, transparent);
+  background: color-mix(in srgb, var(--foreground-color) 18%, transparent);
+}
+
+:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--foreground-color) 45%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 * {
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: color-mix(in srgb, var(--foreground-color) 25%, transparent) transparent;
   scrollbar-width: thin;
 }
 *::-webkit-scrollbar {
@@ -97,383 +123,959 @@ body {
 }
 *::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: var(--border);
+  background: color-mix(in srgb, var(--foreground-color) 25%, transparent);
 }
 
-a {
+/* ── chrome ─────────────────────────────────────────────────────────── */
+
+.site-nav {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.25rem;
+  padding-top: 2rem;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-transform: lowercase;
+  view-transition-name: site-nav;
+}
+
+.nav-link {
   color: inherit;
   text-decoration: none;
+  opacity: 0.68;
+  transition: opacity 160ms ease, color 160ms ease;
 }
-a:hover {
-  text-decoration: underline;
+.nav-link:hover {
+  opacity: 1;
+}
+.nav-link:focus-visible {
+  opacity: 1;
+  outline: 1px solid color-mix(in srgb, var(--foreground-color) 35%, transparent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.nav-link[aria-current="page"] {
+  opacity: 1;
+  font-weight: 500;
 }
 
-:focus-visible {
-  outline: 2px solid var(--link);
-  outline-offset: 2px;
-}
-
-/* Component classes live in the Tailwind `components` layer so utility classes
-   in markup can override them; the base/token rules above stay unlayered. */
-@layer components {
-
-/* Chrome: sticky header, flat border, blurred ground (OpenCode's site-header) */
-.site-header {
-  position: sticky;
-  z-index: 20;
-  top: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  background: color-mix(in srgb, var(--background) 82%, transparent);
-  backdrop-filter: blur(16px);
-}
-.header-inner {
+.nav-tools {
   display: flex;
-  width: min(100%, 72rem);
-  height: var(--header-height);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
   align-items: center;
   gap: 1.25rem;
 }
-.brand {
-  font-weight: 700;
+
+.nav-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  opacity: 0.68;
+  transition: opacity 160ms ease, color 160ms ease;
 }
-.brand:hover {
-  text-decoration: none;
-  color: var(--blue);
+.nav-button:hover {
+  opacity: 1;
 }
-.github-link {
-  color: var(--muted);
-  font-weight: 700;
+.nav-button:focus-visible {
+  opacity: 1;
+  outline: 1px solid color-mix(in srgb, var(--foreground-color) 35%, transparent);
+  outline-offset: 4px;
+  border-radius: 2px;
 }
-.github-link:hover {
-  color: var(--foreground);
-  text-decoration: none;
+.nav-button kbd {
+  font: inherit;
+  font-size: 11px;
+  opacity: 0.6;
 }
 
-/* The prompt line: tontide1@github:~/path $ command ▊ */
-.cmdline {
+/* Mobile: one floating pill, full-screen menu under it. */
+.mobile-bar {
+  position: fixed;
+  top: 3vw;
+  left: 3vw;
+  right: 3vw;
+  z-index: 50;
+}
+.mobile-pill {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3.5vw 5vw;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground-color) 6%, transparent);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--foreground-color);
+  font: inherit;
+  cursor: pointer;
+}
+.mobile-pill-title {
+  font-family: var(--font-sans);
+  font-size: 5vw;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.mobile-pill-mark {
+  width: 5vw;
+  height: 5vw;
+}
+.mobile-pill-mark svg {
+  width: 100%;
+  height: 100%;
+}
+/* Tailwind's preflight sets `svg { display: block }`, which outranks the UA's
+   `[hidden]` rule; keep the icon swap honest. */
+.mobile-pill-mark svg[hidden] {
+  display: none;
+}
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-color);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 200ms ease, visibility 200ms ease;
+}
+.mobile-menu[data-open="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+.mobile-menu-links {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5vh;
+}
+.mobile-menu-links a {
+  display: block;
+  color: inherit;
+  font-family: var(--font-serif);
+  font-size: 14vw;
+  font-weight: 400;
+  line-height: 17vw;
+  text-align: center;
+  text-decoration: none;
+}
+.mobile-menu-links a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 1.2vw;
+}
+.mobile-menu-foot {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8vw;
+  padding-bottom: 10vh;
+  font-size: 3.5vw;
+  color: color-mix(in srgb, var(--foreground-color) 35%, transparent);
+}
+.mobile-menu-foot a {
+  color: inherit;
+  text-decoration: none;
+}
+.mobile-menu-foot button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.mobile-menu-foot svg {
+  width: 4.5vw;
+  height: 4.5vw;
+}
+@media (min-width: 64rem) {
+  .mobile-bar,
+  .mobile-menu {
+    display: none;
+  }
+}
+@media (max-width: 63.99rem) {
+  .site-nav {
+    display: none;
+  }
+}
+
+/* ── links ──────────────────────────────────────────────────────────── */
+
+/* A link in running prose: a faint 1px underline that firms up on hover. */
+.ink-link {
+  color: var(--foreground-color);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: color-mix(in srgb, var(--foreground-color) 35%, transparent);
+  transition: text-decoration-color 150ms ease, opacity 150ms ease;
+  outline: none;
+}
+.ink-link:hover,
+.ink-link:focus-visible {
+  text-decoration-color: currentColor;
+}
+.ink-link:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--foreground-color) 28%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.quiet-link {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.72;
+  transition: opacity 160ms ease, text-decoration-color 160ms ease;
+  text-underline-offset: 3px;
+}
+.quiet-link:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--foreground-color) 45%, transparent);
+}
+.quiet-link:focus-visible {
+  opacity: 1;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--foreground-color) 45%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--foreground-color) 35%, transparent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── home ───────────────────────────────────────────────────────────── */
+
+.home {
+  position: relative;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--background-color);
+  transition: background-color 300ms ease;
+}
+.home-canvas {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.home-main {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+.home-head {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin-inline: auto;
+  padding: 5.5rem 1.5rem 2.75rem;
+  flex-direction: column;
+  /* Shrink-wrap the copy so the pond's avoid boxes hug the text: full-width
+     boxes would push the monkey and the water off the whole lower screen. */
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 1.85rem;
+  color: var(--foreground-color);
+}
+@media (min-width: 64rem) {
+  /* The reference keeps the copy in the lower-left corner, clear of the
+     subject: a narrow measure and a 5.5% gutter rather than the reading column. */
+  .home-head {
+    padding: 6rem 5.5vw 7.5rem;
+    gap: 2.25rem;
+  }
+  /* Above ~38rem the intro's avoid box would cross into the monkey's ground. */
+  .intro {
+    max-width: min(38rem, 45vw);
+  }
+}
+
+.quote {
   margin: 0;
-  font-size: 0.8125rem;
-  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  opacity: 0.65;
 }
-.cmd-user {
-  color: var(--blue);
-  font-weight: 700;
-}
-.cmd-cwd {
-  color: var(--green);
-}
-.cmd-prompt {
-  margin-right: 0.5ch;
-  color: var(--muted);
-}
-.cmd-body {
-  color: var(--foreground);
-}
+
+/* The line the quote ends on: a solid block blinking at 1.1s. */
 .cursor {
   display: inline-block;
-  width: 0.6em;
+  width: 0.55em;
   height: 1em;
-  margin-left: 0.15em;
-  background: var(--foreground);
-  vertical-align: -0.12em;
-  animation: blink 1.1s steps(1) infinite;
+  margin-left: 0.25rem;
+  transform: translateY(0.15em);
+  background: var(--foreground-color);
+  animation: blink 1.1s step-end infinite;
 }
 @keyframes blink {
-  50% {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
     opacity: 0;
   }
 }
 
-/* fastfetch panel */
-.banner {
-  margin: 0;
-  color: var(--blue);
-  font-size: 0.625rem;
-  line-height: 1.3;
-  user-select: none;
+.intro {
+  max-width: 40rem;
+  font-size: 15px;
+  line-height: max(23px, 3.1vh);
 }
-.hostline {
+.intro h1 {
+  margin: 0 0 0.45rem;
+  font: inherit;
+  font-weight: 500;
+}
+.intro p {
+  margin: 0;
+  font: inherit;
+}
+.intro p + p {
+  margin-top: 0.45rem;
+}
+.intro .socials {
+  margin-top: 1.5vh;
+}
+.socials {
+  margin: 0;
+}
+.socials-sep {
+  opacity: 0.35;
+  padding-inline: 0.15rem;
+}
+
+/* Hover a citation and the surrounding prose steps back, so the mention is the
+   only lit thing on the line. Colour, not opacity: a child cannot exceed its
+   parent's opacity, so the card would dim too. */
+.cited-text {
+  transition: color 180ms ease;
+}
+.cited-text:has(.cite-wrap:hover),
+.cited-text:has(.cite-wrap:focus-within) {
+  color: color-mix(in srgb, var(--foreground-color) 32%, transparent);
+}
+
+.cite-wrap {
+  position: relative;
+  display: inline-block;
+}
+.cite {
+  cursor: pointer;
+}
+/* The mention sits on an underline, not a pill. It darkens when its card is open. */
+.cite-wrap:hover .cite,
+.cite-wrap:focus-within .cite {
+  text-decoration-color: currentColor;
+}
+
+.cite-card {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  width: 340px;
+  margin-bottom: 10px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  color: var(--foreground-color);
+  font-family: var(--font-mono);
+  text-align: left;
+  text-decoration: none;
+  transform-origin: bottom left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px) scale(0.98);
+  transition:
+    opacity 120ms ease-out,
+    transform 120ms ease-out,
+    visibility 120ms;
+}
+.cite-wrap:hover .cite-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 55ms;
+}
+.cite-wrap:focus-within .cite-card {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  transition-delay: 0ms;
+}
+.cite-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 0;
+  font-size: 12px;
+  line-height: 1;
+}
+.cite-mark {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--foreground-color) 12%, transparent);
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.75;
+}
+.cite-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.6;
+}
+.cite-date {
+  margin-left: auto;
+  padding-left: 8px;
+  flex-shrink: 0;
+  color: var(--muted-color);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+.cite-role {
+  padding: 8px 14px 0;
+  font-size: 13px;
+  line-height: 18px;
+}
+.cite-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  padding: 2px 14px 12px;
+  font-size: 12px;
+  line-height: 18px;
+  opacity: 0.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.cite-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-top: 1px solid var(--line-color);
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0.4;
+}
+
+/* Live counts of what is in the pond. */
+.pond-stats {
+  position: absolute;
+  top: 2rem;
+  right: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.625;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 64rem) {
+  .pond-stats {
+    right: 20vw;
+  }
+}
+/* The phone pill owns the top of the screen; the counts would sit under it. */
+@media (max-width: 63.99rem) {
+  .pond-stats {
+    display: none;
+  }
+}
+.pond-stats > div {
+  opacity: 0.32;
+  transition: opacity 300ms ease;
+}
+.pond-stats > div.flash {
+  opacity: 1;
+}
+
+/* ── pages ──────────────────────────────────────────────────────────── */
+
+.page {
+  min-height: 100dvh;
+  padding: 7rem 1.5rem 6rem;
+  color: var(--foreground-color);
+}
+@media (min-width: 64rem) {
+  .page {
+    padding-inline: 20vw;
+  }
+}
+.page-narrow {
+  max-width: 54rem;
+}
+.page h1 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+.page-lede {
+  margin: 0;
+  max-width: 32rem;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  text-wrap: pretty;
+  opacity: 0.8;
+}
+
+/* A list row: date, title, summary, tags, divided by hairlines. */
+.entries {
+  display: flex;
+  flex-direction: column;
+}
+.entry {
+  display: block;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line-color);
+  color: inherit;
+  text-decoration: none;
+}
+.entry:last-child {
+  border-bottom: 1px solid var(--line-color);
+}
+.entry-head {
   display: flex;
   align-items: baseline;
   gap: 1rem;
-  margin-bottom: 1.25rem;
 }
-.hostline .cmd-user {
-  font-size: 1rem;
+.entry-date {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--muted-color);
+  font-variant-numeric: tabular-nums;
 }
-.hostline-rule {
-  flex: 1;
-  border-bottom: 1px solid var(--border);
-  transform: translateY(-0.3em);
+.entry-title {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.45;
 }
-.ff {
-  margin: 0 0 1.75rem;
+.entry:hover .entry-title,
+.entry:focus-visible .entry-title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
-.ff-row {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  column-gap: 2.5rem;
-  align-items: baseline;
+.entry-summary {
+  margin: 0.35rem 0 0;
+  max-width: 42rem;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  text-wrap: pretty;
+  color: var(--muted-color);
 }
-.ff-label {
-  color: var(--amber);
-}
-.ff-value {
-  color: var(--foreground);
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-.ff-section {
-  margin-top: 2rem;
-}
-.ff-title {
-  margin: 0 0 0.75rem;
-  color: var(--link);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-@media (max-width: 40rem) {
-  .ff-row {
-    grid-template-columns: minmax(0, 1fr);
-    margin-bottom: 0.25rem;
-  }
-  .ff-value {
-    text-align: left;
-  }
-}
-@media (min-width: 64rem) {
-  .banner {
-    font-size: 0.875rem;
-  }
-}
-
-/* Directory tree, shared by the sidebar, the home panel, and the 404 page */
-.tree {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.tree-link {
+.entry-tags {
   display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  padding-block: 0.25rem;
-  color: var(--muted);
-}
-.tree-link:hover {
-  color: var(--foreground);
-  text-decoration: none;
-}
-.tree-link[aria-current="page"] {
-  color: var(--foreground);
-  font-weight: 700;
-}
-.tree-blurb {
-  color: var(--muted);
-  font-size: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 11px;
+  color: var(--muted-color);
 }
 
-/* Content frame: sidebar + main on desktop, stacked with a details nav below */
-.term-frame {
-  width: min(100%, 72rem);
-  margin-inline: auto;
-  padding-inline: var(--gutter);
-}
-.mobile-nav {
-  border-bottom: 1px solid var(--border);
-}
-.mobile-nav summary {
-  padding: 0.75rem var(--gutter);
-  cursor: pointer;
-  color: var(--muted);
-}
-.mobile-nav .tree {
-  padding: 0 var(--gutter) 0.75rem;
-}
-.sidebar {
-  display: none;
-}
-@media (min-width: 64rem) {
-  .mobile-nav {
-    display: none;
-  }
-  .term-frame {
-    display: grid;
-    grid-template-columns: 14rem minmax(0, 1fr);
-    gap: 2.5rem;
-  }
-  .sidebar {
-    display: block;
-    position: sticky;
-    top: var(--header-height);
-    align-self: start;
-    padding-block: 3rem;
-  }
-}
+/* ── article ────────────────────────────────────────────────────────── */
 
-/* Article typography, adapted from the OpenCode docs prose rules */
-.term-article {
-  max-width: 100%;
-  overflow-wrap: break-word;
+.article {
+  margin-top: 3rem;
+  max-width: 54rem;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  text-wrap: pretty;
 }
-.term-article :first-child {
+.article > :first-child {
   margin-top: 0;
 }
-.term-article h2 {
-  margin: 3rem 0 0.75rem;
-  color: var(--foreground);
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.5;
+.article h2,
+.article h3,
+.article h4 {
+  margin: 2.5rem 0 0.75rem;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
 }
-.term-article h3 {
-  margin: 2.25rem 0 0.75rem;
-  color: var(--foreground);
-  font-size: 1.125rem;
-  font-weight: 700;
+.article p,
+.article ul,
+.article ol {
+  margin: 0.9rem 0 0;
 }
-.term-article h4 {
-  margin: 2rem 0 0.75rem;
-  color: var(--foreground);
-  font-size: 1rem;
-  font-weight: 700;
+.article ul,
+.article ol {
+  padding-left: 1.25rem;
 }
-.term-article p,
-.term-article ul,
-.term-article ol {
-  margin: 0 0 1.5rem;
+.article li + li {
+  margin-top: 0.35rem;
 }
-.term-article ul,
-.term-article ol {
-  padding-left: 1.5rem;
+.article a {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: color-mix(in srgb, var(--foreground-color) 35%, transparent);
+  transition: text-decoration-color 150ms ease;
 }
-.term-article li + li {
-  margin-top: 0.5rem;
+.article a:hover,
+.article a:focus-visible {
+  text-decoration-color: currentColor;
 }
-.term-article a {
-  color: var(--link);
+.article strong {
+  font-weight: 500;
 }
-.term-article code {
-  font: inherit;
+.article code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
 }
-.term-article :not(pre) > code {
-  padding: 0.0625rem 0.4ch;
-  background: color-mix(in srgb, currentColor 10%, transparent);
+.article :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--foreground-color) 7%, transparent);
+  font-size: 0.85em;
 }
-.term-article pre {
-  max-width: 100%;
-  margin: 0 0 1.5rem;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--border);
-  background: var(--background) !important;
-  font: inherit;
-  font-size: 0.8125rem;
+.article pre {
+  margin: 1.5rem 0 0;
+  padding: 1rem 1.15rem;
   overflow-x: auto;
+  border: 1px solid var(--line-color);
+  border-radius: 6px;
+  background: #131211;
+  font-size: 13px;
+  line-height: 1.7;
 }
-.term-article blockquote {
-  margin: 0 0 1.5rem;
+.article pre code {
+  font-size: inherit;
+}
+.article blockquote {
+  margin: 1.5rem 0 0;
   padding-left: 1rem;
-  border-left: 2px solid var(--muted);
-  color: var(--muted);
+  border-left: 1px solid var(--line-color);
+  color: var(--muted-color);
 }
-.term-article hr {
-  margin: 3rem 0 1.5rem;
+.article hr {
+  margin: 2.5rem 0;
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line-color);
 }
-.term-article table {
+.article table {
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
   border-collapse: collapse;
-  font-size: 0.8125rem;
+  font-size: 14px;
 }
-.term-article th,
-.term-article td {
-  padding: 0.5rem 1rem 0.5rem 0;
-  border-bottom: 1px solid var(--border);
+.article th,
+.article td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--line-color);
   text-align: left;
   vertical-align: top;
 }
-.term-article img {
+.article img {
   max-width: 100%;
   height: auto;
+  border-radius: 4px;
+}
+.article .toc,
+.article .callout {
+  font-family: var(--font-mono);
+  font-size: 14px;
 }
 
-/* Flat cards for the listing pages */
-.card {
-  border: 1px solid var(--border);
-  padding: 1rem;
-}
-.card:hover {
-  background: var(--surface);
-}
-.card-eyebrow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.5rem;
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-.tags {
+.meta-line {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-top: 0.75rem;
-  color: var(--muted);
-  font-size: 0.75rem;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-top: 1rem;
+  font-size: 12px;
+  color: var(--muted-color);
 }
-.tags span {
-  border: 1px solid var(--border);
-  padding-inline: 0.4rem;
+.back-link {
+  display: inline-block;
+  margin-bottom: 2rem;
+  font-size: 13px;
+  color: var(--muted-color);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.back-link:hover,
+.back-link:focus-visible {
+  color: var(--foreground-color);
 }
 
-/* Search: native dialog + flat panel (OpenCode's search dialog) */
-.search-trigger {
-  display: inline-flex;
-  min-width: 9.5rem;
-  height: 2.25rem;
-  padding-inline: 0.75rem;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: transparent;
-  align-items: center;
+/* ── project strip ──────────────────────────────────────────────────── */
+
+.projects-page {
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  background: var(--background-color);
+  color: var(--foreground-color);
+}
+.strip-main {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 3rem;
+}
+.strip {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-inline: max(1.5rem, calc((100vw - 56rem) / 2));
+  scrollbar-width: none;
+}
+.strip::-webkit-scrollbar {
+  display: none;
+}
+.tile {
+  display: block;
+  width: min-content;
+  flex-shrink: 0;
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+.tile-cover {
+  position: relative;
+  height: min(62vh, 42rem);
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--foreground-color) 5%, transparent);
+}
+/* A dot grid at the canvas's own tile rhythm, so an image-less cover still
+   belongs to the same surface as the pond behind the home page. */
+.tile-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--foreground-color) 18%, transparent) 1px, transparent 1px);
+  background-size: 12px 14px;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.tile-poster {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  color: var(--muted);
+  padding: 1.75rem;
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tile:hover .tile-poster,
+.tile:focus-visible .tile-poster {
+  transform: scale(1.03);
+}
+.tile-index {
+  font-size: 12px;
+  color: var(--muted-color);
+  font-variant-numeric: tabular-nums;
+}
+.tile-name {
+  margin: 0;
+  max-width: 11em;
+  font-family: var(--font-sans);
+  font-size: clamp(1.75rem, 3.2vw, 3rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.tile-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  margin-top: 0.75rem;
+  font-size: 11px;
+  color: var(--muted-color);
+}
+.tile-hint {
+  pointer-events: none;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.55);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: #fff7f0;
+  font-size: 12px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+.tile:hover .tile-hint,
+.tile:focus-visible .tile-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+.tile-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.tile-meta-name {
+  white-space: nowrap;
+  font-size: 15px;
+}
+.tile-meta-year {
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted-color);
+}
+.tile-tagline {
+  margin: 0.25rem 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted-color);
+}
+
+/* Phones get a plain stacked list instead of the strip. */
+.projects-mobile {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--background-color);
+}
+.projects-mobile-inner {
+  display: flex;
+  flex-direction: column;
+  padding: 20vw 1.5rem 12vh;
+}
+.projects-mobile .tile-cover {
+  width: 100%;
+  height: 65vw;
+  aspect-ratio: auto;
+  border-radius: 1rem;
+}
+.projects-mobile article {
+  padding-bottom: 16vw;
+}
+.mobile-project-name {
+  margin: 5vw 0 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 21px;
+  font-weight: 400;
+}
+.mobile-project-desc {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  opacity: 0.6;
+}
+.mobile-project-year {
+  margin-top: 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 17px;
+}
+.mobile-project-year span {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 17px;
+  opacity: 0.6;
+}
+.pill-button {
+  display: inline-flex;
+  margin-top: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--foreground-color) 8%, transparent);
+  color: var(--foreground-color);
   font: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform 150ms ease;
 }
-.search-trigger:hover {
-  border-color: var(--muted);
-  color: var(--foreground);
+.pill-button:active {
+  transform: scale(0.95);
 }
-.search-trigger kbd {
-  font: inherit;
-  font-size: 0.75rem;
+@media (min-width: 64rem) {
+  .projects-mobile {
+    display: none;
+  }
 }
+@media (max-width: 63.99rem) {
+  .strip-main {
+    display: none;
+  }
+}
+
+/* ── search ─────────────────────────────────────────────────────────── */
+
 .search-dialog {
-  width: min(42rem, calc(100% - 2rem));
-  max-height: min(36rem, calc(100vh - 4rem));
-  margin: 10vh auto auto;
+  width: min(40rem, calc(100% - 2rem));
+  max-height: min(34rem, calc(100vh - 6rem));
+  margin: 12vh auto auto;
   padding: 0;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--background) 92%, transparent);
-  color: var(--foreground);
-  backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  color: var(--foreground-color);
+  font-family: var(--font-mono);
+  overflow: hidden;
 }
 .search-dialog::backdrop {
-  background: rgb(0 0 0 / 0.72);
+  background: rgb(0 0 0 / 0.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
 }
 .search-bar {
   display: flex;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
   align-items: center;
   gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line-color);
+}
+.search-bar > span {
+  opacity: 0.4;
 }
 .search-bar input {
   min-width: 0;
@@ -484,76 +1086,134 @@ a:hover {
   color: inherit;
   font: inherit;
 }
+.search-bar input::placeholder {
+  color: var(--muted-color);
+  opacity: 0.8;
+}
 .search-bar button {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--muted);
+  color: var(--muted-color);
   font: inherit;
+  font-size: 12px;
   cursor: pointer;
 }
 .search-results {
-  max-height: 28rem;
+  max-height: 26rem;
   padding: 0.5rem;
   overflow-y: auto;
 }
 .search-results > p {
   margin: 0;
-  padding: 0.75rem;
-  color: var(--muted);
+  padding: 0.9rem;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted-color);
 }
 .search-results a {
   display: block;
-  padding: 0.75rem;
-  color: var(--foreground);
-}
-.search-results a:hover {
-  background: var(--surface-hover);
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  color: var(--foreground-color);
   text-decoration: none;
 }
-.search-results strong,
+.search-results a:hover,
+.search-results a:focus-visible {
+  background: color-mix(in srgb, var(--foreground-color) 6%, transparent);
+}
+.search-results strong {
+  display: block;
+  font-weight: 400;
+  font-size: 14px;
+}
 .search-results span {
   display: block;
+  margin-top: 0.2rem;
+  font-size: 12px;
+  color: var(--muted-color);
 }
-.search-results span {
-  margin-top: 0.25rem;
-  color: var(--muted);
-  font-size: 0.8125rem;
+
+/* ── footer ─────────────────────────────────────────────────────────── */
+
+.site-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 2rem 1.5rem 3rem;
+  font-size: 12px;
+  color: var(--muted-color);
 }
-@media (max-width: 48rem) {
-  .search-trigger {
-    min-width: 2.25rem;
-    justify-content: center;
-    padding-inline: 0;
+@media (min-width: 64rem) {
+  .site-foot {
+    padding-inline: 20vw;
   }
-  .search-trigger span,
-  .search-trigger kbd {
-    display: none;
+}
+.site-foot a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+.site-foot a:hover,
+.site-foot a:focus-visible {
+  color: var(--foreground-color);
+}
+
+/* ── view transitions ───────────────────────────────────────────────── */
+
+@view-transition {
+  navigation: auto;
+}
+
+/* Opening a project from the strip carries on its sideways motion: the strip
+   drifts left while the project page slides in over it from the right. */
+:root[data-transition]::view-transition-old(root),
+:root[data-transition]::view-transition-new(root) {
+  animation-duration: 0.65s;
+  animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+  animation-fill-mode: both;
+  mix-blend-mode: normal;
+}
+:root[data-transition="forward"]::view-transition-old(root) {
+  animation-name: vt-drift-left;
+}
+:root[data-transition="forward"]::view-transition-new(root) {
+  animation-name: vt-slide-in;
+  box-shadow: -24px 0 48px rgb(0 0 0 / 0.3);
+}
+:root[data-transition="back"]::view-transition-old(root) {
+  z-index: 1;
+  animation-name: vt-slide-out;
+  box-shadow: -24px 0 48px rgb(0 0 0 / 0.3);
+}
+:root[data-transition="back"]::view-transition-new(root) {
+  animation-name: vt-drift-in;
+}
+@keyframes vt-drift-left {
+  to {
+    transform: translateX(-30%);
   }
-  .search-trigger::before {
-    content: ">";
+}
+@keyframes vt-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes vt-slide-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes vt-drift-in {
+  from {
+    transform: translateX(-30%);
   }
 }
 
-/* Staggered reveal for the fastfetch rows; reduced motion keeps them static */
-@media (prefers-reduced-motion: no-preference) {
-  .stagger {
-    opacity: 0;
-    animation: fade-in 0.18s ease-out forwards;
-    animation-delay: calc(var(--i, 0) * 45ms);
-  }
-  @keyframes fade-in {
-    to {
-      opacity: 1;
-    }
-  }
-}
+/* ── motion preferences ─────────────────────────────────────────────── */
 
-} /* end @layer components */
-
-/* Respect reduced motion: nothing moves or blinks, everything stays visible.
-   The WebGL layer this block originally guarded is gone; the rule now covers
-   the cursor blink, the row reveal, and any future transition. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -562,5 +1222,14 @@ a:hover {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .cursor {
+    animation: none !important;
+    opacity: 1;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

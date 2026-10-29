@@ -1,6 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
-import ContentLayout from '../../layouts/ContentLayout.astro';
+import ProseLayout from '../../layouts/ProseLayout.astro';
 import { article } from '../../lib/seo';
 
 export async function getStaticPaths() {
@@ -13,48 +13,45 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
+const data = project.data;
 ---
 
-<ContentLayout
-  title={project.data.title}
-  command={`cat ~/projects/${project.id}.md`}
-  cwd="~/projects"
-  description={project.data.summary}
-  publishedTime={project.data.date}
-  modifiedTime={project.data.updated ?? project.data.date}
+<ProseLayout
+  title={data.title}
+  backHref="/projects"
+  backLabel="projects"
+  description={data.summary}
+  publishedTime={data.date}
+  modifiedTime={data.updated ?? data.date}
   structuredData={article({
-    title: project.data.title,
-    description: project.data.summary,
+    title: data.title,
+    description: data.summary,
     url: Astro.url.href,
     section: 'Projects',
-    tags: project.data.tags,
-    date: project.data.date,
-    updated: project.data.updated,
+    tags: data.tags,
+    date: data.date,
+    updated: data.updated,
   })}
 >
-  <div class="mb-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-xs text-muted">
-    <span>{project.data.date}</span>
-    <span class="text-amber">{project.data.status}</span>
-    <span class="flex flex-wrap gap-1.5">
-      {project.data.stack.map((tech) => <span class="border border-line px-1.5">{tech}</span>)}
-    </span>
-    {project.data.github && (
-      <a href={project.data.github} target="_blank" rel="noopener noreferrer" class="ml-auto">github ↗</a>
+  <Fragment slot="meta">
+    <span>{data.date}</span>
+    <span>{data.status}</span>
+    {data.stack.map((tech) => <span>{tech}</span>)}
+    {data.github && (
+      <a class="ink-link" href={data.github} target="_blank" rel="noopener noreferrer">github ↗</a>
     )}
-  </div>
+  </Fragment>
 
-  <article>
-    <Content />
-  </article>
+  <Content components={{ h1: 'h2' }} />
 
-  {project.data.related && project.data.related.length > 0 && (
-    <div class="mt-12 border-t border-line pt-6">
-      <h3 class="mb-3 mt-0 text-xs uppercase tracking-wide text-muted">related</h3>
-      <ul class="m-0 list-none space-y-1 pl-0 text-sm">
-        {project.data.related.map((rel) => (
-          <li><a href={rel}>{rel}</a></li>
+  {data.related.length > 0 && (
+    <div class="mt-16 border-t border-line pt-6">
+      <p class="mb-3 mt-0 text-[12px] text-muted">related</p>
+      <ul class="m-0 list-none space-y-1 pl-0 text-[14px]">
+        {data.related.map((rel) => (
+          <li><a class="ink-link" href={rel}>{rel}</a></li>
         ))}
       </ul>
     </div>
   )}
-</ContentLayout>
+</ProseLayout>

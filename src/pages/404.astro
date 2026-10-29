@@ -1,41 +1,33 @@
 ---
-import ContentLayout from '../layouts/ContentLayout.astro';
-import { DOMAINS } from '../lib/domains';
+import ListLayout from '../layouts/ListLayout.astro';
+import { NAV } from '../lib/domains';
 
 {/*
   GitHub Pages serves this for any unmatched path, so it has to be useful
-  rather than decorative: the two things a lost visitor needs are a way back
-  home and a way into the six directories. It is `noindex` — a dead URL should
-  not be offered to a crawler as a destination.
+  rather than decorative: a way back home and a way into every directory.
+  It is `noindex` — a dead URL should not be offered to a crawler.
 */}
 ---
 
-<ContentLayout
+<ListLayout
   title="404 — Not Found"
-  command="cat /not-found"
-  type="website"
+  description="The requested address does not resolve to a page on this site. Take a road back home, or pick a directory."
+  quote="this road goes nowhere."
   robots="noindex, follow"
-  description="The requested address does not resolve to a file in this tree. Return home, or jump straight to a directory."
 >
-  <p class="m-0 border border-line p-4 text-red">cat: /not-found: No such file or directory</p>
-
-  <p>
-    The address you followed does not resolve to anything in this tree. Nothing was lost — the
-    path was simply never written.
-  </p>
-
-  <ul class="tree m-0 pl-0">
-    {DOMAINS.map((domain) => (
-      <li>
-        <a class="tree-link" href={domain.path}>
-          <span>~/{domain.label}</span><span class="tree-blurb">{domain.blurb}</span>
-        </a>
-      </li>
+  <div class="entries">
+    {NAV.map((item) => (
+      <a class="entry" href={item.path}>
+        <span class="entry-head">
+          <span class="entry-date">../</span>
+          <span class="entry-title">{item.label}</span>
+        </span>
+        <p class="entry-summary">{item.blurb}</p>
+      </a>
     ))}
-  </ul>
-
-  <p>
+  </div>
+  <p class="mt-10 text-[14px] text-muted">
     If you reached this from a link on this site, it is a broken edge and worth
-    <a href="https://github.com/tontide1/tontide1.github.io/issues">reporting</a>.
+    <a class="ink-link" href="https://github.com/tontide1/tontide1.github.io/issues">reporting</a>.
   </p>
-</ContentLayout>
+</ListLayout>

@@ -1,0 +1,64 @@
+---
+/**
+ * Reading page: back link, title, lede, the metadata line, and the article
+ * itself. The chrome (nav, footer, search) comes from SiteShell.
+ */
+import Layout from './Layout.astro';
+import SiteShell from '../components/site/SiteShell.astro';
+import { toIsoDate } from '../lib/seo';
+
+interface Props {
+  title: string;
+  /** Directory this page belongs to, for the back link and og:type. */
+  backHref?: string;
+  backLabel?: string;
+  description?: string;
+  type?: 'website' | 'article';
+  image?: string;
+  imageAlt?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  robots?: string;
+}
+
+const {
+  title,
+  backHref,
+  backLabel,
+  description,
+  type = 'article',
+  image,
+  imageAlt,
+  publishedTime,
+  modifiedTime,
+  structuredData,
+  robots,
+} = Astro.props;
+---
+
+<Layout
+  title={`${title} — TONTIDE1`}
+  description={description}
+  type={type}
+  image={image}
+  imageAlt={imageAlt}
+  publishedTime={toIsoDate(publishedTime)}
+  modifiedTime={toIsoDate(modifiedTime)}
+  structuredData={structuredData}
+  robots={robots}
+>
+  <SiteShell>
+    <main class="page">
+      <div class="page-narrow">
+        {backHref && (
+          <a class="back-link" href={backHref} data-vt-back>← {backLabel ?? backHref.replace('/', '')}</a>
+        )}
+        <h1>{title}</h1>
+        {description && <p class="page-lede mt-3">{description}</p>}
+        <div class="meta-line"><slot name="meta" /></div>
+        <article class="article"><slot /></article>
+      </div>
+    </main>
+  </SiteShell>
+</Layout>

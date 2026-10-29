@@ -1,7 +1,7 @@
 {
   "name": "tontide1.github.io",
   "version": "1.0.0",
-  "description": "TONTIDE1 — a personal portfolio rendered as a terminal session",
+  "description": "TONTIDE1 — a personal site with an ASCII pond of monkeys at the front door",
   "type": "module",
   "packageManager": "pnpm@12.6.0",
   "engines": {

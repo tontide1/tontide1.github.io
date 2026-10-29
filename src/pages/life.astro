@@ -1,21 +1,21 @@
 ---
 import { getCollection } from 'astro:content';
-import ContentLayout from '../layouts/ContentLayout.astro';
+import ListLayout from '../layouts/ListLayout.astro';
+import EntryRow from '../components/site/EntryRow.astro';
 import { collectionPage } from '../lib/seo';
 
-const entries = await getCollection('life', ({ data }) => !data.draft);
+const entries = (await getCollection('life', ({ data }) => !data.draft)).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date)
+);
 
 const title = 'Public Timeline & Milestones';
-const description =
-  'Public personal experiences, technical journey, workspaces, and milestones.';
+const description = 'Public personal experiences, technical journey, workspaces, and milestones.';
 ---
 
-<ContentLayout
+<ListLayout
   title={title}
-  command="ls"
-  cwd="~/life"
-  type="website"
   description={description}
+  quote="a timeline, still being written."
   structuredData={collectionPage({
     title,
     description,
@@ -24,19 +24,15 @@ const description =
     items: entries.map((e) => ({ name: e.data.title, url: new URL(`/life/${e.id}/`, Astro.url).href })),
   })}
 >
-  <div class="relative ml-1 space-y-8 border-l border-line pl-6">
+  <div class="entries">
     {entries.map((item) => (
-      <div class="relative">
-        <div class="absolute -left-[1.85rem] top-2 h-2 w-2 border border-bg bg-blue" />
-        <span class="block text-xs text-muted">{item.data.date}</span>
-        <h2 class="mb-1 mt-1 text-base font-bold leading-snug">
-          <a href={`/life/${item.id}`}>{item.data.title}</a>
-        </h2>
-        <p class="m-0 text-sm text-muted">{item.data.summary}</p>
-        <div class="tags">
-          {item.data.tags.map((tag) => <span>#{tag}</span>)}
-        </div>
-      </div>
+      <EntryRow
+        href={`/life/${item.id}`}
+        date={item.data.date}
+        title={item.data.title}
+        summary={item.data.summary}
+        tags={item.data.tags}
+      />
     ))}
   </div>
-</ContentLayout>
+</ListLayout>

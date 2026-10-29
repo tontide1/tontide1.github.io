@@ -29,7 +29,7 @@ const SUITES = [
   { id: 'source', needs: { browser: false, server: null }, run: () => import('./suite-source.mjs') },
   { id: 'seo', needs: { browser: false, server: null }, run: () => import('./suite-seo.mjs') },
   { id: 'layout', needs: { browser: false, server: null }, run: () => import('./suite-layout.mjs') },
-  { id: 'terminal', needs: { browser: true, server: 'dev' }, run: () => import('./suite-terminal.mjs') },
+  { id: 'home', needs: { browser: true, server: 'dev' }, run: () => import('./suite-home.mjs') },
   { id: 'keyboard', needs: { browser: true, server: 'dev' }, run: () => import('./suite-keyboard.mjs') },
 ];
 

@@ -4,6 +4,7 @@ dist/
 
 # Browser tooling artifacts
 .playwright-mcp/
+scratch/
 
 # Dependencies
 node_modules/

@@ -45,19 +45,23 @@ export default async function run() {
   s.note('getCollection call sites checked', callSites);
 
   // A rendered page must be byte-identical on every reload: randomness in the
-  // output is a bug, not decoration. The deleted universe used a seeded PRNG;
-  // the terminal has no legitimate use for randomness at all.
+  // output is a bug, not decoration. The pond engine is the one exception —
+  // it seeds a canvas after load, so its randomness never reaches the HTML.
   const random = [];
+  const canvasDir = path.join(ROOT, 'src', 'components', 'pond') + path.sep;
   for (const file of files) {
+    if (file.startsWith(canvasDir)) continue;
     const text = fs.readFileSync(file, 'utf8');
     if (text.includes('Math.random()')) random.push(path.relative(ROOT, file));
   }
-  s.check('no unseeded randomness in rendered output', random.length === 0, random.join(', '));
+  s.check('no unseeded randomness in server-rendered pages', random.length === 0, random.join(', '));
+  s.note('randomness scan', 'excludes src/components/pond (canvas seeded in the browser)');
 
   // `prose` needs @tailwindcss/typography, which this project does not depend on,
   // so the classes silently did nothing. Catch them reappearing. Note the word
-  // boundary: a `-prose` suffix (e.g. `term-prose`) trips this check too, which
-  // is why the article wrapper is named `term-article`.
+  // boundary: a `-prose` suffix (e.g. `cited-prose`) trips this check too, which
+  // is why the article wrapper is named `article` and the dimming wrapper
+  // `cited-text`.
   const deadProse = [];
   for (const file of files) {
     const text = fs.readFileSync(file, 'utf8');

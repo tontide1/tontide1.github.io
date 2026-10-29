@@ -1,21 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
-import ContentLayout from '../layouts/ContentLayout.astro';
+import ListLayout from '../layouts/ListLayout.astro';
+import EntryRow from '../components/site/EntryRow.astro';
 import { collectionPage } from '../lib/seo';
 
-const researches = await getCollection('research', ({ data }) => !data.draft);
+const researches = (await getCollection('research', ({ data }) => !data.draft)).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date)
+);
 
 const title = 'Research Investigations';
 const description =
   'What Tài investigates: structured questions, empirical hypotheses, benchmarks, and experimental pipelines.';
 ---
 
-<ContentLayout
+<ListLayout
   title={title}
-  command="ls"
-  cwd="~/research"
-  type="website"
   description={description}
+  quote="questions with benchmarks."
   structuredData={collectionPage({
     title,
     description,
@@ -24,26 +25,16 @@ const description =
     items: researches.map((r) => ({ name: r.data.title, url: new URL(`/research/${r.id}/`, Astro.url).href })),
   })}
 >
-  <div class="space-y-4">
+  <div class="entries">
     {researches.map((item) => (
-      <article class="card">
-        <div class="card-eyebrow">
-          <span class="text-amber">{item.data.status}</span>
-          <span>{item.data.date}</span>
-        </div>
-        <h2 class="mb-2 mt-0 text-base font-bold leading-snug">
-          <a href={`/research/${item.id}`}>{item.data.title}</a>
-        </h2>
-        <dl class="m-0 text-sm">
-          <dt class="text-xs uppercase tracking-wide text-muted">research question</dt>
-          <dd class="mb-3 mt-0">{item.data.research_question}</dd>
-          <dt class="text-xs uppercase tracking-wide text-muted">working hypothesis</dt>
-          <dd class="m-0 text-muted">{item.data.hypothesis}</dd>
-        </dl>
-        <div class="mt-3 border-t border-line pt-3 text-xs">
-          <a href={`/research/${item.id}`}>read benchmark & methodology →</a>
-        </div>
-      </article>
+      <EntryRow
+        href={`/research/${item.id}`}
+        date={item.data.date}
+        meta={item.data.status}
+        title={item.data.title}
+        summary={item.data.summary}
+        tags={item.data.tags}
+      />
     ))}
   </div>
-</ContentLayout>
+</ListLayout>

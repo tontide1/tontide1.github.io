@@ -26,6 +26,15 @@ export async function buildSearchIndex(): Promise<SearchItem[]> {
   ]);
 
   return [
+    {
+      id: 'dir-pond',
+      title: 'pond',
+      summary: 'Home — the one-screen pond',
+      domain: 'pond',
+      tags: [] as string[],
+      path: '/',
+      meta: 'directory',
+    },
     ...DOMAINS.map((domain) => ({
       id: `dir-${domain.id}`,
       title: `~/${domain.label}`,

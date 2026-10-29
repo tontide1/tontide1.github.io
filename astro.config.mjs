@@ -8,8 +8,8 @@ export default defineConfig({
   site: 'https://tontide1.github.io',
   integrations: [mdx(), sitemap()],
   markdown: {
-    // The site is dark-only; pin the code-block theme so MDX pre blocks do not
-    // render with Shiki's light default.
+    // Code blocks stay dark in both themes (they sit on their own surface), so
+    // pin the theme instead of letting Shiki pick a light default.
     shikiConfig: {
       theme: 'github-dark',
     },

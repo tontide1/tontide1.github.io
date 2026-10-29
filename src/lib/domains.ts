@@ -21,3 +21,13 @@ export const DOMAINS: DomainInfo[] = [
   { id: 'research', label: 'research', path: '/research', blurb: 'Studies & benchmarks' },
   { id: 'thoughts', label: 'thoughts', path: '/thoughts', blurb: 'Long-form essays' },
 ];
+
+/**
+ * The nav reads left to right from the home scene out through the domains:
+ * the pond first, then the six directories in the order a visitor meets them.
+ */
+export const NAV: DomainInfo[] = [
+  { id: 'pond', label: 'pond', path: '/', blurb: 'Home' },
+  ...DOMAINS.filter((d) => d.id !== 'about'),
+  DOMAINS.find((d) => d.id === 'about')!,
+];

@@ -1,21 +1,22 @@
 ---
 import { getCollection } from 'astro:content';
-import ContentLayout from '../layouts/ContentLayout.astro';
+import ListLayout from '../layouts/ListLayout.astro';
+import EntryRow from '../components/site/EntryRow.astro';
 import { collectionPage } from '../lib/seo';
 
-const notes = await getCollection('notes', ({ data }) => !data.draft);
+const notes = (await getCollection('notes', ({ data }) => !data.draft)).sort((a, b) =>
+  b.data.date.localeCompare(a.data.date)
+);
 
 const title = 'Compact Knowledge Fragments';
 const description =
   'What Tài learns and records: technical notes, Linux tooling, debugging logs, and concise implementation references.';
 ---
 
-<ContentLayout
+<ListLayout
   title={title}
-  command="ls"
-  cwd="~/notes"
-  type="website"
   description={description}
+  quote="small things, written down."
   structuredData={collectionPage({
     title,
     description,
@@ -24,21 +25,16 @@ const description =
     items: notes.map((n) => ({ name: n.data.title, url: new URL(`/notes/${n.id}/`, Astro.url).href })),
   })}
 >
-  <div class="space-y-4">
+  <div class="entries">
     {notes.map((note) => (
-      <article class="card">
-        <div class="card-eyebrow">
-          <span class="text-amber">{note.data.category}</span>
-          <span>{note.data.date}</span>
-        </div>
-        <h2 class="mb-1 mt-0 text-base font-bold leading-snug">
-          <a href={`/notes/${note.id}`}>{note.data.title}</a>
-        </h2>
-        <p class="mt-0 text-sm text-muted">{note.data.summary}</p>
-        <div class="tags">
-          {note.data.tags.map((tag) => <span>#{tag}</span>)}
-        </div>
-      </article>
+      <EntryRow
+        href={`/notes/${note.id}`}
+        date={note.data.date}
+        meta={note.data.category}
+        title={note.data.title}
+        summary={note.data.summary}
+        tags={note.data.tags}
+      />
     ))}
   </div>
-</ContentLayout>
+</ListLayout>
