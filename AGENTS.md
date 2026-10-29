@@ -18,3 +18,7 @@ Five canonical labels with default names: `needs-triage`, `needs-info`, `ready-f
 ### Domain docs
 
 Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Design skill
+
+`impeccable` (cài ở `.agents/skills/`) — workflow, lệnh và config riêng của repo: `docs/GUIDE_IMPECCABLE.md`. Đọc trước khi sửa UI.

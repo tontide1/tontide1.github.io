@@ -45,7 +45,7 @@ interface Palette {
 }
 
 const DARK: Palette = {
-  bg: [17, 17, 15],
+  bg: [18, 17, 16],
   fur: [63, 49, 41],
   furLit: [84, 72, 60],
   furInk: [160, 148, 134],
@@ -122,8 +122,8 @@ export class PondRenderer {
 
   resize(width: number, height: number, dpr: number) {
     this.dpr = dpr;
-    this.cw = clamp(Math.round(width / 200), 7, 10);
-    this.ch = Math.round(this.cw * 1.25);
+    this.cw = clamp(Math.round(width / 180), 6, 8);
+    this.ch = this.cw;
     this.cols = Math.ceil(width / this.cw);
     this.rows = Math.ceil(height / this.ch);
     this.ctx.canvas.width = Math.round(width * dpr);
@@ -172,7 +172,7 @@ export class PondRenderer {
     const { ctx, cw, ch, cols } = this;
     ctx.globalAlpha = alpha;
     ctx.fillStyle = this.style(packRgb(rgb));
-    ctx.fillText(glyph, (i % cols) * cw + cw / 2, ((i / cols) | 0) * ch + ch / 2 + 1);
+    ctx.fillText(glyph, (i % cols) * cw + cw / 2, ((i / cols) | 0) * ch + ch / 2);
   }
 
   render(world: World, dt: number) {
@@ -190,7 +190,7 @@ export class PondRenderer {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.font = `600 ${Math.round(this.ch * 0.78)}px ${this.fontFamily}`;
+    ctx.font = `bold 900 ${Math.round(this.ch * 0.85)}px ${this.fontFamily}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -217,17 +217,18 @@ export class PondRenderer {
         dc = Math.round(cols * 0.68) + (t.c - MONKEY_ANCHOR_COL);
         dr = Math.round(rows * 0.28) + (t.r - MONKEY_ANCHOR_ROW);
       } else {
-        // Desktop: anchor monkey at ~62% of cols, perched above ripples
+        // Desktop: anchor monkey at ~62% of cols, perched cleanly at ~44% rows
         const anchorCol = Math.round(cols * 0.62);
+        const anchorRow = Math.round(rows * 0.44);
         dc = anchorCol + (t.c - MONKEY_ANCHOR_COL);
-        dr = t.r + 6;
+        dr = anchorRow + (t.r - MONKEY_ANCHOR_ROW);
       }
 
-      const isMonkey = t.c >= 35 && t.c <= 68 && t.r >= 6 && t.r <= 50;
+      const isMonkey = t.c >= 44 && t.c <= 80 && t.r >= 14 && t.r <= 70;
       if (isMonkey) {
         dr += bob;
         if (t.r > MONKEY_ANCHOR_ROW) {
-          dc += sway * (t.r - MONKEY_ANCHOR_ROW) * 0.06;
+          dc += sway * (t.r - MONKEY_ANCHOR_ROW) * 0.04;
         }
       }
 
@@ -243,8 +244,14 @@ export class PondRenderer {
 
       if (isLight) {
         if (bgAlpha > 0) {
-          bgRgb = palette.face;
-          bgAlpha = Math.min(bgAlpha, 0.25);
+          const isHighlight = t.bgRgb && (t.bgRgb[0] > 100 || t.bgRgb[1] > 90);
+          if (isHighlight) {
+            bgRgb = palette.face;
+            bgAlpha = Math.min(bgAlpha, 0.35);
+          } else {
+            bgRgb = [228, 222, 214];
+            bgAlpha = Math.min(bgAlpha, 0.40);
+          }
         }
         const isCream = (t.rgb[0] > 200 && t.rgb[1] > 190 && t.rgb[2] > 180);
         if (isCream) {
@@ -271,8 +278,15 @@ export class PondRenderer {
       cellAlpha[idx] = 1;
     }
   }
+
   private drawCells() {
     const { ctx, cw, ch, cols, cellGlyph, cellColor, cellAlpha, cellTile, cellTileAlpha, cellDim } = this;
+    const pad = 1;
+    const tw = Math.max(1, cw - pad * 2);
+    const th = Math.max(1, ch - pad * 2);
+    const radius = 1.2;
+    const lineWidth = Math.max(0.65, cw * 0.12);
+
     for (let i = 0; i < cellGlyph.length; i++) {
       const code = cellGlyph[i];
       if (!code && cellTileAlpha[i] === 0) continue;
@@ -283,19 +297,23 @@ export class PondRenderer {
         ctx.globalAlpha = cellTileAlpha[i] * cellDim[i];
         ctx.fillStyle = this.style(cellTile[i]);
         ctx.beginPath();
-        const r = 1;
-        const tx = x;
-        const ty = y;
-        const tw = cw;
-        const th = ch;
-        ctx.roundRect ? ctx.roundRect(tx, ty, tw, th, r) : ctx.rect(tx, ty, tw, th);
+        if (ctx.roundRect) {
+          ctx.roundRect(x + pad, y + pad, tw, th, radius);
+        } else {
+          ctx.rect(x + pad, y + pad, tw, th);
+        }
         ctx.fill();
       }
 
       if (code && code !== 32) {
+        const char = String.fromCharCode(code);
         ctx.globalAlpha = cellAlpha[i] * cellDim[i];
-        ctx.fillStyle = this.style(cellColor[i]);
-        ctx.fillText(String.fromCharCode(code), x + cw / 2, y + ch / 2 + 1);
+        const col = this.style(cellColor[i]);
+        ctx.fillStyle = col;
+        ctx.strokeStyle = col;
+        ctx.lineWidth = lineWidth;
+        ctx.strokeText(char, x + cw / 2, y + ch / 2);
+        ctx.fillText(char, x + cw / 2, y + ch / 2);
       }
     }
   }

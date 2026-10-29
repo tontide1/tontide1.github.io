@@ -376,8 +376,20 @@ body {
   pointer-events: none;
   font-family: var(--font-mono);
   font-size: 6.5px;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  line-height: 1.0;
+  letter-spacing: 0px;
+}
+html.dark .home-canvas {
+  filter: drop-shadow(0 0 1px rgba(240, 160, 80, 0.24)) drop-shadow(0 0 5px rgba(220, 110, 30, 0.12));
+}
+html.dark .home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 60% 40%, rgba(220, 140, 60, 0.025), transparent 70%),
+              radial-gradient(circle at center, transparent 40%, rgba(10, 9, 8, 0.25) 100%);
+  z-index: 10;
 }
 .home-main {
   position: relative;

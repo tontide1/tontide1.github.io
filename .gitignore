@@ -18,3 +18,5 @@ node_modules/
 # System
 .DS_Store
 Thumbs.db
+# Impeccable: engine binary (launcher tự tải lại vào ~/.impeccable/bin khi thiếu)
+# /.agents/skills/impeccable/scripts/bin/
