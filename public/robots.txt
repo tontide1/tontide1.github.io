@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://tontide1.github.io/sitemap-index.xml
